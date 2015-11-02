@@ -7,6 +7,7 @@
     <!-- http://foundation.zurb.com/forum/posts/1863-foundation-cdn -->
     <link href='http://cdn.foundation5.zurb.com/foundation.css' rel='stylesheet' type='text/css'>
     <link href='./src/foundation-player.css' rel='stylesheet' type='text/css'>
+    <link href='./src/foundation-icons/foundation-icons.css' rel='stylesheet' type='text/css'>
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js' type='text/javascript'></script>
     <script src='http://cdn.foundation5.zurb.com/foundation.js' type='text/javascript'></script>
     <script src='http://cdn.rawgit.com/katspaugh/wavesurfer.js/master/dist/wavesurfer.min.js' type='text/javascript'></script>
@@ -15,7 +16,6 @@
       $(document).ready(function($) {
         $(document).foundation();
         $('.player-no-1').foundationPlayer({loadURL: '/src/ukulele.m4a'});
-        $('.player-no-2').foundationPlayer();
       });
     </script>
   </head>
@@ -34,42 +34,11 @@
           <li class='tab-title active'>
             <a href='#normal'>Normal</a>
           </li>
-          <li class='tab-title'>
-            <a href='#small'>Interactive</a>
-          </li>
         </ul>
         <div class='tabs-content'>
           <div class='content active' id='normal'>
             <p>Normal player</p>
             <div class='foundation-player player-no-1 normal'>
-              <ul class='inline-list noselection'>
-                <li class='player-button play'>
-                  <em class='fi-play'></em>
-                </li>
-                <li class='player-button back'>
-                  <em class='fi-refresh'></em>
-                </li>
-                <li class='player-time'>
-                  <strong class='elapsed'>01:27</strong>
-                </li>
-                <li class='player-bar'>
-                  <div class='range-slider' data-options='initial: 0' data-slider>
-                    <span class='range-slider-handle' role='slider' tabindex='0'></span>
-                    <span class='range-slider-active-segment'></span>
-                  </div>
-                </li>
-                <li class='player-time'>
-                  <strong class='remains'>-05:10</strong>
-                </li>
-                <li class='player-button volume'>
-                  <em class='fi-volume'></em>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class='content' id='small'>
-            <p>Interactive version...</p>
-            <div class='foundation-player player-no-2 small'>
               <ul class='inline-list noselection'>
                 <li class='player-button play'>
                   <em class='fi-play'></em>
