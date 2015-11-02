@@ -1,155 +1,4 @@
-/* line 431, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-version {
-  font-family: "/5.5.3/"; }
-
-/* line 435, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-mq-small {
-  font-family: "/only screen/";
-  width: 0; }
-
-/* line 440, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-mq-small-only {
-  font-family: "/only screen and (max-width: 40em)/";
-  width: 0; }
-
-/* line 445, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-mq-medium {
-  font-family: "/only screen and (min-width:40.0625em)/";
-  width: 40.0625em; }
-
-/* line 450, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-mq-medium-only {
-  font-family: "/only screen and (min-width:40.0625em) and (max-width:64em)/";
-  width: 40.0625em; }
-
-/* line 455, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-mq-large {
-  font-family: "/only screen and (min-width:64.0625em)/";
-  width: 64.0625em; }
-
-/* line 460, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-mq-large-only {
-  font-family: "/only screen and (min-width:64.0625em) and (max-width:90em)/";
-  width: 64.0625em; }
-
-/* line 465, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-mq-xlarge {
-  font-family: "/only screen and (min-width:90.0625em)/";
-  width: 90.0625em; }
-
-/* line 470, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-mq-xlarge-only {
-  font-family: "/only screen and (min-width:90.0625em) and (max-width:120em)/";
-  width: 90.0625em; }
-
-/* line 475, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-mq-xxlarge {
-  font-family: "/only screen and (min-width:120.0625em)/";
-  width: 120.0625em; }
-
-/* line 480, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-meta.foundation-data-attribute-namespace {
-  font-family: false; }
-
-/* line 489, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-html, body {
-  height: 100%; }
-
-/* line 492, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-*,
-*:before,
-*:after {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box; }
-
-/* line 498, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-html,
-body {
-  font-size: 100%; }
-
-/* line 502, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-body {
-  background: #fff;
-  color: #222;
-  cursor: auto;
-  font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
-  position: relative; }
-
-/* line 515, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-a:hover {
-  cursor: pointer; }
-
-/* line 518, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-img {
-  max-width: 100%;
-  height: auto; }
-
-/* line 520, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-img {
-  -ms-interpolation-mode: bicubic; }
-
-/* line 525, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-#map_canvas img,
-#map_canvas embed,
-#map_canvas object,
-.map_canvas img,
-.map_canvas embed,
-.map_canvas object,
-.mqa-display img,
-.mqa-display embed,
-.mqa-display object {
-  max-width: none !important; }
-
-/* line 532, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-.left {
-  float: left !important; }
-
-/* line 533, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-.right {
-  float: right !important; }
-
-/* line 239, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-.clearfix:before, .clearfix:after {
-  content: " ";
-  display: table; }
-/* line 240, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-.clearfix:after {
-  clear: both; }
-
-/* line 537, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-.hide {
-  display: none; }
-
-/* line 542, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-.invisible {
-  visibility: hidden; }
-
-/* line 548, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-.antialiased {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; }
-
-/* line 551, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-img {
-  display: inline-block;
-  vertical-align: middle; }
-
-/* line 561, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-textarea {
-  height: auto;
-  min-height: 50px; }
-
-/* line 564, /Users/sashaegorov/.rvm/gems/ruby-2.2.3@rails/gems/foundation-rails-5.5.3.2/vendor/assets/stylesheets/foundation/components/_global.scss */
-select {
-  width: 100%; }
-
-/* line 114, foundation-player.scss */
+/* line 124, foundation-player.scss */
 .foundation-player .range-slider {
   border: 2px solid #F9690E;
   position: relative;
@@ -158,72 +7,72 @@ select {
   cursor: col-resize;
   background: rgba(249, 105, 14, 0.1);
   border-radius: 1000px; }
-/* line 120, foundation-player.scss */
+/* line 130, foundation-player.scss */
 .foundation-player.normal .range-slider {
   height: 0.625rem;
   margin: .8rem 0;
   width: 200px;
   background: rgba(249, 105, 14, 0.1);
   border-radius: 1000px; }
-/* line 124, foundation-player.scss */
+/* line 134, foundation-player.scss */
 .foundation-player.normal .range-slider-active-segment {
   height: 0.375rem; }
-/* line 128, foundation-player.scss */
+/* line 138, foundation-player.scss */
 .foundation-player.normal .range-slider-handle {
   background: linear-gradient(-45deg, #D91E18, #F9690E);
   height: 1.25rem;
   top: -0.4375rem;
   width: 1.25rem; }
-  /* line 106, foundation-player.scss */
+  /* line 116, foundation-player.scss */
   .foundation-player.normal .range-slider-handle:hover {
     background: linear-gradient(-45deg, #D91E18, #F9690E); }
-/* line 132, foundation-player.scss */
+/* line 142, foundation-player.scss */
 .foundation-player.normal .player-button,
 .foundation-player.normal .player-time,
 .foundation-player.normal .player-bar {
   font-size: 1.4375rem;
   margin-left: 0.71875rem; }
-/* line 139, foundation-player.scss */
+/* line 149, foundation-player.scss */
 .foundation-player.normal .player-button.play {
   font-size: 2.75rem;
   margin: -1.1rem 0; }
-/* line 146, foundation-player.scss */
+/* line 156, foundation-player.scss */
 .foundation-player.small .range-slider {
   height: 0.375rem;
   margin: .7rem 0;
   width: 100px;
   background: rgba(249, 105, 14, 0.1);
   border-radius: 1000px; }
-/* line 150, foundation-player.scss */
+/* line 160, foundation-player.scss */
 .foundation-player.small .range-slider-active-segment {
   height: 0.125rem; }
-/* line 154, foundation-player.scss */
+/* line 164, foundation-player.scss */
 .foundation-player.small .range-slider-handle {
   background: linear-gradient(-45deg, #D91E18, #F9690E);
   height: 1.125rem;
   top: -0.5rem;
   width: 1.125rem; }
-  /* line 106, foundation-player.scss */
+  /* line 116, foundation-player.scss */
   .foundation-player.small .range-slider-handle:hover {
     background: linear-gradient(-45deg, #D91E18, #F9690E); }
-/* line 158, foundation-player.scss */
+/* line 168, foundation-player.scss */
 .foundation-player.small .player-button,
 .foundation-player.small .player-time,
 .foundation-player.small .player-bar {
   font-size: 1.125rem;
   margin-left: 0.5625rem; }
-/* line 165, foundation-player.scss */
+/* line 175, foundation-player.scss */
 .foundation-player.small .player-button.play {
   font-size: 1.6875rem;
   margin: -0.42188rem 0; }
-/* line 171, foundation-player.scss */
+/* line 181, foundation-player.scss */
 .foundation-player .range-slider-active-segment {
   background: #F9690E;
   border-bottom-left-radius: inherit;
   border-top-left-radius: inherit;
   display: inline-block;
   position: absolute; }
-/* line 179, foundation-player.scss */
+/* line 189, foundation-player.scss */
 .foundation-player .range-slider-handle {
   cursor: col-resize;
   display: inline-block;
@@ -232,25 +81,25 @@ select {
   touch-action: manipulation;
   background: linear-gradient(-45deg, #D91E18, #F9690E);
   border-radius: 1000px; }
-  /* line 106, foundation-player.scss */
+  /* line 116, foundation-player.scss */
   .foundation-player .range-slider-handle:hover {
     background: linear-gradient(-45deg, #D91E18, #F9690E); }
-/* line 185, foundation-player.scss */
+/* line 195, foundation-player.scss */
 .foundation-player .player-button,
 .foundation-player .player-time {
   color: #F9690E; }
-/* line 190, foundation-player.scss */
+/* line 200, foundation-player.scss */
 .foundation-player .player-button {
   cursor: pointer; }
-  /* line 194, foundation-player.scss */
+  /* line 204, foundation-player.scss */
   .foundation-player .player-button.back em {
     transform: scale(-1, 1); }
-  /* line 200, foundation-player.scss */
+  /* line 210, foundation-player.scss */
   .foundation-player .player-button em:before {
     background: linear-gradient(-45deg, #D91E18, #F9690E);
     -webkit-background-clip: text;
     color: transparent; }
-  /* line 207, foundation-player.scss */
+  /* line 217, foundation-player.scss */
   .foundation-player .player-button em:hover:before {
     transform: scale(1.1);
     background: linear-gradient(45deg, #D91E18, #DB0A5B);

@@ -1,10 +1,20 @@
-@import 'foundation/components/_global';
+@import 'foundation/_functions';
 
 // Units and sizes
+// There is no need in this section usually
 $h1-font-size: rem-calc(44);
 $h3-font-size: rem-calc(27);
 $h4-font-size: rem-calc(23);
 $h5-font-size: rem-calc(18);
+$global-rounded: 1000px !default;
+
+// Monkey path of radius mixin
+@mixin radius($radius:$global-radius) {
+  @if $radius {
+    border-radius: $radius;
+  }
+}
+
 // Main player colors
 $logo-color-red: #D91E18;
 $logo-color-orange: #F9690E;
