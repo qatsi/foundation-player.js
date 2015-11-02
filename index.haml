@@ -44,19 +44,21 @@
       .large-offset-2.large-8.columns
         %h1.text-center Foundation-player.js
         %p
-          Super-easy way to add player to your
-          = succeed "." do
-            %code form
+          Super-easy way to add player to your page. Take a look to
           %a{href: 'https://github.com/qatsi/foundation-player.js/blob/master/README.md'} README
           and the
-          = succeed ',' do
+          = succeed '.' do
             %a{href: 'https://github.com/qatsi/foundation-player.js/blob/master/index.html'} source
         %ul.tabs{'data-options' => 'scroll_to_content: false', 'data-tab' => ''}
           %li.tab-title.active
             %a{href: '#normal'} Normal
+        %hr/
         .tabs-content
           #normal.content.active
-            %p Normal player
+            %p
+              Regular player setup. Only one option is required:
+              %br/
+              %code $('.player').foundationPlayer({loadURL: '/src/ukulele.m4a'});
             .foundation-player.player-no-1.normal= player
 
         %p.text-center
