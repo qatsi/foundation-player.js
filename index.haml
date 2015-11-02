@@ -1,0 +1,71 @@
+!!!
+%html
+  %head
+    %meta{content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-Type'}/
+    %meta{charset: 'utf-8'}/
+    %title Audio Player for Foundation! Boom!
+    / http://foundation.zurb.com/forum/posts/1863-foundation-cdn
+    -# Styles
+    %link{href: 'http://cdn.foundation5.zurb.com/foundation.css', rel: 'stylesheet', type: 'text/css'}/
+    %link{href: './src/foundation-player.css', rel: 'stylesheet', type: 'text/css'}/
+    -# Scripts
+    %script{src: 'http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js', type: 'text/javascript'}
+    %script{src: 'http://cdn.foundation5.zurb.com/foundation.js', type: 'text/javascript'}
+    %script{src: 'http://cdn.rawgit.com/katspaugh/wavesurfer.js/master/dist/wavesurfer.min.js', type: 'text/javascript'}
+    %script{src: './src/foundation-player.js', type: "text/javascript"}
+    :javascript
+      $(document).ready(function($) {
+        $(document).foundation();
+        $('.player-no-1').foundationPlayer({loadURL: '/src/ukulele.m4a'});
+        $('.player-no-2').foundationPlayer();
+      });
+
+  -# Prerender player
+  - player = capture_haml do
+    %ul.inline-list.noselection
+      %li.player-button.play
+        %em.fi-play
+      %li.player-button.back
+        %em.fi-refresh
+      %li.player-time
+        %strong.elapsed 01:27
+      %li.player-bar
+        -# Seek bar made as Foundation range slider.
+        .range-slider{ 'data-slider' => true, 'data-options' => 'initial: 0' }
+          %span.range-slider-handle{ role: 'slider', tabindex: '0' }
+          %span.range-slider-active-segment
+      %li.player-time
+        %strong.remains -05:10
+      %li.player-button.volume
+        %em.fi-volume
+
+  %body.foundation-player-demo
+    .row
+      .large-offset-2.large-8.columns
+        %h1.text-center Foundation-player.js
+        %p
+          Super-easy way to add player to your
+          = succeed "." do
+            %code form
+          %a{href: 'https://github.com/qatsi/foundation-player.js/blob/master/README.md'} README
+          and the
+          = succeed ',' do
+            %a{href: 'https://github.com/qatsi/foundation-player.js/blob/master/index.html'} source
+        %ul.tabs{'data-options' => 'scroll_to_content: false', 'data-tab' => ''}
+          %li.tab-title.active
+            %a{href: '#normal'} Normal
+          %li.tab-title
+            %a{href: '#small'} Interactive
+        .tabs-content
+          #normal.content.active
+            %p Normal player
+            .foundation-player.player-no-1.normal= player
+          #small.content
+            %p Interactive version...
+            .foundation-player.player-no-2.small= player
+
+        %p.text-center
+          %small
+            Made with fun, love, keyboard and… with
+            %code 'single'
+            quotes inside.

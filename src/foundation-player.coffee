@@ -8,15 +8,15 @@
 # $('.foundation-player').foundationPlayer('seekToTime', 'Hello, world');
 # $('.foundation-player').foundationPlayer('seek', '1:50');
 #
+# TODO:
+# 1) Player width calculation
 (($, window) ->
   # Define the plugin class
   class FoundationPlayer
     defaults:
       size: 'normal'        # Size of player. Internall it is just class name
-
       # Look and feel options
       # playOnStart: false  # play as soon as it's loaded
-
       # Waveform options
       showWave: true      # Show waveform
 
@@ -32,6 +32,7 @@
     init: ->
       # Init function
       # Setup range slider
+      return unless checkOptions(this.options)
       setUpRangeSlider(@$el)
       setUpWaveSurfer(this) if this.options.showWave
       window.wtf = this
@@ -61,8 +62,14 @@
       e.wavesurfer.on 'ready', ->
         # e.wavesurfer.play() # play() MUST be called in callback
         return
-      e.wavesurfer.load '/audios/ukulele.m4a'
+      e.wavesurfer.load e.options.loadURL
       return
+    checkOptions = (o) ->
+      if o.loadURL
+        return true
+      else
+        console.error 'Please specify `loadURL`. It has no default setings.'
+        return false
 
   # jQuery extend part
   $.fn.extend foundationPlayer: (option, args...) ->
