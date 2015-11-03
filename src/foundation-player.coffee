@@ -16,9 +16,9 @@
     defaults:
       size: 'normal'        # Size of player. Internall it is just class name
       # Look and feel options
-      # playOnStart: false  # play as soon as it's loaded
+      playOnStart: true     # play as soon as it's loaded
       # Waveform options
-      showWave: true      # Show waveform
+      showWave: true        # Show waveform
 
     constructor: (el, options) ->
       @options = $.extend({}, @defaults, options)
@@ -34,7 +34,7 @@
       # Setup range slider
       return unless checkOptions(this.options)
       setUpRangeSlider(@$el)
-      setUpWaveSurfer(this) if this.options.showWave
+      setUpWaveSurfer(this)
       window.wtf = this
 
     seekToTime: (time) -> # Just a dummy place holder
@@ -47,6 +47,9 @@
       return
     setUpWaveSurfer = (e) ->
       e.wavesurfer.init
+        # Customizable stuff
+        # - e.options.showWave
+
         # Opiniated defaults for WaveSurfer
         container: e.$el[0] # First guy...
         # Please create an issue if need need something to customize
@@ -59,9 +62,11 @@
         # normalize: true # no idea what is that
         # interact: false
         skipLength: 15
-      e.wavesurfer.on 'ready', ->
-        # e.wavesurfer.play() # play() MUST be called in callback
-        return
+      # Set 'ready' callback
+      if e.options.playOnStart
+        e.wavesurfer.on 'ready', ->
+          e.wavesurfer.play() # play() must be called in callback
+      # Perform load
       e.wavesurfer.load e.options.loadURL
       return
     checkOptions = (o) ->

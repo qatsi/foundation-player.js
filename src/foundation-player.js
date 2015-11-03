@@ -8,6 +8,7 @@
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
+        playOnStart: true,
         showWave: true
       };
 
@@ -45,7 +46,11 @@
           barWidth: 1,
           skipLength: 15
         });
-        e.wavesurfer.on('ready', function() {});
+        if (e.options.playOnStart) {
+          e.wavesurfer.on('ready', function() {
+            return e.wavesurfer.play();
+          });
+        }
         e.wavesurfer.load(e.options.loadURL);
       };
 
