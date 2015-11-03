@@ -140,8 +140,8 @@ $small: false) {
       }
 
       .player-button,
-      .player-time,
-      .player-bar {
+      .player-status,
+      .player-sliderbar {
         font-size: $h4-font-size;
         margin-left: ($h4-font-size / 2);
       }
@@ -166,8 +166,8 @@ $small: false) {
       }
 
       .player-button,
-      .player-time,
-      .player-bar {
+      .player-status,
+      .player-sliderbar {
         font-size: $h5-font-size;
         margin-left: ($h5-font-size / 2);
       }
@@ -193,7 +193,7 @@ $small: false) {
 
     // Buttons and icons
     .player-button,
-    .player-time {
+    .player-status {
       color: $logo-color-orange;
     }
 

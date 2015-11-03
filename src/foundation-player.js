@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var checkOptions, setUpButtonPlayPause, setUpButtonVolume, setUpClassAndStyle, setUpRangeSlider, setUpWaveSurfer, swithClass;
+      var checkOptions, prettyTime, setUpButtonPlayPause, setUpButtonVolume, setUpClassAndStyle, setUpRangeSlider, setUpWaveSurfer, stringPadLeft, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -18,6 +18,8 @@
         this.wavesurfer = Object.create(WaveSurfer);
         this.muted = false;
         this.$el = $(el);
+        this.$elapsed = $(el).find('.player-status.time .elapsed');
+        this.$remains = $(el).find('.player-status.time .remains');
         this.init();
       }
 
@@ -30,6 +32,7 @@
         setUpButtonPlayPause(this);
         setUpButtonVolume(this);
         this.setUpButtonRewind();
+        this.updateStatus();
         setUpRangeSlider(this);
       };
 
@@ -97,6 +100,21 @@
         });
       };
 
+      FoundationPlayer.prototype.updateStatus = function() {
+        this.updateStatusElapsed();
+        return this.updateStatusRemains();
+      };
+
+      FoundationPlayer.prototype.updateStatusElapsed = function() {
+        return this.$elapsed.text(prettyTime(this.wavesurfer.getCurrentTime()));
+      };
+
+      FoundationPlayer.prototype.updateStatusRemains = function() {
+        var w;
+        w = this.wavesurfer;
+        return this.$remains.text('-' + prettyTime(w.getDuration() - w.getCurrentTime()));
+      };
+
       setUpRangeSlider = function(e) {};
 
       checkOptions = function(o) {
@@ -110,6 +128,17 @@
 
       swithClass = function(e, from, to) {
         return $(e).addClass(from).removeClass(to);
+      };
+
+      prettyTime = function(s) {
+        var minutes, seconds;
+        minutes = Math.floor(s / 60);
+        seconds = Math.floor(s - minutes * 60);
+        return (stringPadLeft(minutes, '0', 2)) + ":" + (stringPadLeft(seconds, '0', 2));
+      };
+
+      stringPadLeft = function(string, pad, length) {
+        return (new Array(length + 1).join(pad) + string).slice(-length);
       };
 
       return FoundationPlayer;

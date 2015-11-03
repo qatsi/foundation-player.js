@@ -40,15 +40,15 @@
       -# TODO: .back > .rewind
       %li.player-button.rewind
         %em.fi-refresh
-      %li.player-time
-        %strong.elapsed 01:27
-      %li.player-bar
+      %li.player-status.time
+        %strong.elapsed 00:00
+      %li.player-sliderbar
         -# Seek bar made as Foundation range slider.
         .range-slider{ 'data-slider' => true, 'data-options' => 'initial: 0' }
           %span.range-slider-handle{ role: 'slider', tabindex: '0' }
           %span.range-slider-active-segment
-      %li.player-time
-        %strong.remains -05:10
+      %li.player-status.time
+        %strong.remains 00:00
       %li.player-button.volume
         %em.fi-volume
 

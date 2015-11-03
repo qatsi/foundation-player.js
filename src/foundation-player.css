@@ -28,8 +28,8 @@
     background: linear-gradient(-45deg, #D91E18, #F9690E); }
 /* line 142, foundation-player.scss */
 .foundation-player.normal .player-button,
-.foundation-player.normal .player-time,
-.foundation-player.normal .player-bar {
+.foundation-player.normal .player-status,
+.foundation-player.normal .player-sliderbar {
   font-size: 1.4375rem;
   margin-left: 0.71875rem; }
 /* line 149, foundation-player.scss */
@@ -57,22 +57,22 @@
     background: linear-gradient(-45deg, #D91E18, #F9690E); }
 /* line 168, foundation-player.scss */
 .foundation-player.small .player-button,
-.foundation-player.small .player-time,
-.foundation-player.small .player-bar {
+.foundation-player.small .player-status,
+.foundation-player.small .player-sliderbar {
   font-size: 1.125rem;
   margin-left: 0.5625rem; }
-/* line 175, foundation-player.scss */
+/* line 176, foundation-player.scss */
 .foundation-player.small .player-button.play {
   font-size: 1.6875rem;
   margin: -0.42188rem 0; }
-/* line 181, foundation-player.scss */
+/* line 182, foundation-player.scss */
 .foundation-player .range-slider-active-segment {
   background: #F9690E;
   border-bottom-left-radius: inherit;
   border-top-left-radius: inherit;
   display: inline-block;
   position: absolute; }
-/* line 189, foundation-player.scss */
+/* line 190, foundation-player.scss */
 .foundation-player .range-slider-handle {
   cursor: col-resize;
   display: inline-block;
@@ -84,22 +84,22 @@
   /* line 116, foundation-player.scss */
   .foundation-player .range-slider-handle:hover {
     background: linear-gradient(-45deg, #D91E18, #F9690E); }
-/* line 195, foundation-player.scss */
+/* line 196, foundation-player.scss */
 .foundation-player .player-button,
-.foundation-player .player-time {
+.foundation-player .player-status {
   color: #F9690E; }
-/* line 200, foundation-player.scss */
+/* line 201, foundation-player.scss */
 .foundation-player .player-button {
   cursor: pointer; }
-  /* line 204, foundation-player.scss */
+  /* line 205, foundation-player.scss */
   .foundation-player .player-button.back em {
     transform: scale(-1, 1); }
-  /* line 210, foundation-player.scss */
+  /* line 211, foundation-player.scss */
   .foundation-player .player-button em:before {
     background: linear-gradient(-45deg, #D91E18, #F9690E);
     -webkit-background-clip: text;
     color: transparent; }
-  /* line 217, foundation-player.scss */
+  /* line 218, foundation-player.scss */
   .foundation-player .player-button em:hover:before {
     transform: scale(1.1);
     background: linear-gradient(45deg, #D91E18, #DB0A5B);

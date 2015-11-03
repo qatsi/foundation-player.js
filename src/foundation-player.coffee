@@ -9,9 +9,12 @@
 #    $('.foundation-player').foundationPlayer('seek', '1:50');
 
 # Some conventions:
-# - Most of buttons has selector `.player-button.play em` where:
+# - Buttons has selector `.player-button.play em` where:
 #   `.player-button.play` is li element
 #   `em` is actual event target
+# - Status elements has selector `.player-status.time .elapsed` where:
+#   `.player-status.time` is li element
+#   `.elapsed` is actual target to update
 
 # TODO:
 # 1) Player width calculation
@@ -44,6 +47,8 @@
       @muted = false # by default player isn't muted
       # Elements
       @$el = $(el)
+      @$elapsed = $(el).find('.player-status.time .elapsed')
+      @$remains = $(el).find('.player-status.time .remains')
       # Calls
       @init()
 
@@ -58,6 +63,7 @@
       setUpButtonPlayPause(this) # Set up Play/Pause
       setUpButtonVolume(this) # Set up Play/Pause
       @setUpButtonRewind()
+      @updateStatus() # Update both time statuses
 
       # Todooo...
       setUpRangeSlider(this) # Setup range slider
@@ -126,6 +132,18 @@
       @$el.find('.player-button.rewind em').on 'click', @wavesurfer, (e) ->
         e.data.skipBackward()
 
+    # Update all statuses
+    updateStatus: () ->
+      @updateStatusElapsed()
+      @updateStatusRemains()
+    # Update $elapsed time status
+    updateStatusElapsed: () ->
+      @$elapsed.text prettyTime @wavesurfer.getCurrentTime()
+    # Update $remains time status
+    updateStatusRemains: () ->
+      w = @wavesurfer
+      @$remains.text '-' + prettyTime w.getDuration()-w.getCurrentTime()
+
     # Setup range slider
     setUpRangeSlider = (e) ->
       # From Slider to Player
@@ -145,10 +163,23 @@
       else
         console.error 'Please specify `loadURL`. It has no default setings.'
         return false
+
     # Some relly internal stuff goes here
-    #
     swithClass = (e, from, to) ->
       $(e).addClass(from).removeClass(to)
+
+    # Foramt second to human readable format
+    prettyTime = (s) ->
+      # As seen here: http://stackoverflow.com/questions/3733227
+      minutes = Math.floor s / 60
+      seconds = Math.floor s - minutes * 60
+      "#{stringPadLeft minutes, '0', 2}:#{stringPadLeft seconds, '0', 2}"
+
+    # Small helper to padd time correctly
+    stringPadLeft = (string,pad,length) ->
+      # Quick and dirty
+      # As seen here: http://stackoverflow.com/questions/3733227
+      (new Array(length+1).join(pad)+string).slice(-length)
 
   # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->
