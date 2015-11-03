@@ -1,13 +1,18 @@
 # foundation-player.js
 # Author: Alexander Egorov
 
-# Basic usage:
+# Usage:
 # $('.foundation-player').foundationPlayer
 #    playOnStart: false
 # or:
-# $('.foundation-player').foundationPlayer('seekToTime', 'Hello, world');
-# $('.foundation-player').foundationPlayer('seek', '1:50');
-#
+#    $('.foundation-player').foundationPlayer('seekToTime', 'Hello, world');
+#    $('.foundation-player').foundationPlayer('seek', '1:50');
+
+# Some conventions:
+# - Most of buttons has selector `.player-button.play em` where:
+#   `.player-button.play` is li element
+#   `em` is actual event target
+
 # TODO:
 # 1) Player width calculation
 # 2) Shut others when it statrs
@@ -32,21 +37,25 @@
     # Additional plugin methods go here
     init: ->
       # Init function
-      # Setup range slider
-      setUpClass(@$el, this.options)
-      return unless checkOptions(this.options)
-      setUpRangeSlider(@$el)
-      setUpWaveSurfer(this)
-      window.wtf = this
+      return unless checkOptions(this.options) # Check passed options
+      setUpClassAndStyle(@$el, this.options) # Setup default class
+
+      # Player setup
+      setUpWaveSurfer(this) # WaveSurfer setup
+      setUpButtonPlayPause(this) # Set up Play/Pause
+
+      # Todooo...
+      setUpRangeSlider(@$el) # Setup range slider
 
     seekToTime: (time) -> # Just a dummy place holder
       # @$el.html(@options.paramA + ': ' + echo)
       return
     play: ->
       return
-  # Define the plugin
     setUpRangeSlider = (element) ->
       return
+
+    # WaveSurfer setup
     setUpWaveSurfer = (e) ->
       e.wavesurfer.init
         # Customizable stuff
@@ -72,9 +81,21 @@
       e.wavesurfer.load e.options.loadURL
       return
     # Setup default class
-    setUpClass = (e,o) ->
+    setUpClassAndStyle = (e,o) ->
       e.addClass(o.size)
-    # Check passed options:
+
+    # Set up Play/Pause
+    setUpButtonPlayPause = (e) ->
+      button = e.$el.find('.player-button.play em')
+      button.on 'click', e, ->
+        e.wavesurfer.playPause() # Play or pause
+        if e.wavesurfer.isPlaying() # Update button class
+          $(this).addClass('fi-play').removeClass('fi-pause')
+        else
+          $(this).addClass('fi-pause').removeClass('fi-play')
+      return
+
+    # Check passed options
     # 1. Ensure loadURL is present
     checkOptions = (o) ->
       if o.loadURL
@@ -82,7 +103,8 @@
       else
         console.error 'Please specify `loadURL`. It has no default setings.'
         return false
-  # jQuery extend part
+
+  # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->
     # Set up FoundationPlayers for documant
     if !$.data(document.body, 'FoundationPlayers')

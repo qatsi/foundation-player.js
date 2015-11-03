@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var checkOptions, setUpClass, setUpRangeSlider, setUpWaveSurfer;
+      var checkOptions, setUpButtonPlayPause, setUpClassAndStyle, setUpRangeSlider, setUpWaveSurfer;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -20,13 +20,13 @@
       }
 
       FoundationPlayer.prototype.init = function() {
-        setUpClass(this.$el, this.options);
         if (!checkOptions(this.options)) {
           return;
         }
-        setUpRangeSlider(this.$el);
+        setUpClassAndStyle(this.$el, this.options);
         setUpWaveSurfer(this);
-        return window.wtf = this;
+        setUpButtonPlayPause(this);
+        return setUpRangeSlider(this.$el);
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {};
@@ -53,8 +53,21 @@
         e.wavesurfer.load(e.options.loadURL);
       };
 
-      setUpClass = function(e, o) {
+      setUpClassAndStyle = function(e, o) {
         return e.addClass(o.size);
+      };
+
+      setUpButtonPlayPause = function(e) {
+        var button;
+        button = e.$el.find('.player-button.play em');
+        button.on('click', e, function() {
+          e.wavesurfer.playPause();
+          if (e.wavesurfer.isPlaying()) {
+            return $(this).addClass('fi-play').removeClass('fi-pause');
+          } else {
+            return $(this).addClass('fi-pause').removeClass('fi-play');
+          }
+        });
       };
 
       checkOptions = function(o) {
