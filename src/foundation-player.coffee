@@ -32,6 +32,7 @@
     init: ->
       # Init function
       # Setup range slider
+      setUpClass(@$el, this.options)
       return unless checkOptions(this.options)
       setUpRangeSlider(@$el)
       setUpWaveSurfer(this)
@@ -69,6 +70,11 @@
       # Perform load
       e.wavesurfer.load e.options.loadURL
       return
+    setUpClass = (e,o) ->
+      console.log e
+      console.log o
+      e.addClass(o.size)
+
     checkOptions = (o) ->
       if o.loadURL
         return true

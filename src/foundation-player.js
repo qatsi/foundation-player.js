@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var checkOptions, setUpRangeSlider, setUpWaveSurfer;
+      var checkOptions, setUpClass, setUpRangeSlider, setUpWaveSurfer;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -20,13 +20,12 @@
       }
 
       FoundationPlayer.prototype.init = function() {
+        setUpClass(this.$el, this.options);
         if (!checkOptions(this.options)) {
           return;
         }
         setUpRangeSlider(this.$el);
-        if (this.options.showWave) {
-          setUpWaveSurfer(this);
-        }
+        setUpWaveSurfer(this);
         return window.wtf = this;
       };
 
@@ -52,6 +51,12 @@
           });
         }
         e.wavesurfer.load(e.options.loadURL);
+      };
+
+      setUpClass = function(e, o) {
+        console.log(e);
+        console.log(o);
+        return e.addClass(o.size);
       };
 
       checkOptions = function(o) {

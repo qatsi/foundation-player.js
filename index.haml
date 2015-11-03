@@ -17,9 +17,11 @@
     :javascript
       $(document).ready(function($) {
         $(document).foundation();
-        $('.player-no-1').foundationPlayer({loadURL: '/src/ukulele.m4a'});
-      });
-
+        $('.foundation-player.player-no-1').foundationPlayer(
+          {
+            loadURL: '/src/ukulele.m4a'
+          });
+        });
   -# Prerender player
   - player = capture_haml do
     %ul.inline-list.noselection
@@ -59,7 +61,7 @@
               Regular player setup. Only one option is required:
               %br/
               %code $('.player').foundationPlayer({loadURL: '/src/ukulele.m4a'});
-            .foundation-player.player-no-1.normal= player
+            .foundation-player.player-no-1= player
 
         %p.text-center
           %small
