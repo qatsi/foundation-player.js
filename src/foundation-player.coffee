@@ -11,6 +11,7 @@
 # TODO:
 # 1) Player width calculation
 # 2) Shut others when it statrs
+# 3) Loading indicator
 (($, window) ->
   # Define the plugin class
   class FoundationPlayer

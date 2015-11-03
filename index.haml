@@ -19,7 +19,7 @@
         $(document).foundation();
         // Direct load on start
         $('.foundation-player.player-no-1').foundationPlayer({
-          loadURL: '/src/ukulele.m4a', playOnStart: true
+          loadURL: './src/ukulele.m4a', playOnStart: true
         });
         // Lazy load when tab become active
         // This prevents issue when WaveSurfer can't calculate width
@@ -27,7 +27,7 @@
           window.tab = tab;
           if(tab.hasClass('foundation-player-small')){
             $('.foundation-player.player-no-2').foundationPlayer({
-              loadURL: '/src/climbing.m4a', size: 'small'
+              loadURL: './src/climbing.m4a', size: 'small'
             });
           }
         });
