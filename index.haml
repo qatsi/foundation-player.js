@@ -17,11 +17,21 @@
     :javascript
       $(document).ready(function($) {
         $(document).foundation();
-        $('.foundation-player.player-no-1').foundationPlayer(
-          {
-            loadURL: '/src/ukulele.m4a'
-          });
+        // Direct load on start
+        $('.foundation-player.player-no-1').foundationPlayer({
+          loadURL: '/src/ukulele.m4a', playOnStart: true
         });
+        // Lazy load when tab become active
+        // This prevents issue when WaveSurfer can't calculate width
+        $('.foundation-player-tab').on('toggled', function (event, tab) {
+          window.tab = tab;
+          if(tab.hasClass('foundation-player-small')){
+            $('.foundation-player.player-no-2').foundationPlayer({
+              loadURL: '/src/climbing.m4a', size: 'small'
+            });
+          }
+        });
+      });
   -# Prerender player
   - player = capture_haml do
     %ul.inline-list.noselection
@@ -51,9 +61,11 @@
           and the
           = succeed '.' do
             %a{href: 'https://github.com/qatsi/foundation-player.js/blob/master/index.html'} source
-        %ul.tabs{'data-options' => 'scroll_to_content: false', 'data-tab' => ''}
+        %ul.tabs.foundation-player-tab{'data-options' => 'scroll_to_content: false', 'data-tab' => ''}
           %li.tab-title.active
             %a{href: '#normal'} Normal
+          %li.tab-title.foundation-player-small
+            %a{href: '#small'} Small
         %hr/
         .tabs-content
           #normal.content.active
@@ -62,6 +74,12 @@
               %br/
               %code $('.player').foundationPlayer({loadURL: '/src/ukulele.m4a'});
             .foundation-player.player-no-1= player
+
+          #small.content
+            %p
+              Small player setup:
+              %code { ... playOnStart: false, size: 'small' ... }
+            .foundation-player.player-no-2= player
 
         %p.text-center
           %small

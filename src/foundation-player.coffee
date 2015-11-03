@@ -10,6 +10,7 @@
 #
 # TODO:
 # 1) Player width calculation
+# 2) Shut others when it statrs
 (($, window) ->
   # Define the plugin class
   class FoundationPlayer
@@ -70,27 +71,25 @@
       # Perform load
       e.wavesurfer.load e.options.loadURL
       return
+    # Setup default class
     setUpClass = (e,o) ->
-      console.log e
-      console.log o
       e.addClass(o.size)
-
+    # Check passed options:
+    # 1. Ensure loadURL is present
     checkOptions = (o) ->
       if o.loadURL
         return true
       else
         console.error 'Please specify `loadURL`. It has no default setings.'
         return false
-
   # jQuery extend part
   $.fn.extend foundationPlayer: (option, args...) ->
+    # Set up FoundationPlayers for documant
+    if !$.data(document.body, 'FoundationPlayers')
+      $.data(document.body, 'FoundationPlayers', [] )
     @each ->
-      $this = $(this)
-      data = $this.data('foundationPlayer')
-      # Check double instantiation here
-      if !data
-        $this.data 'foundationPlayer', (data = new FoundationPlayer(this, option))
-      if typeof option == 'string'
-        data[option].apply(data, args)
-
+      if !$.data(this, 'FoundationPlayer')
+        fplayer = new FoundationPlayer(this, option)
+        $.data this, 'FoundationPlayer', fplayer
+        $.data(document.body, 'FoundationPlayers').push(fplayer)
 ) window.jQuery, window

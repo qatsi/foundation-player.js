@@ -54,8 +54,6 @@
       };
 
       setUpClass = function(e, o) {
-        console.log(e);
-        console.log(o);
         return e.addClass(o.size);
       };
 
@@ -75,15 +73,15 @@
       foundationPlayer: function() {
         var args, option;
         option = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+        if (!$.data(document.body, 'FoundationPlayers')) {
+          $.data(document.body, 'FoundationPlayers', []);
+        }
         return this.each(function() {
-          var $this, data;
-          $this = $(this);
-          data = $this.data('foundationPlayer');
-          if (!data) {
-            $this.data('foundationPlayer', (data = new FoundationPlayer(this, option)));
-          }
-          if (typeof option === 'string') {
-            return data[option].apply(data, args);
+          var fplayer;
+          if (!$.data(this, 'FoundationPlayer')) {
+            fplayer = new FoundationPlayer(this, option);
+            $.data(this, 'FoundationPlayer', fplayer);
+            return $.data(document.body, 'FoundationPlayers').push(fplayer);
           }
         });
       }
