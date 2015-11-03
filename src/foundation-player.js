@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var checkOptions, setUpClass, setUpRangeSlider, setUpWaveSurfer;
+      var checkOptions, setUpButtonPlayPause, setUpButtonVolume, setUpClassAndStyle, setUpRangeSlider, setUpWaveSurfer, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -15,25 +15,25 @@
       function FoundationPlayer(el, options) {
         this.options = $.extend({}, this.defaults, options);
         this.wavesurfer = Object.create(WaveSurfer);
+        this.muted = false;
         this.$el = $(el);
         this.init();
       }
 
       FoundationPlayer.prototype.init = function() {
-        setUpClass(this.$el, this.options);
         if (!checkOptions(this.options)) {
           return;
         }
-        setUpRangeSlider(this.$el);
+        setUpClassAndStyle(this.$el, this.options);
         setUpWaveSurfer(this);
-        return window.wtf = this;
+        setUpButtonPlayPause(this);
+        setUpButtonVolume(this);
+        return setUpRangeSlider(this);
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {};
 
       FoundationPlayer.prototype.play = function() {};
-
-      setUpRangeSlider = function(element) {};
 
       setUpWaveSurfer = function(e) {
         e.wavesurfer.init({
@@ -53,9 +53,43 @@
         e.wavesurfer.load(e.options.loadURL);
       };
 
-      setUpClass = function(e, o) {
-        return e.addClass(o.size);
+      setUpClassAndStyle = function(e, o) {
+        e.addClass(o.size);
+        return e;
       };
+
+      setUpButtonPlayPause = function(e) {
+        var button;
+        button = e.$el.find('.player-button.play em');
+        button.on('click', e, function() {
+          e.wavesurfer.playPause();
+          if (e.wavesurfer.isPlaying()) {
+            return swithClass(this, 'fi-play', 'fi-pause');
+          } else {
+            return swithClass(this, 'fi-pause', 'fi-play');
+          }
+        });
+        return e;
+      };
+
+      setUpButtonVolume = function(e) {
+        var button;
+        button = e.$el.find('.player-button.volume em');
+        button.on('click', e, function() {
+          if (e.muted) {
+            e.muted = false;
+            e.wavesurfer.toggleMute();
+            return swithClass(this, 'fi-volume', 'fi-volume-strike');
+          } else {
+            e.muted = true;
+            e.wavesurfer.toggleMute();
+            return swithClass(this, 'fi-volume-strike', 'fi-volume');
+          }
+        });
+        return e;
+      };
+
+      setUpRangeSlider = function(e) {};
 
       checkOptions = function(o) {
         if (o.loadURL) {
@@ -64,6 +98,10 @@
           console.error('Please specify `loadURL`. It has no default setings.');
           return false;
         }
+      };
+
+      swithClass = function(e, from, to) {
+        return $(e).addClass(from).removeClass(to);
       };
 
       return FoundationPlayer;
