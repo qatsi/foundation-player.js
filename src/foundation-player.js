@@ -4,20 +4,21 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var checkOptions, prettyTime, setUpButtonPlayPause, setUpButtonVolume, setUpClassAndStyle, setUpRangeSlider, setUpWaveSurfer, stringPadLeft, swithClass;
+      var checkOptions, prettyTime, setUpClassAndStyle, setUpRangeSlider, setUpWaveSurfer, stringPadLeft, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
         playOnStart: true,
-        skipSeconds: 10,
-        showWave: true
+        skipSeconds: 10
       };
 
       function FoundationPlayer(el, options) {
         this.options = $.extend({}, this.defaults, options);
         this.wavesurfer = Object.create(WaveSurfer);
-        this.muted = false;
         this.$el = $(el);
+        this.$play = $(el).find('.player-button.play em');
+        this.$rewind = $(el).find('.player-button.rewind em');
+        this.$volume = $(el).find('.player-button.volume em');
         this.$elapsed = $(el).find('.player-status.time .elapsed');
         this.$remains = $(el).find('.player-status.time .remains');
         this.init();
@@ -29,8 +30,8 @@
         }
         setUpClassAndStyle(this.$el, this.options);
         setUpWaveSurfer(this);
-        setUpButtonPlayPause(this);
-        setUpButtonVolume(this);
+        this.setUpButtonPlayPause();
+        this.setUpButtonVolume();
         this.setUpButtonRewind();
         this.updateStatus();
         setUpRangeSlider(this);
@@ -63,39 +64,39 @@
         return e;
       };
 
-      setUpButtonPlayPause = function(e) {
-        var button;
-        button = e.$el.find('.player-button.play em');
-        button.on('click', e, function() {
-          e.wavesurfer.playPause();
-          if (e.wavesurfer.isPlaying()) {
-            return swithClass(this, 'fi-play', 'fi-pause');
-          } else {
-            return swithClass(this, 'fi-pause', 'fi-play');
-          }
+      FoundationPlayer.prototype.setUpButtonPlayPause = function() {
+        return this.$play.bind('click', this, function(e) {
+          e.data.wavesurfer.playPause();
+          return e.data.updateButtonPlay();
         });
-        return e;
       };
 
-      setUpButtonVolume = function(e) {
-        var button;
-        button = e.$el.find('.player-button.volume em');
-        button.on('click', e, function() {
-          if (e.muted) {
-            e.muted = false;
-            e.wavesurfer.toggleMute();
-            return swithClass(this, 'fi-volume', 'fi-volume-strike');
-          } else {
-            e.muted = true;
-            e.wavesurfer.toggleMute();
-            return swithClass(this, 'fi-volume-strike', 'fi-volume');
-          }
+      FoundationPlayer.prototype.updateButtonPlay = function() {
+        if (this.wavesurfer.isPlaying()) {
+          swithClass(this.$play, 'fi-play', 'fi-pause');
+        } else {
+          swithClass(this.$play, 'fi-pause', 'fi-play');
+        }
+        return this;
+      };
+
+      FoundationPlayer.prototype.setUpButtonVolume = function() {
+        return this.$volume.bind('click', this, function(e) {
+          e.data.wavesurfer.toggleMute();
+          return e.data.updateButtonVolume();
         });
-        return e;
+      };
+
+      FoundationPlayer.prototype.updateButtonVolume = function() {
+        if (this.wavesurfer.isMuted) {
+          return swithClass(this.$volume, 'fi-volume-strike', 'fi-volume');
+        } else {
+          return swithClass(this.$volume, 'fi-volume', 'fi-volume-strike');
+        }
       };
 
       FoundationPlayer.prototype.setUpButtonRewind = function() {
-        return this.$el.find('.player-button.rewind em').on('click', this.wavesurfer, function(e) {
+        return this.$rewind.on('click', this.wavesurfer, function(e) {
           return e.data.skipBackward();
         });
       };

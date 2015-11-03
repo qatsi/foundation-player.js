@@ -39,14 +39,15 @@
       playOnStart: true     # play as soon as it's loaded
       skipSeconds: 10       # how many we want to skip
       # Waveform options
-      showWave: true        # Show waveform
 
     constructor: (el, options) ->
       @options = $.extend({}, @defaults, options)
       @wavesurfer = Object.create WaveSurfer
-      @muted = false # by default player isn't muted
       # Elements
       @$el = $(el)
+      @$play =  $(el).find('.player-button.play em')
+      @$rewind =  $(el).find('.player-button.rewind em')
+      @$volume =  $(el).find('.player-button.volume em')
       @$elapsed = $(el).find('.player-status.time .elapsed')
       @$remains = $(el).find('.player-status.time .remains')
       # Calls
@@ -60,10 +61,10 @@
 
       # Player setup
       setUpWaveSurfer(this) # WaveSurfer setup
-      setUpButtonPlayPause(this) # Set up Play/Pause
-      setUpButtonVolume(this) # Set up Play/Pause
-      @setUpButtonRewind()
-      @updateStatus() # Update both time statuses
+      @setUpButtonPlayPause() # Set up Play/Pause
+      @setUpButtonVolume()    # Set up volume button
+      @setUpButtonRewind()    # Set up rewind button
+      @updateStatus()         # Update both time statuses
 
       # Todooo...
       setUpRangeSlider(this) # Setup range slider
@@ -79,8 +80,6 @@
     setUpWaveSurfer = (e) ->
       e.wavesurfer.init
         # Customizable stuff
-        # - e.options.showWave
-
         # Opiniated defaults for WaveSurfer
         container: e.$el[0] # First guy...
         # Please create an issue if need need something to customize
@@ -98,39 +97,40 @@
       # Perform load
       e.wavesurfer.load e.options.loadURL
       return
+
     # Setup default class
     setUpClassAndStyle = (e,o) ->
       e.addClass(o.size)
       return e
 
     # Set up Play/Pause
-    setUpButtonPlayPause = (e) ->
-      button = e.$el.find('.player-button.play em')
-      button.on 'click', e, ->
-        e.wavesurfer.playPause() # Play or pause
-        if e.wavesurfer.isPlaying() # Update button class
-          swithClass this, 'fi-play', 'fi-pause'
-        else
-          swithClass this, 'fi-pause', 'fi-play'
-      return e
+    setUpButtonPlayPause: () ->
+      @$play.bind 'click', @, (e) ->
+        e.data.wavesurfer.playPause() # Play or pause
+        e.data.updateButtonPlay()
+    # Update Play/Pause
+    updateButtonPlay: () ->
+      if @wavesurfer.isPlaying() # Update button class
+        swithClass @$play, 'fi-play', 'fi-pause'
+      else
+        swithClass @$play, 'fi-pause', 'fi-play'
+      return @
 
-    # Set up Play/Pause
-    setUpButtonVolume = (e) ->
-      button = e.$el.find('.player-button.volume em')
-      button.on 'click', e, ->
-        if e.muted
-          e.muted = false
-          e.wavesurfer.toggleMute()
-          swithClass this, 'fi-volume', 'fi-volume-strike'
-        else
-          e.muted = true
-          e.wavesurfer.toggleMute()
-          swithClass this, 'fi-volume-strike', 'fi-volume'
-      return e
-    # Set up Play/Pause
+    # Set up volume button
+    setUpButtonVolume: () ->
+      @$volume.bind 'click', @, (e) ->
+        e.data.wavesurfer.toggleMute() # Play or pause
+        e.data.updateButtonVolume()
+    # Update volume button
+    updateButtonVolume: () ->
+      if @wavesurfer.isMuted
+        swithClass @$volume, 'fi-volume-strike', 'fi-volume'
+      else
+        swithClass @$volume, 'fi-volume', 'fi-volume-strike'
+
+    # Set up rewind button
     setUpButtonRewind: () ->
-      @$el.find('.player-button.rewind em').on 'click', @wavesurfer, (e) ->
-        e.data.skipBackward()
+      @$rewind.on 'click', @wavesurfer, (e) -> e.data.skipBackward()
 
     # Update all statuses
     updateStatus: () ->
