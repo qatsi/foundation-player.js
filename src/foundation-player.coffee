@@ -18,9 +18,14 @@
 # 2) Shut others when it statrs
 # 3) Loading indicator
 # 4) Smart redraw of Waveform
-#   wavesurfer.params.height = (waveformFrame.offsetHeight - 30); //30px is the time code height, may different in your environment
+#   wavesurfer.params.height = (waveformFrame.offsetHeight - 30);
+#   //30px is the time code height, may different in your environment
 #   wavesurfer.drawer.setHeight((waveformFrame.offsetHeight - 30));
 #   wavesurfer.drawBuffer();
+# 5) Fix Safari quirks for buttons hover state
+# 6) Fixed buttons sizes to prefent overflow in hover state
+# 7) Refactor this to @ : - (
+# 8) Wavesurfer isMuted property
 
 (($, window) ->
   # Define the plugin class
@@ -29,6 +34,7 @@
       size: 'normal'        # Size of player. Internall it is just class name
       # Look and feel options
       playOnStart: true     # play as soon as it's loaded
+      skipSeconds: 10       # how many we want to skip
       # Waveform options
       showWave: true        # Show waveform
 
@@ -51,9 +57,11 @@
       setUpWaveSurfer(this) # WaveSurfer setup
       setUpButtonPlayPause(this) # Set up Play/Pause
       setUpButtonVolume(this) # Set up Play/Pause
+      @setUpButtonRewind()
 
       # Todooo...
       setUpRangeSlider(this) # Setup range slider
+      return
 
     seekToTime: (time) -> # Just a dummy place holder
       # @$el.html(@options.paramA + ': ' + echo)
@@ -76,9 +84,7 @@
         # hideScrollbar: true
         height: 96
         barWidth: 1
-        # normalize: true # no idea what is that
-        # interact: false
-        skipLength: 15
+        skipLength: e.options.skipSeconds
       # Set 'ready' callback
       if e.options.playOnStart
         e.wavesurfer.on 'ready', ->
@@ -115,6 +121,10 @@
           e.wavesurfer.toggleMute()
           swithClass this, 'fi-volume-strike', 'fi-volume'
       return e
+    # Set up Play/Pause
+    setUpButtonRewind: () ->
+      @$el.find('.player-button.rewind em').on 'click', @wavesurfer, (e) ->
+        e.data.skipBackward()
 
     # Setup range slider
     setUpRangeSlider = (e) ->

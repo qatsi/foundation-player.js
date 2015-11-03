@@ -9,6 +9,7 @@
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
         playOnStart: true,
+        skipSeconds: 10,
         showWave: true
       };
 
@@ -28,7 +29,8 @@
         setUpWaveSurfer(this);
         setUpButtonPlayPause(this);
         setUpButtonVolume(this);
-        return setUpRangeSlider(this);
+        this.setUpButtonRewind();
+        setUpRangeSlider(this);
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {};
@@ -43,7 +45,7 @@
           cursorColor: 'transparent',
           height: 96,
           barWidth: 1,
-          skipLength: 15
+          skipLength: e.options.skipSeconds
         });
         if (e.options.playOnStart) {
           e.wavesurfer.on('ready', function() {
@@ -87,6 +89,12 @@
           }
         });
         return e;
+      };
+
+      FoundationPlayer.prototype.setUpButtonRewind = function() {
+        return this.$el.find('.player-button.rewind em').on('click', this.wavesurfer, function(e) {
+          return e.data.skipBackward();
+        });
       };
 
       setUpRangeSlider = function(e) {};
