@@ -34,7 +34,16 @@
         this.setUpButtonVolume();
         this.setUpButtonRewind();
         this.updateStatus();
+        this.setUpMainLoop();
         setUpRangeSlider(this);
+      };
+
+      FoundationPlayer.prototype.setUpMainLoop = function() {
+        return setInterval(this.mainLoop.bind(this), 1000);
+      };
+
+      FoundationPlayer.prototype.mainLoop = function() {
+        return this.updateStatus();
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {};

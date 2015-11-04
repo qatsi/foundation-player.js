@@ -28,7 +28,9 @@
 # 5) Fix Safari quirks for buttons hover state
 # 6) Fixed buttons sizes to prefent overflow in hover state
 # 7) Refactor this to @ : - (
-# 8) Wavesurfer isMuted property
+
+# Nice to have:
+# 1) Highlight table of contents on wavaform e.g. dots or bars
 
 (($, window) ->
   # Define the plugin class
@@ -65,10 +67,16 @@
       @setUpButtonVolume()    # Set up volume button
       @setUpButtonRewind()    # Set up rewind button
       @updateStatus()         # Update both time statuses
-
+      @setUpMainLoop()
       # Todooo...
       setUpRangeSlider(this) # Setup range slider
       return
+
+    setUpMainLoop: ->
+      setInterval @mainLoop.bind(@), 1000
+
+    mainLoop: ->
+      @updateStatus()
 
     seekToTime: (time) -> # Just a dummy place holder
       # @$el.html(@options.paramA + ': ' + echo)
