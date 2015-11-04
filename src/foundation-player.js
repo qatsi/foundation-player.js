@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var checkOptions, prettyTime, setUpClassAndStyle, setUpRangeSlider, setUpWaveSurfer, stringPadLeft, swithClass;
+      var checkOptions, prettyTime, setUpClassAndStyle, setUpRangeSlider, stringPadLeft, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -16,11 +16,11 @@
         this.options = $.extend({}, this.defaults, options);
         this.wavesurfer = Object.create(WaveSurfer);
         this.$el = $(el);
-        this.$play = $(el).find('.player-button.play em');
-        this.$rewind = $(el).find('.player-button.rewind em');
-        this.$volume = $(el).find('.player-button.volume em');
-        this.$elapsed = $(el).find('.player-status.time .elapsed');
-        this.$remains = $(el).find('.player-status.time .remains');
+        this.$play = this.$el.find('.player-button.play em');
+        this.$rewind = this.$el.find('.player-button.rewind em');
+        this.$volume = this.$el.find('.player-button.volume em');
+        this.$elapsed = this.$el.find('.player-status.time .elapsed');
+        this.$remains = this.$el.find('.player-status.time .remains');
         this.init();
       }
 
@@ -29,7 +29,7 @@
           return;
         }
         setUpClassAndStyle(this.$el, this.options);
-        setUpWaveSurfer(this);
+        this.setUpWaveSurfer();
         this.setUpButtonPlayPause();
         this.setUpButtonVolume();
         this.setUpButtonRewind();
@@ -41,22 +41,24 @@
 
       FoundationPlayer.prototype.play = function() {};
 
-      setUpWaveSurfer = function(e) {
-        e.wavesurfer.init({
-          container: e.$el[0],
+      FoundationPlayer.prototype.setUpWaveSurfer = function() {
+        var wavesurfer;
+        this.wavesurfer.init({
+          container: this.$el[0],
           waveColor: '#EEEEEE',
           progressColor: '#DDDDDD',
           cursorColor: 'transparent',
           height: 96,
           barWidth: 1,
-          skipLength: e.options.skipSeconds
+          skipLength: this.options.skipSeconds
         });
-        if (e.options.playOnStart) {
-          e.wavesurfer.on('ready', function() {
-            return e.wavesurfer.play();
+        this.wavesurfer.load(this.options.loadURL);
+        wavesurfer = this.wavesurfer;
+        if (this.options.playOnStart) {
+          this.wavesurfer.on('ready', function() {
+            return wavesurfer.play();
           });
         }
-        e.wavesurfer.load(e.options.loadURL);
       };
 
       setUpClassAndStyle = function(e, o) {
@@ -73,11 +75,10 @@
 
       FoundationPlayer.prototype.updateButtonPlay = function() {
         if (this.wavesurfer.isPlaying()) {
-          swithClass(this.$play, 'fi-play', 'fi-pause');
+          return swithClass(this.$play, 'fi-play', 'fi-pause');
         } else {
-          swithClass(this.$play, 'fi-pause', 'fi-play');
+          return swithClass(this.$play, 'fi-pause', 'fi-play');
         }
-        return this;
       };
 
       FoundationPlayer.prototype.setUpButtonVolume = function() {

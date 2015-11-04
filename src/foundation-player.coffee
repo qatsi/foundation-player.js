@@ -45,11 +45,11 @@
       @wavesurfer = Object.create WaveSurfer
       # Elements
       @$el = $(el)
-      @$play =  $(el).find('.player-button.play em')
-      @$rewind =  $(el).find('.player-button.rewind em')
-      @$volume =  $(el).find('.player-button.volume em')
-      @$elapsed = $(el).find('.player-status.time .elapsed')
-      @$remains = $(el).find('.player-status.time .remains')
+      @$play = @$el.find('.player-button.play em')
+      @$rewind =  @$el.find('.player-button.rewind em')
+      @$volume =  @$el.find('.player-button.volume em')
+      @$elapsed = @$el.find('.player-status.time .elapsed')
+      @$remains = @$el.find('.player-status.time .remains')
       # Calls
       @init()
 
@@ -60,7 +60,7 @@
       setUpClassAndStyle(@$el, this.options) # Setup default class
 
       # Player setup
-      setUpWaveSurfer(this) # WaveSurfer setup
+      @setUpWaveSurfer()      # WaveSurfer setup
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
       @setUpButtonRewind()    # Set up rewind button
@@ -77,11 +77,11 @@
       return
 
     # WaveSurfer setup
-    setUpWaveSurfer = (e) ->
-      e.wavesurfer.init
+    setUpWaveSurfer: () ->
+      @wavesurfer.init
         # Customizable stuff
         # Opiniated defaults for WaveSurfer
-        container: e.$el[0] # First guy...
+        container: @$el[0] # First guy...
         # Please create an issue if need need something to customize
         waveColor: '#EEEEEE'
         progressColor: '#DDDDDD'
@@ -89,13 +89,14 @@
         # hideScrollbar: true
         height: 96
         barWidth: 1
-        skipLength: e.options.skipSeconds
-      # Set 'ready' callback
-      if e.options.playOnStart
-        e.wavesurfer.on 'ready', ->
-          e.wavesurfer.play() # play() must be called in callback
+        skipLength: @options.skipSeconds
       # Perform load
-      e.wavesurfer.load e.options.loadURL
+      @wavesurfer.load @options.loadURL
+      # Set 'ready' callback
+      wavesurfer = @wavesurfer
+      if @options.playOnStart
+        # play() must be called as callback in local variable
+        @wavesurfer.on 'ready', -> wavesurfer.play()
       return
 
     # Setup default class
@@ -114,7 +115,6 @@
         swithClass @$play, 'fi-play', 'fi-pause'
       else
         swithClass @$play, 'fi-pause', 'fi-play'
-      return @
 
     # Set up volume button
     setUpButtonVolume: () ->
