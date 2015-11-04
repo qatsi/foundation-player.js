@@ -52,6 +52,9 @@
       @$volume =  @$el.find('.player-button.volume em')
       @$elapsed = @$el.find('.player-status.time .elapsed')
       @$remains = @$el.find('.player-status.time .remains')
+      @$slider =  @$el.find('.player-sliderbar .range-slider')
+      # State
+      @percentage = 0
       # Calls
       @init()
 
@@ -76,7 +79,9 @@
       setInterval @mainLoop.bind(@), 1000
 
     mainLoop: ->
+      @updatePercentage()
       @updateStatus()
+      @updateSliderPosition()
 
     seekToTime: (time) -> # Just a dummy place holder
       # @$el.html(@options.paramA + ': ' + echo)
@@ -138,7 +143,9 @@
 
     # Set up rewind button
     setUpButtonRewind: () ->
-      @$rewind.on 'click', @wavesurfer, (e) -> e.data.skipBackward()
+      @$rewind.on 'click', @, (e) ->
+        e.data.wavesurfer.skipBackward()
+        e.data.updateSlider()
 
     # Update all statuses
     updateStatus: () ->
@@ -151,6 +158,17 @@
     updateStatusRemains: () ->
       w = @wavesurfer
       @$remains.text '-' + prettyTime w.getDuration()-w.getCurrentTime()
+
+    updateSlider: () ->
+      @updatePercentage()
+      @updateSliderPosition()
+
+    updateSliderPosition: () ->
+      @$slider.foundation('slider', 'set_value', @percentage);
+
+    updatePercentage: () ->
+      w = @wavesurfer
+      @percentage = Math.floor (w.getCurrentTime()/w.getDuration())*100
 
     # Setup range slider
     setUpRangeSlider = (e) ->
