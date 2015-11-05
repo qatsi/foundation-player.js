@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var hasCorrectOptions, prettyTime, stringPadLeft, swithClass;
+      var calculateChildrensWidth, hasCorrectOptions, prettyTime, stringPadLeft, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -16,6 +16,7 @@
         this.options = $.extend({}, this.defaults, options);
         this.wavesurfer = Object.create(WaveSurfer);
         this.$el = $(el);
+        this.$player = this.$el.children('ul');
         this.$play = this.$el.find('.player-button.play em');
         this.$rewind = this.$el.find('.player-button.rewind em');
         this.$volume = this.$el.find('.player-button.volume em');
@@ -77,7 +78,14 @@
       };
 
       FoundationPlayer.prototype.setUpClassAndStyle = function() {
-        return this.$el.addClass(this.options.size);
+        var actualWidth, playerWidth;
+        this.$el.addClass(this.options.size);
+        actualWidth = this.$player.width();
+        playerWidth = 0;
+        calculateChildrensWidth(this.$player).each(function() {
+          return playerWidth += this;
+        });
+        return this.$player.width(Math.floor(5 + playerWidth / actualWidth * 100) + '%');
       };
 
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
@@ -182,6 +190,12 @@
 
       stringPadLeft = function(string, pad, length) {
         return (new Array(length + 1).join(pad) + string).slice(-length);
+      };
+
+      calculateChildrensWidth = function(e) {
+        return e.children().map(function() {
+          return $(this).outerWidth(true);
+        });
       };
 
       return FoundationPlayer;

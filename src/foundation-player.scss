@@ -1,4 +1,4 @@
-@import 'foundation/_functions';
+@import 'foundation/functions';
 
 // Units and sizes
 // There is no need in this section usually
@@ -16,9 +16,9 @@ $global-rounded: 1000px !default;
 }
 
 // Main player colors
-$logo-color-red: #D91E18;
-$logo-color-orange: #F9690E;
-$logo-color-pink: #DB0A5B;
+$logo-color-red: #d91e18;
+$logo-color-orange: #f9690e;
+$logo-color-pink: #db0a5b;
 // Gradients
 $fp-gradient: linear-gradient(-45deg, $logo-color-red, $logo-color-orange);
 $fp-gradient-hover: linear-gradient(45deg, $logo-color-red, $logo-color-pink);
@@ -120,7 +120,12 @@ $small: false) {
 
 // Actual CSS Generation
 @include exports('foundation-player') {
+
   .foundation-player {
+    .player {
+      margin: 0 auto;
+    }
+
     .range-slider {
       @include fp-bar-base;
       @include fp-bar-style($bg:true);
@@ -209,15 +214,16 @@ $small: false) {
       // Foundation Icons with gradient font
       em:before {
         background: $fp-gradient;
-        // http://caniuse.com/#search=background-clip
+        // Can't avoid -webkut http://caniuse.com/#search=background-clip
         -webkit-background-clip: text;
         color: transparent;
       }
 
       em:hover:before {
-        transform: scale($fp-button-hover-scale);
         background: $fp-gradient-hover;
+        // Can't avoid -webkut http://caniuse.com/#search=background-clip
         -webkit-background-clip: text;
+        transform: scale($fp-button-hover-scale);
       }
     }
   }

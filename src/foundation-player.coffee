@@ -17,7 +17,7 @@
 #   `.elapsed` is actual target to update
 
 # TODO:
-# 1) Player width calculation
+# 1) XXX Reflow bug: set position to slider, resize window : - (
 # 2) Shut others when it statrs
 # 3) Loading indicator
 # 4) Smart redraw of Waveform
@@ -48,6 +48,7 @@
       @wavesurfer = Object.create WaveSurfer
       # Elements
       @$el = $(el)
+      @$player =  @$el.children('ul')
       @$play = @$el.find('.player-button.play em')
       @$rewind =  @$el.find('.player-button.rewind em')
       @$volume =  @$el.find('.player-button.volume em')
@@ -117,6 +118,14 @@
     # Setup default class
     setUpClassAndStyle: () ->
       @$el.addClass(@options.size)
+
+      # Calculate player width
+      # XXX Added initial extra due to 2px error...
+      # TODO Refactor to smaller function and call it on window resize :-(
+      actualWidth = @$player.width()
+      playerWidth = 0
+      calculateChildrensWidth(@$player).each -> playerWidth += this
+      @$player.width Math.floor(5 + playerWidth/actualWidth*100) + '%'
 
     # Set up Play/Pause
     setUpButtonPlayPause: () ->
@@ -210,6 +219,10 @@
       # Quick and dirty
       # As seen here: http://stackoverflow.com/questions/3733227
       (new Array(length+1).join(pad)+string).slice(-length)
+
+    # Utility function to calculate actual withds of children elements
+    calculateChildrensWidth = (e) ->
+      e.children().map -> $(@).outerWidth(true) # Get widths including margin
 
   # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->
