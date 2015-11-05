@@ -64,9 +64,8 @@
     # Additional plugin methods go here
     init: ->
       # Init function
-      return unless checkOptions(this.options) # Check passed options
-      setUpClassAndStyle(@$el, this.options) # Setup default class
-
+      return if !hasCorrectOptions(@options) # Check passed options
+      @setUpClassAndStyle()    # Setup default class
       # Player setup
       @setUpWaveSurfer()      # WaveSurfer setup
       @setUpButtonPlayPause() # Set up Play/Pause
@@ -116,9 +115,8 @@
       return
 
     # Setup default class
-    setUpClassAndStyle = (e,o) ->
-      e.addClass(o.size)
-      return e
+    setUpClassAndStyle: () ->
+      @$el.addClass(@options.size)
 
     # Set up Play/Pause
     setUpButtonPlayPause: () ->
@@ -188,7 +186,7 @@
       @updateStatus() # Status should be updated after seek
 
     # Check passed options
-    checkOptions = (o) ->
+    hasCorrectOptions = (o) ->
       # 1. Ensure loadURL is present
       if o.loadURL
         return true

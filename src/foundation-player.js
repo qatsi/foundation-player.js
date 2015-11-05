@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var checkOptions, prettyTime, setUpClassAndStyle, stringPadLeft, swithClass;
+      var hasCorrectOptions, prettyTime, stringPadLeft, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -29,10 +29,10 @@
       }
 
       FoundationPlayer.prototype.init = function() {
-        if (!checkOptions(this.options)) {
+        if (!hasCorrectOptions(this.options)) {
           return;
         }
-        setUpClassAndStyle(this.$el, this.options);
+        this.setUpClassAndStyle();
         this.setUpWaveSurfer();
         this.setUpButtonPlayPause();
         this.setUpButtonVolume();
@@ -76,9 +76,8 @@
         }
       };
 
-      setUpClassAndStyle = function(e, o) {
-        e.addClass(o.size);
-        return e;
+      FoundationPlayer.prototype.setUpClassAndStyle = function() {
+        return this.$el.addClass(this.options.size);
       };
 
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
@@ -161,7 +160,7 @@
         return this.updateStatus();
       };
 
-      checkOptions = function(o) {
+      hasCorrectOptions = function(o) {
         if (o.loadURL) {
           return true;
         } else {
