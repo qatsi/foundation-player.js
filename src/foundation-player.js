@@ -16,15 +16,12 @@
         this.options = $.extend({}, this.defaults, options);
         this.wavesurfer = Object.create(WaveSurfer);
         this.$el = $(el);
-        this.$player = this.$el.children('ul');
+        this.$player = this.$el.children('.player');
         this.$play = this.$el.find('.player-button.play em');
         this.$rewind = this.$el.find('.player-button.rewind em');
         this.$volume = this.$el.find('.player-button.volume em');
         this.$elapsed = this.$el.find('.player-status.time .elapsed');
         this.$remains = this.$el.find('.player-status.time .remains');
-        this.$slider = this.$el.find('.player-sliderbar .range-slider');
-        this.playedPercentage = 0;
-        this.sliderPosition = 0;
         this.timer = null;
         this.init();
       }
@@ -38,19 +35,18 @@
         this.setUpButtonPlayPause();
         this.setUpButtonVolume();
         this.setUpButtonRewind();
-        this.setUpRangeSlider();
-        this.updateStatus();
+        this.updateTimeStatuses();
         return this.setUpMainLoop();
       };
 
       FoundationPlayer.prototype.setUpMainLoop = function() {
-        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 1000);
+        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 100);
       };
 
       FoundationPlayer.prototype.playerLoopFunctions = function() {
-        this.updatePercentage();
-        this.updateStatus();
-        return this.updateSliderPosition();
+        this.updatePlayedPercentageAttribute();
+        this.updateButtonPlay();
+        return this.updateTimeStatuses();
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {};
@@ -58,7 +54,6 @@
       FoundationPlayer.prototype.play = function() {};
 
       FoundationPlayer.prototype.setUpWaveSurfer = function() {
-        var wavesurfer;
         this.wavesurfer.init({
           container: this.$el[0],
           waveColor: '#EEEEEE',
@@ -69,11 +64,11 @@
           skipLength: this.options.skipSeconds
         });
         this.wavesurfer.load(this.options.loadURL);
-        wavesurfer = this.wavesurfer;
         if (this.options.playOnStart) {
-          this.wavesurfer.on('ready', function() {
-            return wavesurfer.play();
-          });
+          this.wavesurfer.on('ready', (function() {
+            this.wavesurfer.play();
+            return this.updateButtonPlay();
+          }).bind(this));
         }
       };
 
@@ -97,9 +92,9 @@
 
       FoundationPlayer.prototype.updateButtonPlay = function() {
         if (this.wavesurfer.isPlaying()) {
-          return swithClass(this.$play, 'fi-play', 'fi-pause');
-        } else {
           return swithClass(this.$play, 'fi-pause', 'fi-play');
+        } else {
+          return swithClass(this.$play, 'fi-play', 'fi-pause');
         }
       };
 
@@ -120,12 +115,11 @@
 
       FoundationPlayer.prototype.setUpButtonRewind = function() {
         return this.$rewind.on('click', this, function(e) {
-          e.data.wavesurfer.skipBackward();
-          return e.data.updateSlider();
+          return e.data.wavesurfer.skipBackward();
         });
       };
 
-      FoundationPlayer.prototype.updateStatus = function() {
+      FoundationPlayer.prototype.updateTimeStatuses = function() {
         this.updateStatusElapsed();
         return this.updateStatusRemains();
       };
@@ -138,34 +132,6 @@
         var w;
         w = this.wavesurfer;
         return this.$remains.text('-' + prettyTime(w.getDuration() - w.getCurrentTime()));
-      };
-
-      FoundationPlayer.prototype.updateSlider = function() {
-        this.updatePercentage();
-        return this.updateSliderPosition();
-      };
-
-      FoundationPlayer.prototype.updateSliderPosition = function() {};
-
-      FoundationPlayer.prototype.updatePercentage = function() {
-        var w;
-        w = this.wavesurfer;
-        return this.playedPercentage = Math.floor((w.getCurrentTime() / w.getDuration()) * 100);
-      };
-
-      FoundationPlayer.prototype.updateSliderPercentage = function() {
-        return this.sliderPosition = this.$slider.attr('data-slider');
-      };
-
-      FoundationPlayer.prototype.setUpRangeSlider = function() {
-        return this.$slider.on('change.fndtn.slider', (function() {
-          return this.updatePlayerPosition();
-        }).bind(this));
-      };
-
-      FoundationPlayer.prototype.updatePlayerPosition = function() {
-        this.wavesurfer.seekTo(this.updateSliderPercentage() / 100);
-        return this.updateStatus();
       };
 
       hasCorrectOptions = function(o) {

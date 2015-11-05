@@ -48,16 +48,13 @@
       @wavesurfer = Object.create WaveSurfer
       # Elements
       @$el = $(el)
-      @$player =  @$el.children('ul')
+      @$player = @$el.children('.player')
       @$play = @$el.find('.player-button.play em')
-      @$rewind =  @$el.find('.player-button.rewind em')
-      @$volume =  @$el.find('.player-button.volume em')
+      @$rewind = @$el.find('.player-button.rewind em')
+      @$volume = @$el.find('.player-button.volume em')
       @$elapsed = @$el.find('.player-status.time .elapsed')
       @$remains = @$el.find('.player-status.time .remains')
-      @$slider =  @$el.find('.player-sliderbar .range-slider')
       # State
-      @playedPercentage = 0
-      @sliderPosition = 0
       @timer = null
       # Calls
       @init()
@@ -72,22 +69,22 @@
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
       @setUpButtonRewind()    # Set up rewind button
-      @setUpRangeSlider()     # Set up range slider
-      @updateStatus()         # Update both time statuses
+      @updateTimeStatuses()   # Update both time statuses
       @setUpMainLoop()
 
     # Main loop
     setUpMainLoop: ->
-      @timer = setInterval @playerLoopFunctions.bind(@), 1000
+      @timer = setInterval @playerLoopFunctions.bind(@), 100
     playerLoopFunctions: ->
-      @updatePercentage()
-      @updateStatus()
-      @updateSliderPosition()
+      @updatePlayedPercentageAttribute()
+      @updateButtonPlay() # XXX Only when stopped?
+      @updateTimeStatuses()
 
     # TODO: seekToTime()
     seekToTime: (time) -> # Just a dummy place holder
       # @$el.html(@options.paramA + ': ' + echo)
       return
+
     # TODO: play()
     play: ->
       return
@@ -109,12 +106,14 @@
       # Perform load
       @wavesurfer.load @options.loadURL
       # Set 'ready' callback
-      wavesurfer = @wavesurfer
       if @options.playOnStart
         # play() must be called as callback in local variable
-        @wavesurfer.on 'ready', -> wavesurfer.play()
+        @wavesurfer.on 'ready', (->
+          @wavesurfer.play()
+          @updateButtonPlay()
+        ).bind(@)
       return
-
+    # UI =======================================================================
     # Setup default class
     setUpClassAndStyle: ->
       @$el.addClass(@options.size)
@@ -126,7 +125,7 @@
       playerWidth = 0
       calculateChildrensWidth(@$player).each -> playerWidth += this
       @$player.width Math.floor(5 + playerWidth/actualWidth*100) + '%'
-
+    # Buttons ==================================================================
     # Set up Play/Pause
     setUpButtonPlayPause: ->
       @$play.bind 'click', @, (e) ->
@@ -135,10 +134,9 @@
     # Update Play/Pause
     updateButtonPlay: ->
       if @wavesurfer.isPlaying() # Update button class
-        swithClass @$play, 'fi-play', 'fi-pause'
-      else
         swithClass @$play, 'fi-pause', 'fi-play'
-
+      else
+        swithClass @$play, 'fi-play', 'fi-pause'
     # Set up volume button
     setUpButtonVolume: ->
       @$volume.bind 'click', @, (e) ->
@@ -150,50 +148,24 @@
         swithClass @$volume, 'fi-volume-strike', 'fi-volume'
       else
         swithClass @$volume, 'fi-volume', 'fi-volume-strike'
-
     # Set up rewind button
     setUpButtonRewind: ->
       @$rewind.on 'click', @, (e) ->
         e.data.wavesurfer.skipBackward()
-        e.data.updateSlider()
-
+        # XXX Update progress bar
+    # Status ===================================================================
     # Update all statuses
-    updateStatus: ->
+    # Gets updated in loop
+    updateTimeStatuses: ->
       @updateStatusElapsed()
       @updateStatusRemains()
-    # Update $elapsed time status
-    updateStatusElapsed: ->
+    updateStatusElapsed: -> # Update $elapsed time status
       @$elapsed.text prettyTime @wavesurfer.getCurrentTime()
-    # Update $remains time status
-    updateStatusRemains: ->
+    updateStatusRemains: -> # Update $remains time status
       w = @wavesurfer
       @$remains.text '-' + prettyTime w.getDuration()-w.getCurrentTime()
-    updateSlider: ->
-      @updatePercentage()
-      @updateSliderPosition()
-    updateSliderPosition: ->
-      # XXX Shit!
-      # @$slider.foundation('slider', 'set_value', @playedPercentage);
 
-    # Update @playedPercentage according played state
-    updatePercentage: ->
-      w = @wavesurfer
-      @playedPercentage = Math.floor (w.getCurrentTime()/w.getDuration())*100
-    # Update @sliderPosition according slider position
-    # This updates continiusly durig slider drag
-    updateSliderPercentage: ->
-      @sliderPosition = @$slider.attr('data-slider')
-      # @playedPercentage = Math.floor (w.getCurrentTime()/w.getDuration())*100
-    # Setup range slider
-    setUpRangeSlider: ->
-      # XXX From Player to Slider: $('.slider').f... 'slider', 'set_value', 23;
-      # TODO Reflow $(document).foundation('slider', 'reflow');
-      @$slider.on 'change.fndtn.slider', (-> @updatePlayerPosition()).bind(@)
-    # Seek to @sliderPosition
-    updatePlayerPosition: ->
-      @wavesurfer.seekTo @updateSliderPercentage()/100
-      @updateStatus() # Status should be updated after seek
-
+    # Helpers ==================================================================
     # Check passed options
     hasCorrectOptions = (o) ->
       # 1. Ensure loadURL is present
