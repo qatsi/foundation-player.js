@@ -93,7 +93,7 @@
       return
 
     # XXX WaveSurfer setup
-    setUpWaveSurfer: () ->
+    setUpWaveSurfer: ->
       @wavesurfer.init
         # Customizable stuff
         # Opiniated defaults for WaveSurfer
@@ -116,7 +116,7 @@
       return
 
     # Setup default class
-    setUpClassAndStyle: () ->
+    setUpClassAndStyle: ->
       @$el.addClass(@options.size)
 
       # Calculate player width
@@ -128,60 +128,60 @@
       @$player.width Math.floor(5 + playerWidth/actualWidth*100) + '%'
 
     # Set up Play/Pause
-    setUpButtonPlayPause: () ->
+    setUpButtonPlayPause: ->
       @$play.bind 'click', @, (e) ->
         e.data.wavesurfer.playPause() # Play or pause
         e.data.updateButtonPlay()
     # Update Play/Pause
-    updateButtonPlay: () ->
+    updateButtonPlay: ->
       if @wavesurfer.isPlaying() # Update button class
         swithClass @$play, 'fi-play', 'fi-pause'
       else
         swithClass @$play, 'fi-pause', 'fi-play'
 
     # Set up volume button
-    setUpButtonVolume: () ->
+    setUpButtonVolume: ->
       @$volume.bind 'click', @, (e) ->
         e.data.wavesurfer.toggleMute() # Play or pause
         e.data.updateButtonVolume()
     # Update volume button
-    updateButtonVolume: () ->
+    updateButtonVolume: ->
       if @wavesurfer.isMuted
         swithClass @$volume, 'fi-volume-strike', 'fi-volume'
       else
         swithClass @$volume, 'fi-volume', 'fi-volume-strike'
 
     # Set up rewind button
-    setUpButtonRewind: () ->
+    setUpButtonRewind: ->
       @$rewind.on 'click', @, (e) ->
         e.data.wavesurfer.skipBackward()
         e.data.updateSlider()
 
     # Update all statuses
-    updateStatus: () ->
+    updateStatus: ->
       @updateStatusElapsed()
       @updateStatusRemains()
     # Update $elapsed time status
-    updateStatusElapsed: () ->
+    updateStatusElapsed: ->
       @$elapsed.text prettyTime @wavesurfer.getCurrentTime()
     # Update $remains time status
-    updateStatusRemains: () ->
+    updateStatusRemains: ->
       w = @wavesurfer
       @$remains.text '-' + prettyTime w.getDuration()-w.getCurrentTime()
-    updateSlider: () ->
+    updateSlider: ->
       @updatePercentage()
       @updateSliderPosition()
-    updateSliderPosition: () ->
+    updateSliderPosition: ->
       # XXX Shit!
       # @$slider.foundation('slider', 'set_value', @playedPercentage);
 
     # Update @playedPercentage according played state
-    updatePercentage: () ->
+    updatePercentage: ->
       w = @wavesurfer
       @playedPercentage = Math.floor (w.getCurrentTime()/w.getDuration())*100
     # Update @sliderPosition according slider position
     # This updates continiusly durig slider drag
-    updateSliderPercentage: () ->
+    updateSliderPercentage: ->
       @sliderPosition = @$slider.attr('data-slider')
       # @playedPercentage = Math.floor (w.getCurrentTime()/w.getDuration())*100
     # Setup range slider
