@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var checkOptions, prettyTime, setUpClassAndStyle, setUpRangeSlider, stringPadLeft, swithClass;
+      var checkOptions, prettyTime, setUpClassAndStyle, stringPadLeft, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -22,7 +22,9 @@
         this.$elapsed = this.$el.find('.player-status.time .elapsed');
         this.$remains = this.$el.find('.player-status.time .remains');
         this.$slider = this.$el.find('.player-sliderbar .range-slider');
-        this.percentage = 0;
+        this.playedPercentage = 0;
+        this.sliderPosition = 0;
+        this.timer = null;
         this.init();
       }
 
@@ -35,16 +37,16 @@
         this.setUpButtonPlayPause();
         this.setUpButtonVolume();
         this.setUpButtonRewind();
+        this.setUpRangeSlider();
         this.updateStatus();
-        this.setUpMainLoop();
-        setUpRangeSlider(this);
+        return this.setUpMainLoop();
       };
 
       FoundationPlayer.prototype.setUpMainLoop = function() {
-        return setInterval(this.mainLoop.bind(this), 1000);
+        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 1000);
       };
 
-      FoundationPlayer.prototype.mainLoop = function() {
+      FoundationPlayer.prototype.playerLoopFunctions = function() {
         this.updatePercentage();
         this.updateStatus();
         return this.updateSliderPosition();
@@ -136,17 +138,28 @@
         return this.updateSliderPosition();
       };
 
-      FoundationPlayer.prototype.updateSliderPosition = function() {
-        return this.$slider.foundation('slider', 'set_value', this.percentage);
-      };
+      FoundationPlayer.prototype.updateSliderPosition = function() {};
 
       FoundationPlayer.prototype.updatePercentage = function() {
         var w;
         w = this.wavesurfer;
-        return this.percentage = Math.floor((w.getCurrentTime() / w.getDuration()) * 100);
+        return this.playedPercentage = Math.floor((w.getCurrentTime() / w.getDuration()) * 100);
       };
 
-      setUpRangeSlider = function(e) {};
+      FoundationPlayer.prototype.updateSliderPercentage = function() {
+        return this.sliderPosition = this.$slider.attr('data-slider');
+      };
+
+      FoundationPlayer.prototype.setUpRangeSlider = function() {
+        return this.$slider.on('change.fndtn.slider', (function() {
+          return this.updatePlayerPosition();
+        }).bind(this));
+      };
+
+      FoundationPlayer.prototype.updatePlayerPosition = function() {
+        this.wavesurfer.seekTo(this.updateSliderPercentage() / 100);
+        return this.updateStatus();
+      };
 
       checkOptions = function(o) {
         if (o.loadURL) {
@@ -157,8 +170,8 @@
         }
       };
 
-      swithClass = function(e, from, to) {
-        return $(e).addClass(from).removeClass(to);
+      swithClass = function(element, p, n) {
+        return $(element).addClass(p).removeClass(n);
       };
 
       prettyTime = function(s) {

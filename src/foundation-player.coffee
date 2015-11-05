@@ -27,7 +27,8 @@
 #   wavesurfer.drawBuffer();
 # 5) Fix Safari quirks for buttons hover state
 # 6) Fixed buttons sizes to prefent overflow in hover state
-# 7) Refactor this to @ : - (
+# 7) API Method to navigate to timestamp e.g. "02:10"
+# 8) API Change size method
 
 # Nice to have:
 # 1) Highlight table of contents on wavaform e.g. dots or bars
@@ -54,7 +55,9 @@
       @$remains = @$el.find('.player-status.time .remains')
       @$slider =  @$el.find('.player-sliderbar .range-slider')
       # State
-      @percentage = 0
+      @playedPercentage = 0
+      @sliderPosition = 0
+      @timer = null
       # Calls
       @init()
 
@@ -69,27 +72,27 @@
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
       @setUpButtonRewind()    # Set up rewind button
+      @setUpRangeSlider()     # Set up range slider
       @updateStatus()         # Update both time statuses
       @setUpMainLoop()
-      # Todooo...
-      setUpRangeSlider(this) # Setup range slider
-      return
 
+    # Main loop
     setUpMainLoop: ->
-      setInterval @mainLoop.bind(@), 1000
-
-    mainLoop: ->
+      @timer = setInterval @playerLoopFunctions.bind(@), 1000
+    playerLoopFunctions: ->
       @updatePercentage()
       @updateStatus()
       @updateSliderPosition()
 
+    # TODO: seekToTime()
     seekToTime: (time) -> # Just a dummy place holder
       # @$el.html(@options.paramA + ': ' + echo)
       return
+    # TODO: play()
     play: ->
       return
 
-    # WaveSurfer setup
+    # XXX WaveSurfer setup
     setUpWaveSurfer: () ->
       @wavesurfer.init
         # Customizable stuff
@@ -158,32 +161,35 @@
     updateStatusRemains: () ->
       w = @wavesurfer
       @$remains.text '-' + prettyTime w.getDuration()-w.getCurrentTime()
-
     updateSlider: () ->
       @updatePercentage()
       @updateSliderPosition()
-
     updateSliderPosition: () ->
-      @$slider.foundation('slider', 'set_value', @percentage);
+      # XXX Shit!
+      # @$slider.foundation('slider', 'set_value', @playedPercentage);
 
+    # Update @playedPercentage according played state
     updatePercentage: () ->
       w = @wavesurfer
-      @percentage = Math.floor (w.getCurrentTime()/w.getDuration())*100
-
+      @playedPercentage = Math.floor (w.getCurrentTime()/w.getDuration())*100
+    # Update @sliderPosition according slider position
+    # This updates continiusly durig slider drag
+    updateSliderPercentage: () ->
+      @sliderPosition = @$slider.attr('data-slider')
+      # @playedPercentage = Math.floor (w.getCurrentTime()/w.getDuration())*100
     # Setup range slider
-    setUpRangeSlider = (e) ->
-      # From Slider to Player
-      # $('[data-slider]').on 'change.fndtn.slider', -> 1
-
-      # From Player to Slider
-      # $('.range-slider').foundation 'slider', 'set_value', new_value;
-
-      # Reflow
-      # $(document).foundation('slider', 'reflow');
+    setUpRangeSlider: ->
+      # XXX From Player to Slider: $('.slider').f... 'slider', 'set_value', 23;
+      # TODO Reflow $(document).foundation('slider', 'reflow');
+      @$slider.on 'change.fndtn.slider', (-> @updatePlayerPosition()).bind(@)
+    # Seek to @sliderPosition
+    updatePlayerPosition: ->
+      @wavesurfer.seekTo @updateSliderPercentage()/100
+      @updateStatus() # Status should be updated after seek
 
     # Check passed options
-    # 1. Ensure loadURL is present
     checkOptions = (o) ->
+      # 1. Ensure loadURL is present
       if o.loadURL
         return true
       else
@@ -191,8 +197,8 @@
         return false
 
     # Some relly internal stuff goes here
-    swithClass = (e, from, to) ->
-      $(e).addClass(from).removeClass(to)
+    swithClass = (element, p, n) ->
+      $(element).addClass(p).removeClass(n)
 
     # Foramt second to human readable format
     prettyTime = (s) ->
