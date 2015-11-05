@@ -15,13 +15,13 @@
       function FoundationPlayer(el, options) {
         this.options = $.extend({}, this.defaults, options);
         this.wavesurfer = Object.create(WaveSurfer);
-        this.$el = $(el);
-        this.$player = this.$el.children('.player');
-        this.$play = this.$el.find('.player-button.play em');
-        this.$rewind = this.$el.find('.player-button.rewind em');
-        this.$volume = this.$el.find('.player-button.volume em');
-        this.$elapsed = this.$el.find('.player-status.time .elapsed');
-        this.$remains = this.$el.find('.player-status.time .remains');
+        this.$wrapper = $(el);
+        this.$player = this.$wrapper.children('.player');
+        this.$play = this.$wrapper.find('.player-button.play em');
+        this.$rewind = this.$wrapper.find('.player-button.rewind em');
+        this.$volume = this.$wrapper.find('.player-button.volume em');
+        this.$elapsed = this.$wrapper.find('.player-status.time .elapsed');
+        this.$remains = this.$wrapper.find('.player-status.time .remains');
         this.timer = null;
         this.init();
       }
@@ -55,7 +55,7 @@
 
       FoundationPlayer.prototype.setUpWaveSurfer = function() {
         this.wavesurfer.init({
-          container: this.$el[0],
+          container: this.$wrapper[0],
           waveColor: '#EEEEEE',
           progressColor: '#DDDDDD',
           cursorColor: 'transparent',
@@ -74,7 +74,7 @@
 
       FoundationPlayer.prototype.setUpClassAndStyle = function() {
         var actualWidth, playerWidth;
-        this.$el.addClass(this.options.size);
+        this.$wrapper.addClass(this.options.size);
         actualWidth = this.$player.width();
         playerWidth = 0;
         calculateChildrensWidth(this.$player).each(function() {

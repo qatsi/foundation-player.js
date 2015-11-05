@@ -47,13 +47,13 @@
       @options = $.extend({}, @defaults, options)
       @wavesurfer = Object.create WaveSurfer
       # Elements
-      @$el = $(el)
-      @$player = @$el.children('.player')
-      @$play = @$el.find('.player-button.play em')
-      @$rewind = @$el.find('.player-button.rewind em')
-      @$volume = @$el.find('.player-button.volume em')
-      @$elapsed = @$el.find('.player-status.time .elapsed')
-      @$remains = @$el.find('.player-status.time .remains')
+      @$wrapper = $(el)
+      @$player = @$wrapper.children('.player')
+      @$play = @$wrapper.find('.player-button.play em')
+      @$rewind = @$wrapper.find('.player-button.rewind em')
+      @$volume = @$wrapper.find('.player-button.volume em')
+      @$elapsed = @$wrapper.find('.player-status.time .elapsed')
+      @$remains = @$wrapper.find('.player-status.time .remains')
       # State
       @timer = null
       # Calls
@@ -82,7 +82,7 @@
 
     # TODO: seekToTime()
     seekToTime: (time) -> # Just a dummy place holder
-      # @$el.html(@options.paramA + ': ' + echo)
+      # @$wrapper.html(@options.paramA + ': ' + echo)
       return
 
     # TODO: play()
@@ -94,7 +94,7 @@
       @wavesurfer.init
         # Customizable stuff
         # Opiniated defaults for WaveSurfer
-        container: @$el[0] # First guy...
+        container: @$wrapper[0] # First guy...
         # Please create an issue if need need something to customize
         waveColor: '#EEEEEE'
         progressColor: '#DDDDDD'
@@ -116,7 +116,7 @@
     # UI =======================================================================
     # Setup default class
     setUpClassAndStyle: ->
-      @$el.addClass(@options.size)
+      @$wrapper.addClass(@options.size)
 
       # Calculate player width
       # XXX Added initial extra due to 2px error...
