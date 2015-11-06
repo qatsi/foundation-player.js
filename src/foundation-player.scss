@@ -16,20 +16,21 @@ $base-line-height: 1.5 !default;
 
 // Parameters which may be changed
 // Main player colors
-$logo-color-red: #d91e18;
-$logo-color-orange: #f9690e;
-$logo-color-pink: #db0a5b;
+$color-red: #d91e18 !default;
+$color-orange: #f9690e !default;
+$color-pink: #db0a5b !default;
 // Gradients
-$fp-gradient: linear-gradient(25deg, $logo-color-red, $logo-color-orange);
-$fp-gradient-hover: linear-gradient(25deg, $logo-color-red, $logo-color-pink);
+$fp-gradient: linear-gradient(5deg, $color-red, $color-orange) !default;
+$fp-gradient-hover: linear-gradient(5deg, $color-red, $color-pink) !default;
 // Progress bar size
-$fp-progress-width-normal: 250px;
-$fp-progress-width-small: $fp-progress-width-normal * .75;
+$fp-progress-width-normal: 200px !default;
+$fp-progress-width-small: $fp-progress-width-normal * .75 !default;
 // These numbers should be more or less reasonable
-$fp-progress-height-normal: rem-calc(15);
-$fp-progress-height-small: rem-calc(10);
+$fp-progress-height-normal: rem-calc(15) !default;
+$fp-progress-height-small: rem-calc(10) !default;
 // Button options
-$fp-button-hover-scale: 1.1;
+// May cause 'quirks' in Safari
+$fp-button-hover-scale: 1.2 !default;
 
 // Auxillary styles
 // Disable selection
@@ -58,7 +59,7 @@ $fp-button-hover-scale: 1.1;
     // Buttons and icons
     .player-button,
     .player-status {
-      color: $logo-color-orange;
+      color: $color-orange;
       text-align: center;
     }
 
