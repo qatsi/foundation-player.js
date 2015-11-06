@@ -34,6 +34,7 @@
 # - Mobile actions like touch and etc.
 # - Mobile "first" :-(
 # - Show meta information when possible
+# - Error handling
 
 (($, window) ->
   # Define the plugin class
@@ -60,6 +61,7 @@
       # State
       @timer = null
       @played = 0
+      @nowdragging = false
       # Calls
       @init()
 
@@ -77,7 +79,7 @@
 
     # Main loop
     setUpMainLoop: ->
-      @timer = setInterval @playerLoopFunctions.bind(@), 200
+      @timer = setInterval @playerLoopFunctions.bind(@), 1000
     playerLoopFunctions: ->
       @updateButtonPlay() # XXX Only when stopped?
       @updateTimeStatuses()
@@ -86,6 +88,12 @@
     seekToTime: (time) -> # Just a dummy place holder
       # @$wrapper.html(@options.paramA + ': ' + echo)
       return
+    seekToPercent: (percent) ->
+      # Can use both 0.65 and 65
+      percent = percent/100 if percent >= 1
+      @audio.currentTime = @audio.duration*percent
+      @updatePlayedProgress()
+      @updateTimeStatuses()
 
     playPause: ->
       if @audio.paused # Update button class
@@ -141,6 +149,21 @@
         semiHeight = @$played.height()/2
         @$played.css 'padding', "0 #{semiHeight}px"
       @$played.css 'width', @played + '%'
+      # Click and drag progress
+      @$progress.on 'click.fndtn.player', @, (e) ->
+        e.data.seekToPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
+      # Drag section is tricky
+      # TODO: Mobile actions
+      @$progress.on 'mousedown.fndtn.player', @, (e) ->
+        e.data.nowdragging = true
+      $(document).on 'mouseup.fndtn.player', @, (e) ->
+        e.data.nowdragging = false if e.data.nowdragging
+      @$progress.on 'mouseup.fndtn.player', @, (e) ->
+        e.data.nowdragging = false if e.data.nowdragging
+      @$progress.on 'mousemove.fndtn.player', @, (e) ->
+        if e.data.nowdragging
+          e.data.seekToPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
+
     updatePlayedProgress: ->
       @played = Math.round @audio.currentTime / @audio.duration * 100
       @$played.css 'width', @played + '%'

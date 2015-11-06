@@ -26,6 +26,7 @@
         this.$played = this.$progress.find('.meter');
         this.timer = null;
         this.played = 0;
+        this.nowdragging = false;
         this.init();
       }
 
@@ -40,7 +41,7 @@
       };
 
       FoundationPlayer.prototype.setUpMainLoop = function() {
-        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 200);
+        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 1000);
       };
 
       FoundationPlayer.prototype.playerLoopFunctions = function() {
@@ -50,6 +51,15 @@
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {};
+
+      FoundationPlayer.prototype.seekToPercent = function(percent) {
+        if (percent >= 1) {
+          percent = percent / 100;
+        }
+        this.audio.currentTime = this.audio.duration * percent;
+        this.updatePlayedProgress();
+        return this.updateTimeStatuses();
+      };
 
       FoundationPlayer.prototype.playPause = function() {
         if (this.audio.paused) {
@@ -118,7 +128,28 @@
           semiHeight = this.$played.height() / 2;
           this.$played.css('padding', "0 " + semiHeight + "px");
         }
-        return this.$played.css('width', this.played + '%');
+        this.$played.css('width', this.played + '%');
+        this.$progress.on('click.fndtn.player', this, function(e) {
+          return e.data.seekToPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
+        });
+        this.$progress.on('mousedown.fndtn.player', this, function(e) {
+          return e.data.nowdragging = true;
+        });
+        $(document).on('mouseup.fndtn.player', this, function(e) {
+          if (e.data.nowdragging) {
+            return e.data.nowdragging = false;
+          }
+        });
+        this.$progress.on('mouseup.fndtn.player', this, function(e) {
+          if (e.data.nowdragging) {
+            return e.data.nowdragging = false;
+          }
+        });
+        return this.$progress.on('mousemove.fndtn.player', this, function(e) {
+          if (e.data.nowdragging) {
+            return e.data.seekToPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
+          }
+        });
       };
 
       FoundationPlayer.prototype.updatePlayedProgress = function() {
