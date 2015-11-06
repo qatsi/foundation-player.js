@@ -2,171 +2,208 @@
 # Author: Alexander Egorov
 
 # Usage:
-# $('.foundation-player').foundationPlayer
-#    playOnStart: false
-# or:
-#    $('.foundation-player').foundationPlayer('seekToTime', 'Hello, world');
-#    $('.foundation-player').foundationPlayer('seek', '1:50');
+# $('.foundation-player').foundationPlayer()
 
 # Some conventions:
 # - Buttons has selector `.player-button.play em` where:
-#   `.player-button.play` is li element
-#   `em` is actual event target
+#   `.player-button.play` is li element and `em` is event target
 # - Status elements has selector `.player-status.time .elapsed` where:
-#   `.player-status.time` is li element
-#   `.elapsed` is actual target to update
+#   `.player-status.time` is li element and `.elapsed` is target to update
 
 # TODO:
-# 1) Player width calculation
-# 2) Shut others when it statrs
-# 3) Loading indicator
-# 4) Smart redraw of Waveform
-#   wavesurfer.params.height = (waveformFrame.offsetHeight - 30);
-#   //30px is the time code height, may different in your environment
-#   wavesurfer.drawer.setHeight((waveformFrame.offsetHeight - 30));
-#   wavesurfer.drawBuffer();
-# 5) Fix Safari quirks for buttons hover state
-# 6) Fixed buttons sizes to prefent overflow in hover state
-# 7) Refactor this to @ : - (
-# 8) Wavesurfer isMuted property
+# - Shut others when it statrs
+# - Loading indicator
+# - Fix Safari quirks for buttons hover state
+# - API Method to navigate to timestamp e.g. '02:10'
+# - API Change size method
+# - animate or not options
+# - aN:aN in statuses while loading...
+
+# Unsorted list of *nice to* or *must* have:
+# - Pressed state for buttons
+# - Highlight table of contents on progress bar e.g. dots or bars
+# - Ability to manage many <audio> elements via playlist
+# - Check is it possible to get meta information from audio
+# - Buffering option for playlist items and single media-file
+# - Next/Previous buttons when necessary
+# - Buffering status aka load indicator
+# - Mobile actions like touch and etc.
+# - Mobile "first" :-(
+# - Show meta information when possible
+# - Error handling
 
 (($, window) ->
   # Define the plugin class
   class FoundationPlayer
     defaults:
-      size: 'normal'        # Size of player. Internall it is just class name
+      size: 'normal'        # Size of player <normal|small>
       # Look and feel options
-      playOnStart: true     # play as soon as it's loaded
+      playOnStart: true     # TODO: play as soon as it's loaded
       skipSeconds: 10       # how many we want to skip
-      # Waveform options
+      # Volume options
+      dimmedVolume: 0.25
+      # Animation Duration
+      quick: 50
+      moderate: 150
 
-    constructor: (el, options) ->
-      @options = $.extend({}, @defaults, options)
-      @wavesurfer = Object.create WaveSurfer
+    constructor: (el, opt) ->
+      @options = $.extend({}, @defaults, opt)
       # Elements
-      @$el = $(el)
-      @$play = @$el.find('.player-button.play em')
-      @$rewind =  @$el.find('.player-button.rewind em')
-      @$volume =  @$el.find('.player-button.volume em')
-      @$elapsed = @$el.find('.player-status.time .elapsed')
-      @$remains = @$el.find('.player-status.time .remains')
+      @$wrapper =  $(el)
+      @$player =   @$wrapper.children('.player')
+      @$play =     @$wrapper.find('.player-button.play em')
+      @$rewind =   @$wrapper.find('.player-button.rewind em')
+      @$volume =   @$wrapper.find('.player-button.volume em')
+      @$elapsed =  @$wrapper.find('.player-status.time .elapsed')
+      @$remains =  @$wrapper.find('.player-status.time .remains')
+      @$progress = @$wrapper.find('.player-progress .progress')
+      @$played =   @$progress.find('.meter')
+      @$loaded =   @$played.clone().appendTo(@$progress)
+      @audio =     @$wrapper.children('audio').get(0)
+      # State
+      @timer =     null
+      @played =    0
+      @nowdragging = false
       # Calls
-      @init()
+      @initialize()
 
     # Additional plugin methods go here
-    init: ->
+    initialize: ->
       # Init function
-      return unless checkOptions(this.options) # Check passed options
-      setUpClassAndStyle(@$el, this.options) # Setup default class
-
+      @resetClassAndStyle()    # Setup classes and styles
       # Player setup
-      @setUpWaveSurfer()      # WaveSurfer setup
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
       @setUpButtonRewind()    # Set up rewind button
-      @updateStatus()         # Update both time statuses
+      @setUpPlayedProgress()  # Set up played progress meter
+      @updateTimeStatuses()   # Update both time statuses
+      @setUpMainLoop()        # Fire up main loop
 
-      # Todooo...
-      setUpRangeSlider(this) # Setup range slider
-      return
+    # Main loop
+    setUpMainLoop: ->
+      @timer = setInterval @playerLoopFunctions.bind(@), 500
+    playerLoopFunctions: ->
+      @updateButtonPlay() # XXX Only when stopped?
+      @updateTimeStatuses()
+      @updatePlayedProgress()
+    # TODO: seekToTime()
+    # Playback =================================================================
+    playPause: ->
+      if @audio.paused # Update button class
+        @audio.play()
+      else
+        @audio.pause()
+      @updateButtonPlay()
+      !@audio.paused
 
     seekToTime: (time) -> # Just a dummy place holder
-      # @$el.html(@options.paramA + ': ' + echo)
+      # @$wrapper.html(@options.paramA + ': ' + echo)
       return
-    play: ->
-      return
+    seekPercent: (p) ->
+      # Can use both 0.65 and 65
+      @audio.currentTime = @audio.duration * (p / 100 if p >= 1)
+      @updatePlayedProgress()
+      @updateTimeStatuses()
 
-    # WaveSurfer setup
-    setUpWaveSurfer: () ->
-      @wavesurfer.init
-        # Customizable stuff
-        # Opiniated defaults for WaveSurfer
-        container: @$el[0] # First guy...
-        # Please create an issue if need need something to customize
-        waveColor: '#EEEEEE'
-        progressColor: '#DDDDDD'
-        cursorColor: 'transparent' # bug with hideScrollbar: true?
-        # hideScrollbar: true
-        height: 96
-        barWidth: 1
-        skipLength: @options.skipSeconds
-      # Perform load
-      @wavesurfer.load @options.loadURL
-      # Set 'ready' callback
-      wavesurfer = @wavesurfer
-      if @options.playOnStart
-        # play() must be called as callback in local variable
-        @wavesurfer.on 'ready', -> wavesurfer.play()
-      return
-
+    # Generic ==================================================================
     # Setup default class
-    setUpClassAndStyle = (e,o) ->
-      e.addClass(o.size)
-      return e
+    resetClassAndStyle: ->
+      @$wrapper.addClass(@options.size)
+      # Calculate player width
+      # TODO Refactor to smaller function and call it on window resize :-(
+      actualWidth = @$player.width()
+      playerWidth = 0
+      calculateChildrensWidth(@$player).each -> playerWidth += this
+      @$player.width Math.floor(5 + playerWidth/actualWidth*100) + '%'
+      # Deuglification of round progress bar when it 0% width
+      if @$progress.hasClass('round')
+        semiHeight = @$played.height()/2
+        @$played.css 'padding', "0 #{semiHeight}px"
+      # TODO: Setup styles for meter clone @$loaded
+      # - position: absolute; height: 9px; opacity: 0.5;
 
+    # Buttons ==================================================================
     # Set up Play/Pause
-    setUpButtonPlayPause: () ->
+    setUpButtonPlayPause: ->
       @$play.bind 'click', @, (e) ->
-        e.data.wavesurfer.playPause() # Play or pause
-        e.data.updateButtonPlay()
+        e.data.playPause() # Play or pause
     # Update Play/Pause
-    updateButtonPlay: () ->
-      if @wavesurfer.isPlaying() # Update button class
-        swithClass @$play, 'fi-play', 'fi-pause'
-      else
+    updateButtonPlay: ->
+      if @audio.paused # Update button class
         swithClass @$play, 'fi-pause', 'fi-play'
-
+      else
+        swithClass @$play, 'fi-play', 'fi-pause'
     # Set up volume button
-    setUpButtonVolume: () ->
+    setUpButtonVolume: ->
       @$volume.bind 'click', @, (e) ->
-        e.data.wavesurfer.toggleMute() # Play or pause
-        e.data.updateButtonVolume()
+        s = e.data
+        s.toggleMute()
+        s.updateButtonVolume()
     # Update volume button
-    updateButtonVolume: () ->
-      if @wavesurfer.isMuted
+    updateButtonVolume: ->
+      if @audio.muted
         swithClass @$volume, 'fi-volume-strike', 'fi-volume'
       else
         swithClass @$volume, 'fi-volume', 'fi-volume-strike'
-
     # Set up rewind button
-    setUpButtonRewind: () ->
-      @$rewind.on 'click', @wavesurfer, (e) -> e.data.skipBackward()
+    setUpButtonRewind: ->
+      @$rewind.on 'click', @, (e) ->
+        s = e.data
+        s.audio.currentTime = s.audio.currentTime - s.options.skipSeconds
+        s.updatePlayedProgress()
+        s.updateTimeStatuses()
 
+    # Progress =================================================================
+    setUpPlayedProgress: ->
+      @$played.css 'width', @played + '%'
+      # Click and drag progress
+      @$progress.on 'click.fndtn.player', @, (e) ->
+        e.data.seekPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
+      # Drag section is tricky
+      # TODO: Mobile actions
+      # TODO: DRYup this code
+      @$progress.on 'mousedown.fndtn.player', @, (e) ->
+        e.data.nowdragging = true
+        e.data.setVolume(e.data.options.dimmedVolume)
+      $(document).on 'mouseup.fndtn.player', @, (e) ->
+        if e.data.nowdragging
+          e.data.nowdragging = false
+          e.data.setVolume(1)
+      @$progress.on 'mouseup.fndtn.player', @, (e) ->
+        if e.data.nowdragging
+          e.data.nowdragging = false
+          e.data.setVolume(1)
+      @$progress.on 'mousemove.fndtn.player', @, (e) ->
+        if e.data.nowdragging
+          e.data.seekPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
+    updatePlayedProgress: ->
+      @played = Math.round @audio.currentTime / @audio.duration * 100
+      # @$played.css 'width', @played + '%'
+      @$played.animate width: @played + '%',
+        (queue: false, duration: @options.quick)
+
+    # Volume ===================================================================
+    setVolume: (vol) ->
+      $(@audio).animate volume: vol, (duration: @options.moderate)
+    toggleMute: ->
+      @audio.muted = !@audio.muted
+      @updateButtonVolume()
+
+    # Status ===================================================================
     # Update all statuses
-    updateStatus: () ->
+    # Gets updated in loop
+    updateTimeStatuses: ->
       @updateStatusElapsed()
       @updateStatusRemains()
-    # Update $elapsed time status
-    updateStatusElapsed: () ->
-      @$elapsed.text prettyTime @wavesurfer.getCurrentTime()
-    # Update $remains time status
-    updateStatusRemains: () ->
-      w = @wavesurfer
-      @$remains.text '-' + prettyTime w.getDuration()-w.getCurrentTime()
+    updateStatusElapsed: -> # Update $elapsed time status
+      @$elapsed.text prettyTime @audio.currentTime
+    updateStatusRemains: -> # Update $remains time status
+      @$remains.text '-' + prettyTime @audio.duration-@audio.currentTime
 
-    # Setup range slider
-    setUpRangeSlider = (e) ->
-      # From Slider to Player
-      # $('[data-slider]').on 'change.fndtn.slider', -> 1
-
-      # From Player to Slider
-      # $('.range-slider').foundation 'slider', 'set_value', new_value;
-
-      # Reflow
-      # $(document).foundation('slider', 'reflow');
-
-    # Check passed options
-    # 1. Ensure loadURL is present
-    checkOptions = (o) ->
-      if o.loadURL
-        return true
-      else
-        console.error 'Please specify `loadURL`. It has no default setings.'
-        return false
-
+    # Helpers ==================================================================
     # Some relly internal stuff goes here
-    swithClass = (e, from, to) ->
-      $(e).addClass(from).removeClass(to)
+    swithClass = (element, p, n) ->
+      $(element).addClass(p).removeClass(n)
 
     # Foramt second to human readable format
     prettyTime = (s) ->
@@ -180,6 +217,10 @@
       # Quick and dirty
       # As seen here: http://stackoverflow.com/questions/3733227
       (new Array(length+1).join(pad)+string).slice(-length)
+
+    # Utility function to calculate actual withds of children elements
+    calculateChildrensWidth = (e) ->
+      e.children().map -> $(@).outerWidth(true) # Get widths including margin
 
   # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->

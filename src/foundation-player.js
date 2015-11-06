@@ -4,92 +4,114 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var checkOptions, prettyTime, setUpClassAndStyle, setUpRangeSlider, stringPadLeft, swithClass;
+      var calculateChildrensWidth, prettyTime, stringPadLeft, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
         playOnStart: true,
-        skipSeconds: 10
+        skipSeconds: 10,
+        dimmedVolume: 0.25,
+        quick: 50,
+        moderate: 150
       };
 
-      function FoundationPlayer(el, options) {
-        this.options = $.extend({}, this.defaults, options);
-        this.wavesurfer = Object.create(WaveSurfer);
-        this.$el = $(el);
-        this.$play = this.$el.find('.player-button.play em');
-        this.$rewind = this.$el.find('.player-button.rewind em');
-        this.$volume = this.$el.find('.player-button.volume em');
-        this.$elapsed = this.$el.find('.player-status.time .elapsed');
-        this.$remains = this.$el.find('.player-status.time .remains');
-        this.init();
+      function FoundationPlayer(el, opt) {
+        this.options = $.extend({}, this.defaults, opt);
+        this.$wrapper = $(el);
+        this.$player = this.$wrapper.children('.player');
+        this.$play = this.$wrapper.find('.player-button.play em');
+        this.$rewind = this.$wrapper.find('.player-button.rewind em');
+        this.$volume = this.$wrapper.find('.player-button.volume em');
+        this.$elapsed = this.$wrapper.find('.player-status.time .elapsed');
+        this.$remains = this.$wrapper.find('.player-status.time .remains');
+        this.$progress = this.$wrapper.find('.player-progress .progress');
+        this.$played = this.$progress.find('.meter');
+        this.$loaded = this.$played.clone().appendTo(this.$progress);
+        this.audio = this.$wrapper.children('audio').get(0);
+        this.timer = null;
+        this.played = 0;
+        this.nowdragging = false;
+        this.initialize();
       }
 
-      FoundationPlayer.prototype.init = function() {
-        if (!checkOptions(this.options)) {
-          return;
-        }
-        setUpClassAndStyle(this.$el, this.options);
-        this.setUpWaveSurfer();
+      FoundationPlayer.prototype.initialize = function() {
+        this.resetClassAndStyle();
         this.setUpButtonPlayPause();
         this.setUpButtonVolume();
         this.setUpButtonRewind();
-        this.updateStatus();
-        setUpRangeSlider(this);
+        this.setUpPlayedProgress();
+        this.updateTimeStatuses();
+        return this.setUpMainLoop();
+      };
+
+      FoundationPlayer.prototype.setUpMainLoop = function() {
+        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 500);
+      };
+
+      FoundationPlayer.prototype.playerLoopFunctions = function() {
+        this.updateButtonPlay();
+        this.updateTimeStatuses();
+        return this.updatePlayedProgress();
+      };
+
+      FoundationPlayer.prototype.playPause = function() {
+        if (this.audio.paused) {
+          this.audio.play();
+        } else {
+          this.audio.pause();
+        }
+        this.updateButtonPlay();
+        return !this.audio.paused;
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {};
 
-      FoundationPlayer.prototype.play = function() {};
-
-      FoundationPlayer.prototype.setUpWaveSurfer = function() {
-        var wavesurfer;
-        this.wavesurfer.init({
-          container: this.$el[0],
-          waveColor: '#EEEEEE',
-          progressColor: '#DDDDDD',
-          cursorColor: 'transparent',
-          height: 96,
-          barWidth: 1,
-          skipLength: this.options.skipSeconds
-        });
-        this.wavesurfer.load(this.options.loadURL);
-        wavesurfer = this.wavesurfer;
-        if (this.options.playOnStart) {
-          this.wavesurfer.on('ready', function() {
-            return wavesurfer.play();
-          });
-        }
+      FoundationPlayer.prototype.seekPercent = function(p) {
+        this.audio.currentTime = this.audio.duration * (p >= 1 ? p / 100 : void 0);
+        this.updatePlayedProgress();
+        return this.updateTimeStatuses();
       };
 
-      setUpClassAndStyle = function(e, o) {
-        e.addClass(o.size);
-        return e;
+      FoundationPlayer.prototype.resetClassAndStyle = function() {
+        var actualWidth, playerWidth, semiHeight;
+        this.$wrapper.addClass(this.options.size);
+        actualWidth = this.$player.width();
+        playerWidth = 0;
+        calculateChildrensWidth(this.$player).each(function() {
+          return playerWidth += this;
+        });
+        this.$player.width(Math.floor(5 + playerWidth / actualWidth * 100) + '%');
+        if (this.$progress.hasClass('round')) {
+          semiHeight = this.$played.height() / 2;
+          return this.$played.css('padding', "0 " + semiHeight + "px");
+        }
       };
 
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
         return this.$play.bind('click', this, function(e) {
-          e.data.wavesurfer.playPause();
-          return e.data.updateButtonPlay();
+          return e.data.playPause();
         });
       };
 
       FoundationPlayer.prototype.updateButtonPlay = function() {
-        if (this.wavesurfer.isPlaying()) {
-          return swithClass(this.$play, 'fi-play', 'fi-pause');
-        } else {
+        if (this.audio.paused) {
           return swithClass(this.$play, 'fi-pause', 'fi-play');
+        } else {
+          return swithClass(this.$play, 'fi-play', 'fi-pause');
         }
       };
 
       FoundationPlayer.prototype.setUpButtonVolume = function() {
         return this.$volume.bind('click', this, function(e) {
-          e.data.wavesurfer.toggleMute();
-          return e.data.updateButtonVolume();
+          var s;
+          s = e.data;
+          s.toggleMute();
+          return s.updateButtonVolume();
         });
       };
 
       FoundationPlayer.prototype.updateButtonVolume = function() {
-        if (this.wavesurfer.isMuted) {
+        if (this.audio.muted) {
           return swithClass(this.$volume, 'fi-volume-strike', 'fi-volume');
         } else {
           return swithClass(this.$volume, 'fi-volume', 'fi-volume-strike');
@@ -97,39 +119,81 @@
       };
 
       FoundationPlayer.prototype.setUpButtonRewind = function() {
-        return this.$rewind.on('click', this.wavesurfer, function(e) {
-          return e.data.skipBackward();
+        return this.$rewind.on('click', this, function(e) {
+          var s;
+          s = e.data;
+          s.audio.currentTime = s.audio.currentTime - s.options.skipSeconds;
+          s.updatePlayedProgress();
+          return s.updateTimeStatuses();
         });
       };
 
-      FoundationPlayer.prototype.updateStatus = function() {
+      FoundationPlayer.prototype.setUpPlayedProgress = function() {
+        this.$played.css('width', this.played + '%');
+        this.$progress.on('click.fndtn.player', this, function(e) {
+          return e.data.seekPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
+        });
+        this.$progress.on('mousedown.fndtn.player', this, function(e) {
+          e.data.nowdragging = true;
+          return e.data.setVolume(e.data.options.dimmedVolume);
+        });
+        $(document).on('mouseup.fndtn.player', this, function(e) {
+          if (e.data.nowdragging) {
+            e.data.nowdragging = false;
+            return e.data.setVolume(1);
+          }
+        });
+        this.$progress.on('mouseup.fndtn.player', this, function(e) {
+          if (e.data.nowdragging) {
+            e.data.nowdragging = false;
+            return e.data.setVolume(1);
+          }
+        });
+        return this.$progress.on('mousemove.fndtn.player', this, function(e) {
+          if (e.data.nowdragging) {
+            return e.data.seekPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
+          }
+        });
+      };
+
+      FoundationPlayer.prototype.updatePlayedProgress = function() {
+        this.played = Math.round(this.audio.currentTime / this.audio.duration * 100);
+        return this.$played.animate({
+          width: this.played + '%'
+        }, {
+          queue: false,
+          duration: this.options.quick
+        });
+      };
+
+      FoundationPlayer.prototype.setVolume = function(vol) {
+        return $(this.audio).animate({
+          volume: vol
+        }, {
+          duration: this.options.moderate
+        });
+      };
+
+      FoundationPlayer.prototype.toggleMute = function() {
+        this.audio.muted = !this.audio.muted;
+        return this.updateButtonVolume();
+      };
+
+      FoundationPlayer.prototype.updateTimeStatuses = function() {
         this.updateStatusElapsed();
         return this.updateStatusRemains();
       };
 
       FoundationPlayer.prototype.updateStatusElapsed = function() {
-        return this.$elapsed.text(prettyTime(this.wavesurfer.getCurrentTime()));
+        return this.$elapsed.text(prettyTime(this.audio.currentTime));
       };
 
       FoundationPlayer.prototype.updateStatusRemains = function() {
-        var w;
-        w = this.wavesurfer;
-        return this.$remains.text('-' + prettyTime(w.getDuration() - w.getCurrentTime()));
+        return this.$remains.text('-' + prettyTime(this.audio.duration - this.audio.currentTime));
       };
 
-      setUpRangeSlider = function(e) {};
-
-      checkOptions = function(o) {
-        if (o.loadURL) {
-          return true;
-        } else {
-          console.error('Please specify `loadURL`. It has no default setings.');
-          return false;
-        }
-      };
-
-      swithClass = function(e, from, to) {
-        return $(e).addClass(from).removeClass(to);
+      swithClass = function(element, p, n) {
+        return $(element).addClass(p).removeClass(n);
       };
 
       prettyTime = function(s) {
@@ -141,6 +205,12 @@
 
       stringPadLeft = function(string, pad, length) {
         return (new Array(length + 1).join(pad) + string).slice(-length);
+      };
+
+      calculateChildrensWidth = function(e) {
+        return e.children().map(function() {
+          return $(this).outerWidth(true);
+        });
       };
 
       return FoundationPlayer;

@@ -1,12 +1,8 @@
-@import 'foundation/_functions';
+@import 'foundation/functions';
 
-// Units and sizes
-// There is no need in this section usually
-$h1-font-size: rem-calc(44);
-$h3-font-size: rem-calc(27);
-$h4-font-size: rem-calc(23);
-$h5-font-size: rem-calc(18);
+// Some Foundation defaults
 $global-rounded: 1000px !default;
+$base-line-height: 1.5 !default;
 
 // Monkey path of radius mixin
 @mixin radius($radius:$global-radius) {
@@ -15,210 +11,145 @@ $global-rounded: 1000px !default;
   }
 }
 
+// Parameters which may be changed
 // Main player colors
-$logo-color-red: #D91E18;
-$logo-color-orange: #F9690E;
-$logo-color-pink: #DB0A5B;
+$color-red: #d91e18 !default;
+$color-orange: #f9690e !default;
+$color-pink: #db0a5b !default;
 // Gradients
-$fp-gradient: linear-gradient(-45deg, $logo-color-red, $logo-color-orange);
-$fp-gradient-hover: linear-gradient(45deg, $logo-color-red, $logo-color-pink);
-
-// Parameters which changes
-$fp-bar-width-normal: 200px;
-$fp-bar-width-small: $fp-bar-width-normal * .5;
-// These numbers should be bigger than border * 2
-$fp-bar-height-normal: rem-calc(10);
-$fp-bar-height-small: rem-calc(6);
-$fp-handle-size-normal: $fp-bar-height-normal * 2;
-$fp-handle-size-small: $fp-bar-height-small * 3;
-$fp-bar-border-width: 2px;
-$fp-bar-border-style: solid;
-$fp-bar-border-color: $logo-color-orange;
-$fp-round: $global-rounded;
-$fp-bar-bg-color: scale-color($fp-bar-border-color, $alpha:-90%);
-$fp-active-segment-bg-color: $fp-bar-border-color;
-// These variabels define the slider handle styles
-$fp-handle-bg-color: $fp-gradient;
-$fp-handle-round: $global-rounded;
-$fp-handle-bg-hover-color: $fp-handle-bg-color;
-$fp-handle-cursor: col-resize;
+$fp-gradient: linear-gradient(5deg, $color-red, $color-orange) !default;
+$fp-gradient-hover: linear-gradient(5deg, $color-red, $color-pink) !default;
+$fp-gradient-progess: $fp-gradient;
+// Font sizes
+$fp-font-size-normal: rem-calc(23) !default;
+$fp-font-size-small: rem-calc(18) !default;
+// Progress bar size
+$fp-progress-width-normal: 200px !default;
+$fp-progress-width-small: $fp-progress-width-normal * .75 !default;
+// These numbers should be more or less reasonable
+$fp-progress-height-normal: rem-calc(18) !default;
+$fp-progress-height-small: rem-calc(12) !default;
 // Button options
-$fp-button-hover-scale: 1.1;
+// May cause 'quirks' in Safari
+$fp-button-hover-scale: 1.2 !default;
 
-// Player styles
-// @mixins
-@mixin fp-bar-base() {
-  border: $fp-bar-border-width $fp-bar-border-style $fp-bar-border-color;
-  position: relative;
-  touch-action: none;
-  display: block;
-  cursor: $fp-handle-cursor;
+// Auxillary styles
+// Disable selection. Seen here http://stackoverflow.com/questions/826782/
+.noselect {
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-@mixin fp-bar-style(
-  $bg: true,
-  $round: true,
-  $normal: false,
-  $small: false) {
-  @if $normal == true {
-    height: $fp-bar-height-normal;
-    margin: .8rem 0; // Magic!
-    width: $fp-bar-width-normal;
-  }
-  @if $small == true {
-    height: $fp-bar-height-small;
-    margin: .7rem 0; // Magic!
-    width: $fp-bar-width-small;
-  }
-  @if $bg == true { background: $fp-bar-bg-color; }
-  @if $round == true { @include radius($fp-round); }
-}
-
-@mixin fp-bar(
-$bg: $fp-bar-bg-color,
-$radius:false) {
-  @include fp-bar-base;
-  @include fp-bar-style;
-}
-
-@mixin fp-handle-base() {
-  cursor: $fp-handle-cursor;
-  display: inline-block;
-  position: absolute;
-  z-index: 1;
-  touch-action: manipulation; // This removes the 300ms touch delay on Windows 8
-}
-
-@mixin fp-handle-style(
-$bg: true,
-$round: false,
-$normal: false,
-$small: false) {
-  @if $bg == true { background: $fp-handle-bg-color; }
-  @if $round == true { @include radius($fp-round); }
-  @if $normal == true {
-    height: $fp-handle-size-normal;
-    // Pure fucking magic!
-    top: -1 * ($fp-handle-size-normal / 2) +
-      ($fp-bar-height-normal -
-      rem-calc((strip-unit($fp-bar-border-width) * 2))) / 2;
-    width: $fp-handle-size-normal;
-  }
-  @if $small == true {
-    height: $fp-handle-size-small;
-    // Pure fucking magic!
-    top: -1 * ($fp-handle-size-small / 2) +
-      ($fp-bar-height-small -
-      rem-calc((strip-unit($fp-bar-border-width) * 2))) / 2;
-    width: $fp-handle-size-small;
-  }
-
-  &:hover {
-    background: $fp-handle-bg-hover-color;
-  }
-}
-
-// Actual CSS Generation
+// Foundation player styles
 @include exports('foundation-player') {
+  // Common styles for player parts
   .foundation-player {
-    .range-slider {
-      @include fp-bar-base;
-      @include fp-bar-style($bg:true);
-    }
-    // Styles related to normal player size
-    &.normal {
-      .range-slider {
-        @include fp-bar-style($normal:true);
-      }
-
-      .range-slider-active-segment {
-        height: $fp-bar-height-normal - rem-calc((strip-unit($fp-bar-border-width) * 2));
-      }
-
-      .range-slider-handle {
-        @include fp-handle-style($normal:true);
-      }
-
-      .player-button,
-      .player-status,
-      .player-sliderbar {
-        font-size: $h4-font-size;
-        margin-left: ($h4-font-size / 2);
-      }
-
-      .player-button.play { // Override Play iconsize
-        font-size: $h1-font-size;
-        margin: ($h1-font-size / -2.5) 0;
-      }
-    }
-    // Styles related to small player size
-    &.small {
-      .range-slider {
-        @include fp-bar-style($small:true);
-      }
-
-      .range-slider-active-segment {
-        height: $fp-bar-height-small - rem-calc((strip-unit($fp-bar-border-width) * 2));
-      }
-
-      .range-slider-handle {
-        @include fp-handle-style($small:true);
-      }
-
-      .player-button,
-      .player-status,
-      .player-sliderbar {
-        font-size: $h5-font-size;
-        margin-left: ($h5-font-size / 2);
-      }
-
-      .player-button.play { // Override Play iconsize
-        font-size: $h3-font-size;
-        margin: ($h3-font-size / -4) 0;
-      }
+    .player {
+      margin: 0 auto; // Center player
     }
 
-    .range-slider-active-segment {
-      background: $fp-active-segment-bg-color;
-      border-bottom-left-radius: inherit;
-      border-top-left-radius: inherit;
-      display: inline-block;
-      position: absolute;
-    }
+    .player-progress {
+      cursor: col-resize;
 
-    .range-slider-handle {
-      @include fp-handle-base;
-      @include fp-handle-style($round:true, $bg:true);
+      .meter {
+        background: $fp-gradient-progess;
+      }
     }
 
     // Buttons and icons
     .player-button,
     .player-status {
-      color: $logo-color-orange;
+      color: $color-orange;
+      text-align: center;
     }
 
     .player-button {
-
       cursor: pointer;
+      margin-left: 0; // No margin for buttons
 
-      &.back em {
-        // Transform rewind button, i.e. flip horizontal
-        transform: scale(-1, 1);
+      &.rewind em {
+        transform: scale(-1, 1); // Transform button, i.e. flip horizontal
       }
 
       // Foundation Icons with gradient font
       em:before {
         background: $fp-gradient;
-        // http://caniuse.com/#search=background-clip
+        // Can't avoid -webkut http://caniuse.com/#search=background-clip
         -webkit-background-clip: text;
         color: transparent;
       }
 
       em:hover:before {
-        transform: scale($fp-button-hover-scale);
         background: $fp-gradient-hover;
+        // Can't avoid -webkut http://caniuse.com/#search=background-clip
         -webkit-background-clip: text;
+        transform: scale($fp-button-hover-scale);
       }
+    }
+  }
+  // Styles related to normal player size
+  .foundation-player.normal {
+
+    .player-button,
+    .player-status,
+    .player-progress {
+      font-size: $fp-font-size-normal;
+    }
+
+    .player-status,
+    .player-progress {
+      margin-left: ($fp-font-size-normal / 4);
+    }
+
+    .player-button {
+      width: $fp-font-size-normal * $base-line-height;
+
+      &.play { // Override Play iconsize
+        font-size: $fp-font-size-normal + 1;
+        // -1.7 is pretty magic here
+        margin: ($fp-font-size-normal / -1.7) 0;
+      }
+    }
+
+    .player-progress .progress {
+      height: $fp-progress-height-normal;
+      position: relative;
+      top: (($fp-font-size-normal * ($base-line-height + .1)) / 2) - ($fp-progress-height-normal / 2);
+      width: $fp-progress-width-normal;
+    }
+  }
+  // Styles related to small player size
+  .foundation-player.small {
+
+    .player-button,
+    .player-status,
+    .player-progress {
+      font-size: $fp-font-size-small;
+    }
+
+    .player-status,
+    .player-progress {
+      margin-left: ($fp-font-size-small / 4);
+    }
+
+    .player-button {
+      width: $fp-font-size-small * $base-line-height;
+
+      &.play { // Override Play iconsize
+        font-size: $fp-font-size-small + 1;
+        // -1.3 is pretty magic here
+        margin: ($fp-font-size-small / -1.3) 0;
+      }
+    }
+
+    .player-progress .progress {
+      height: $fp-progress-height-small;
+      position: relative;
+      top: (($fp-font-size-small * ($base-line-height + .1)) / 2) - ($fp-progress-height-small / 2);
+      width: $fp-progress-width-small;
     }
   }
 }

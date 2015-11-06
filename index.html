@@ -1,32 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
     <meta charset='utf-8'>
-    <title>Audio Player for Foundation! Boom!</title>
+    <title>HTML5 Audio Player for Zurb Foundation!</title>
     <!-- http://foundation.zurb.com/forum/posts/1863-foundation-cdn -->
     <link href='http://cdn.foundation5.zurb.com/foundation.css' rel='stylesheet' type='text/css'>
     <link href='./src/foundation-player.css' rel='stylesheet' type='text/css'>
     <link href='./src/foundation-icons/foundation-icons.css' rel='stylesheet' type='text/css'>
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js' type='text/javascript'></script>
     <script src='http://cdn.foundation5.zurb.com/foundation.js' type='text/javascript'></script>
-    <script src='http://cdn.rawgit.com/katspaugh/wavesurfer.js/master/dist/wavesurfer.min.js' type='text/javascript'></script>
     <script src='./src/foundation-player.js' type='text/javascript'></script>
     <script>
       $(document).ready(function($) {
         $(document).foundation();
-        // Direct load on start
-        $('.foundation-player.player-no-1').foundationPlayer({
-          loadURL: './src/ukulele.m4a', playOnStart: true
-        });
-        // Lazy load when tab become active
-        // This prevents issue when WaveSurfer can't calculate width
+        $('.foundation-player.no-1').foundationPlayer(); // Load on DOM ready
+        player = $('.foundation-player.no-1').data('FoundationPlayer');
         $('.foundation-player-tab').on('toggled', function (event, tab) {
-          window.tab = tab;
-          if(tab.hasClass('foundation-player-small')){
-            $('.foundation-player.player-no-2').foundationPlayer({
-              loadURL: './src/climbing.m4a', size: 'small'
-            });
+          if(tab.hasClass('foundation-player-normal')){ // Load when tab active
+            $('.foundation-player.no-2').foundationPlayer()
+          }
+          if(tab.hasClass('foundation-player-small')){ // Load when tab active
+            $('.foundation-player.no-3').foundationPlayer({size: 'small'});
           }
         });
       });
@@ -42,8 +36,11 @@
           and the
           <a href='https://github.com/qatsi/foundation-player.js/blob/master/index.html'>source</a>.
         </p>
-        <ul class='tabs foundation-player-tab' data-options='scroll_to_content: false' data-tab=''>
+        <ul class='tabs foundation-player-tab' data-tab=''>
           <li class='tab-title active'>
+            <a href='#sandbox'>API Sandbox</a>
+          </li>
+          <li class='tab-title foundation-player-normal'>
             <a href='#normal'>Normal</a>
           </li>
           <li class='tab-title foundation-player-small'>
@@ -52,67 +49,160 @@
         </ul>
         <hr>
         <div class='tabs-content'>
-          <div class='content active' id='normal'>
-            <p>
-              Regular player setup. Only one option is required:
-              <br>
-              <code>$('.player').foundationPlayer({loadURL: '/src/ukulele.m4a'});</code>
-            </p>
-            <div class='foundation-player player-no-1'>
-              <ul class='inline-list noselection'>
+          <div class='content active' id='sandbox'>
+            <div class='foundation-player no-1'>
+              <ul class='player inline-list noselect'>
                 <li class='player-button play'>
-                  <em class='fi-play'></em>
+                  <em class='fi-pause'></em>
                 </li>
                 <li class='player-button rewind'>
                   <em class='fi-refresh'></em>
                 </li>
-                <li class='player-status time'>
-                  <strong class='elapsed'>00:00</strong>
+                <li class='player-button volume'>
+                  <em class='fi-volume'></em>
                 </li>
-                <li class='player-sliderbar'>
-                  <div class='range-slider' data-options='initial: 0' data-slider>
-                    <span class='range-slider-handle' role='slider' tabindex='0'></span>
-                    <span class='range-slider-active-segment'></span>
+                <li class='player-status time'>
+                  <span class='elapsed'>00:00</span>
+                </li>
+                <li class='player-progress'>
+                  <div class='progress round'>
+                    <span class='meter'></span>
                   </div>
                 </li>
                 <li class='player-status time'>
-                  <strong class='remains'>00:00</strong>
+                  <span class='remains'>00:00</span>
+                </li>
+              </ul>
+              <audio>
+                <source src='http://kolber.github.io/audiojs/demos/mp3/juicy.mp3'>
+              </audio>
+            </div>
+            <!-- I know this is not good -->
+            <br>
+            <dl class='accordion' data-accordion=''>
+              <dd class='accordion-navigation'>
+                <a href='#info'>Intro</a>
+                <div class='content active' id='info'>
+                  <p>
+                    This is your sandbox for Foundation Player API.
+                    Once you have clicked this tab player has initialized and
+                    <code>player</code>
+                    global variable has appeared.
+                    Fill free to experiment in your browser's JavaScript console.
+                  </p>
+                </div>
+              </dd>
+              <dd class='accordion-navigation'>
+                <a href='#playback'>Playback control</a>
+                <div class='content' id='playback'>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                        <th>Returns</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <code>playPause()</code>
+                        </td>
+                        <td>
+                          This method
+                          <a onclick='player.playPause()'>toggles</a>
+                          play or pause state of player.
+                        </td>
+                        <td>
+                          <code>true</code>
+                          or
+                          <code>false</code>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <code>play()</code>
+                        </td>
+                        <td>...</td>
+                        <td>...</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </dd>
+              <dd class='accordion-navigation'>
+                <a href='#volume'>Volume control</a>
+                <div class='content' id='volume'>
+                  Table with API...
+                </div>
+              </dd>
+            </dl>
+          </div>
+          <div class='content' id='normal'>
+            <p>
+              Regular player setup. There is no options here.
+              <br>
+              <code>$('.foundation-player.no-2').foundationPlayer();</code>
+            </p>
+            <div class='foundation-player no-2'>
+              <ul class='player inline-list noselect'>
+                <li class='player-button play'>
+                  <em class='fi-pause'></em>
+                </li>
+                <li class='player-button rewind'>
+                  <em class='fi-refresh'></em>
                 </li>
                 <li class='player-button volume'>
                   <em class='fi-volume'></em>
                 </li>
+                <li class='player-status time'>
+                  <span class='elapsed'>00:00</span>
+                </li>
+                <li class='player-progress'>
+                  <div class='progress round'>
+                    <span class='meter'></span>
+                  </div>
+                </li>
+                <li class='player-status time'>
+                  <span class='remains'>00:00</span>
+                </li>
               </ul>
+              <audio>
+                <source src='./src/climbing.m4a'>
+              </audio>
             </div>
           </div>
           <div class='content' id='small'>
             <p>
               Small player setup:
-              <code>{ ... playOnStart: false, size: 'small' ... }</code>
+              <code>{ size: 'small' }</code>
             </p>
-            <div class='foundation-player player-no-2'>
-              <ul class='inline-list noselection'>
+            <div class='foundation-player no-3'>
+              <ul class='player inline-list noselect'>
                 <li class='player-button play'>
-                  <em class='fi-play'></em>
+                  <em class='fi-pause'></em>
                 </li>
                 <li class='player-button rewind'>
                   <em class='fi-refresh'></em>
                 </li>
-                <li class='player-status time'>
-                  <strong class='elapsed'>00:00</strong>
-                </li>
-                <li class='player-sliderbar'>
-                  <div class='range-slider' data-options='initial: 0' data-slider>
-                    <span class='range-slider-handle' role='slider' tabindex='0'></span>
-                    <span class='range-slider-active-segment'></span>
-                  </div>
-                </li>
-                <li class='player-status time'>
-                  <strong class='remains'>00:00</strong>
-                </li>
                 <li class='player-button volume'>
                   <em class='fi-volume'></em>
                 </li>
+                <li class='player-status time'>
+                  <span class='elapsed'>00:00</span>
+                </li>
+                <li class='player-progress'>
+                  <div class='progress round'>
+                    <span class='meter'></span>
+                  </div>
+                </li>
+                <li class='player-status time'>
+                  <span class='remains'>00:00</span>
+                </li>
               </ul>
+              <audio>
+                <source src='./src/ukulele.m4a'>
+              </audio>
             </div>
           </div>
         </div>
