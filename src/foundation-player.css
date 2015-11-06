@@ -56,9 +56,9 @@
     margin: -0.84559rem 0; }
 /* line 117, foundation-player.scss */
 .foundation-player.normal .player-progress .progress {
-  height: 0.9375rem;
+  height: 1.125rem;
   position: relative;
-  top: 0.68125rem;
+  top: 0.5875rem;
   width: 200px; }
 
 /* line 127, foundation-player.scss */
@@ -79,7 +79,7 @@
     margin: -0.86538rem 0; }
 /* line 148, foundation-player.scss */
 .foundation-player.small .player-progress .progress {
-  height: 0.625rem;
+  height: 0.75rem;
   position: relative;
-  top: 0.5875rem;
+  top: 0.525rem;
   width: 150px; }

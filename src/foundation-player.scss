@@ -27,8 +27,8 @@ $fp-font-size-small: rem-calc(18) !default;
 $fp-progress-width-normal: 200px !default;
 $fp-progress-width-small: $fp-progress-width-normal * .75 !default;
 // These numbers should be more or less reasonable
-$fp-progress-height-normal: rem-calc(15) !default;
-$fp-progress-height-small: rem-calc(10) !default;
+$fp-progress-height-normal: rem-calc(18) !default;
+$fp-progress-height-small: rem-calc(12) !default;
 // Button options
 // May cause 'quirks' in Safari
 $fp-button-hover-scale: 1.2 !default;
