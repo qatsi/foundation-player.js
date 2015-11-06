@@ -5,6 +5,7 @@ Dead simple player plugin for [Foundation](http://foundation.zurb.com/). The [de
 `Foundation-player.js` featuring:
 - Waveform generation
 - `Play`/`Puase` buttons!
+- Dimmed volume while scrubbing
 - All you looking from a player… will be added soon
 
 ## Install
