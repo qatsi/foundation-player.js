@@ -22,7 +22,7 @@
 # 3) Loading indicator
 # 5) Fix Safari quirks for buttons hover state
 # 6) Fixed buttons sizes to prefent overflow in hover state
-# 7) API Method to navigate to timestamp e.g. "02:10"
+# 7) API Method to navigate to timestamp e.g. '02:10'
 # 8) API Change size method
 
 # Nice to have:

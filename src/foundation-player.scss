@@ -31,7 +31,11 @@ $fp-progress-height-small: rem-calc(10);
 // Button options
 $fp-button-hover-scale: 1.1;
 
-// Actual CSS Generation
+// Auxillary styles
+.noselect {
+  user-select: none;
+}
+// Foundation player styles
 @include exports('foundation-player') {
 
   .foundation-player {
