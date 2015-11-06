@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var calculateChildrensWidth, hasCorrectOptions, prettyTime, stringPadLeft, swithClass;
+      var calculateChildrensWidth, prettyTime, stringPadLeft, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -14,9 +14,9 @@
 
       function FoundationPlayer(el, options) {
         this.options = $.extend({}, this.defaults, options);
-        this.wavesurfer = Object.create(WaveSurfer);
         this.$wrapper = $(el);
         this.$player = this.$wrapper.children('.player');
+        this.audio = this.$wrapper.children('audio').get(0);
         this.$play = this.$wrapper.find('.player-button.play em');
         this.$rewind = this.$wrapper.find('.player-button.rewind em');
         this.$volume = this.$wrapper.find('.player-button.volume em');
@@ -27,11 +27,7 @@
       }
 
       FoundationPlayer.prototype.init = function() {
-        if (!hasCorrectOptions(this.options)) {
-          return;
-        }
         this.setUpClassAndStyle();
-        this.setUpWaveSurfer();
         this.setUpButtonPlayPause();
         this.setUpButtonVolume();
         this.setUpButtonRewind();
@@ -44,32 +40,19 @@
       };
 
       FoundationPlayer.prototype.playerLoopFunctions = function() {
-        this.updatePlayedPercentageAttribute();
         this.updateButtonPlay();
         return this.updateTimeStatuses();
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {};
 
-      FoundationPlayer.prototype.play = function() {};
-
-      FoundationPlayer.prototype.setUpWaveSurfer = function() {
-        this.wavesurfer.init({
-          container: this.$wrapper[0],
-          waveColor: '#EEEEEE',
-          progressColor: '#DDDDDD',
-          cursorColor: 'transparent',
-          height: 96,
-          barWidth: 1,
-          skipLength: this.options.skipSeconds
-        });
-        this.wavesurfer.load(this.options.loadURL);
-        if (this.options.playOnStart) {
-          this.wavesurfer.on('ready', (function() {
-            this.wavesurfer.play();
-            return this.updateButtonPlay();
-          }).bind(this));
+      FoundationPlayer.prototype.playPause = function() {
+        if (this.audio.paused) {
+          this.audio.play();
+        } else {
+          this.audio.pause();
         }
+        return this.updateButtonPlay();
       };
 
       FoundationPlayer.prototype.setUpClassAndStyle = function() {
@@ -85,13 +68,12 @@
 
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
         return this.$play.bind('click', this, function(e) {
-          e.data.wavesurfer.playPause();
-          return e.data.updateButtonPlay();
+          return e.data.playPause();
         });
       };
 
       FoundationPlayer.prototype.updateButtonPlay = function() {
-        if (this.wavesurfer.isPlaying()) {
+        if (this.audio.paused) {
           return swithClass(this.$play, 'fi-pause', 'fi-play');
         } else {
           return swithClass(this.$play, 'fi-play', 'fi-pause');
@@ -125,22 +107,11 @@
       };
 
       FoundationPlayer.prototype.updateStatusElapsed = function() {
-        return this.$elapsed.text(prettyTime(this.wavesurfer.getCurrentTime()));
+        return this.$elapsed.text(prettyTime(this.audio.currentTime));
       };
 
       FoundationPlayer.prototype.updateStatusRemains = function() {
-        var w;
-        w = this.wavesurfer;
-        return this.$remains.text('-' + prettyTime(w.getDuration() - w.getCurrentTime()));
-      };
-
-      hasCorrectOptions = function(o) {
-        if (o.loadURL) {
-          return true;
-        } else {
-          console.error('Please specify `loadURL`. It has no default setings.');
-          return false;
-        }
+        return this.$remains.text('-' + prettyTime(this.audio.duration - this.audio.currentTime));
       };
 
       swithClass = function(element, p, n) {

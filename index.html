@@ -1,32 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
     <meta charset='utf-8'>
-    <title>Audio Player for Foundation! Boom!</title>
+    <title>HTML5 Audio Player for Zurb Foundation!</title>
     <!-- http://foundation.zurb.com/forum/posts/1863-foundation-cdn -->
     <link href='http://cdn.foundation5.zurb.com/foundation.css' rel='stylesheet' type='text/css'>
     <link href='./src/foundation-player.css' rel='stylesheet' type='text/css'>
     <link href='./src/foundation-icons/foundation-icons.css' rel='stylesheet' type='text/css'>
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js' type='text/javascript'></script>
     <script src='http://cdn.foundation5.zurb.com/foundation.js' type='text/javascript'></script>
-    <script src='http://cdn.rawgit.com/katspaugh/wavesurfer.js/master/dist/wavesurfer.min.js' type='text/javascript'></script>
     <script src='./src/foundation-player.js' type='text/javascript'></script>
     <script>
       $(document).ready(function($) {
         $(document).foundation();
-        // Direct load on start
-        $('.foundation-player.player-no-1').foundationPlayer({
-          loadURL: './src/ukulele.m4a', playOnStart: true
-        });
-        // Lazy load when tab become active
-        // This prevents issue when WaveSurfer can't calculate width
+        $('.foundation-player.no-1').foundationPlayer(); // Load on DOM ready
         $('.foundation-player-tab').on('toggled', function (event, tab) {
-          window.tab = tab;
-          if(tab.hasClass('foundation-player-small')){
-            $('.foundation-player.player-no-2').foundationPlayer({
-              loadURL: './src/climbing.m4a', size: 'small'
-            });
+          if(tab.hasClass('foundation-player-small')){ // Load when tab active
+            $('.foundation-player.no-2').foundationPlayer({size: 'small'});
           }
         });
       });
@@ -42,7 +32,7 @@
           and the
           <a href='https://github.com/qatsi/foundation-player.js/blob/master/index.html'>source</a>.
         </p>
-        <ul class='tabs foundation-player-tab' data-options='scroll_to_content: false' data-tab=''>
+        <ul class='tabs foundation-player-tab' data-tab=''>
           <li class='tab-title active'>
             <a href='#normal'>Normal</a>
           </li>
@@ -54,11 +44,11 @@
         <div class='tabs-content'>
           <div class='content active' id='normal'>
             <p>
-              Regular player setup. Only one option is required:
+              Regular player setup. There is no options here.
               <br>
-              <code>$('.player').foundationPlayer({loadURL: '/src/ukulele.m4a'});</code>
+              <code>$('.foundation-player.no-1').foundationPlayer();</code>
             </p>
-            <div class='foundation-player player-no-1'>
+            <div class='foundation-player no-1'>
               <ul class='player inline-list noselection'>
                 <li class='player-button play'>
                   <em class='fi-play'></em>
@@ -71,7 +61,7 @@
                 </li>
                 <li class='player-progress'>
                   <div class='progress round'>
-                    <span class='meter' style='width: 30%'></span>
+                    <span class='meter' style='width: 45%'></span>
                   </div>
                 </li>
                 <li class='player-status time'>
@@ -81,14 +71,17 @@
                   <em class='fi-volume'></em>
                 </li>
               </ul>
+              <audio>
+                <source src='./src/climbing.m4a' type='audio/mp4'>
+              </audio>
             </div>
           </div>
           <div class='content' id='small'>
             <p>
               Small player setup:
-              <code>{ ... playOnStart: false, size: 'small' ... }</code>
+              <code>{ size: 'small' }</code>
             </p>
-            <div class='foundation-player player-no-2'>
+            <div class='foundation-player no-2'>
               <ul class='player inline-list noselection'>
                 <li class='player-button play'>
                   <em class='fi-play'></em>
@@ -101,7 +94,7 @@
                 </li>
                 <li class='player-progress'>
                   <div class='progress round'>
-                    <span class='meter' style='width: 30%'></span>
+                    <span class='meter' style='width: 45%'></span>
                   </div>
                 </li>
                 <li class='player-status time'>
@@ -111,6 +104,9 @@
                   <em class='fi-volume'></em>
                 </li>
               </ul>
+              <audio>
+                <source src='./src/ukulele.m4a' type='audio/mp4'>
+              </audio>
             </div>
           </div>
         </div>

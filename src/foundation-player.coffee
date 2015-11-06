@@ -20,11 +20,6 @@
 # 1) XXX Reflow bug: set position to slider, resize window : - (
 # 2) Shut others when it statrs
 # 3) Loading indicator
-# 4) Smart redraw of Waveform
-#   wavesurfer.params.height = (waveformFrame.offsetHeight - 30);
-#   //30px is the time code height, may different in your environment
-#   wavesurfer.drawer.setHeight((waveformFrame.offsetHeight - 30));
-#   wavesurfer.drawBuffer();
 # 5) Fix Safari quirks for buttons hover state
 # 6) Fixed buttons sizes to prefent overflow in hover state
 # 7) API Method to navigate to timestamp e.g. "02:10"
@@ -45,10 +40,10 @@
 
     constructor: (el, options) ->
       @options = $.extend({}, @defaults, options)
-      @wavesurfer = Object.create WaveSurfer
       # Elements
       @$wrapper = $(el)
       @$player = @$wrapper.children('.player')
+      @audio = @$wrapper.children('audio').get(0)
       @$play = @$wrapper.find('.player-button.play em')
       @$rewind = @$wrapper.find('.player-button.rewind em')
       @$volume = @$wrapper.find('.player-button.volume em')
@@ -62,10 +57,8 @@
     # Additional plugin methods go here
     init: ->
       # Init function
-      return if !hasCorrectOptions(@options) # Check passed options
       @setUpClassAndStyle()    # Setup default class
       # Player setup
-      @setUpWaveSurfer()      # WaveSurfer setup
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
       @setUpButtonRewind()    # Set up rewind button
@@ -76,7 +69,6 @@
     setUpMainLoop: ->
       @timer = setInterval @playerLoopFunctions.bind(@), 100
     playerLoopFunctions: ->
-      @updatePlayedPercentageAttribute()
       @updateButtonPlay() # XXX Only when stopped?
       @updateTimeStatuses()
 
@@ -85,34 +77,14 @@
       # @$wrapper.html(@options.paramA + ': ' + echo)
       return
 
-    # TODO: play()
-    play: ->
-      return
+    playPause: ->
+      if @audio.paused # Update button class
+        @audio.play()
+      else
+        @audio.pause()
+      @updateButtonPlay()
 
-    # XXX WaveSurfer setup
-    setUpWaveSurfer: ->
-      @wavesurfer.init
-        # Customizable stuff
-        # Opiniated defaults for WaveSurfer
-        container: @$wrapper[0] # First guy...
-        # Please create an issue if need need something to customize
-        waveColor: '#EEEEEE'
-        progressColor: '#DDDDDD'
-        cursorColor: 'transparent' # bug with hideScrollbar: true?
-        # hideScrollbar: true
-        height: 96
-        barWidth: 1
-        skipLength: @options.skipSeconds
-      # Perform load
-      @wavesurfer.load @options.loadURL
-      # Set 'ready' callback
-      if @options.playOnStart
-        # play() must be called as callback in local variable
-        @wavesurfer.on 'ready', (->
-          @wavesurfer.play()
-          @updateButtonPlay()
-        ).bind(@)
-      return
+    # XXX @wavesurfer
     # UI =======================================================================
     # Setup default class
     setUpClassAndStyle: ->
@@ -129,11 +101,10 @@
     # Set up Play/Pause
     setUpButtonPlayPause: ->
       @$play.bind 'click', @, (e) ->
-        e.data.wavesurfer.playPause() # Play or pause
-        e.data.updateButtonPlay()
+        e.data.playPause() # Play or pause
     # Update Play/Pause
     updateButtonPlay: ->
-      if @wavesurfer.isPlaying() # Update button class
+      if @audio.paused # Update button class
         swithClass @$play, 'fi-pause', 'fi-play'
       else
         swithClass @$play, 'fi-play', 'fi-pause'
@@ -160,21 +131,11 @@
       @updateStatusElapsed()
       @updateStatusRemains()
     updateStatusElapsed: -> # Update $elapsed time status
-      @$elapsed.text prettyTime @wavesurfer.getCurrentTime()
+      @$elapsed.text prettyTime @audio.currentTime
     updateStatusRemains: -> # Update $remains time status
-      w = @wavesurfer
-      @$remains.text '-' + prettyTime w.getDuration()-w.getCurrentTime()
+      @$remains.text '-' + prettyTime @audio.duration-@audio.currentTime
 
     # Helpers ==================================================================
-    # Check passed options
-    hasCorrectOptions = (o) ->
-      # 1. Ensure loadURL is present
-      if o.loadURL
-        return true
-      else
-        console.error 'Please specify `loadURL`. It has no default setings.'
-        return false
-
     # Some relly internal stuff goes here
     swithClass = (element, p, n) ->
       $(element).addClass(p).removeClass(n)
