@@ -1,59 +1,63 @@
-/* line 35, foundation-player.scss */
+/* line 37, foundation-player.scss */
 .noselect {
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
   user-select: none; }
 
-/* line 42, foundation-player.scss */
+/* line 48, foundation-player.scss */
 .foundation-player .player {
   margin: 0 auto; }
-/* line 49, foundation-player.scss */
+/* line 55, foundation-player.scss */
 .foundation-player.normal .player-button,
 .foundation-player.normal .player-status {
   font-size: 1.4375rem;
   margin-left: 0.71875rem; }
-/* line 55, foundation-player.scss */
+/* line 61, foundation-player.scss */
 .foundation-player.normal .player-button.play {
   font-size: 2.75rem;
   margin: -1.1rem 0; }
-/* line 60, foundation-player.scss */
+/* line 66, foundation-player.scss */
 .foundation-player.normal .player-progress .progress {
   height: 0.9375rem;
   position: relative;
   top: 0.68125rem;
   width: 150px; }
-/* line 70, foundation-player.scss */
+/* line 76, foundation-player.scss */
 .foundation-player.small .player-button,
 .foundation-player.small .player-status {
   font-size: 1.125rem;
   margin-left: 0.5625rem; }
-/* line 76, foundation-player.scss */
+/* line 82, foundation-player.scss */
 .foundation-player.small .player-button.play {
   font-size: 1.6875rem;
   margin: -0.42188rem 0; }
-/* line 81, foundation-player.scss */
+/* line 87, foundation-player.scss */
 .foundation-player.small .player-progress .progress {
   height: 0.625rem;
   position: relative;
   top: 0.5875rem;
   width: 75px; }
-/* line 90, foundation-player.scss */
+/* line 96, foundation-player.scss */
 .foundation-player .player-progress .meter {
   background: linear-gradient(-15deg, #d91e18, #f9690e); }
-/* line 96, foundation-player.scss */
+/* line 102, foundation-player.scss */
 .foundation-player .player-button,
 .foundation-player .player-status {
   color: #f9690e; }
-/* line 101, foundation-player.scss */
+/* line 107, foundation-player.scss */
 .foundation-player .player-button {
   cursor: pointer; }
-  /* line 104, foundation-player.scss */
+  /* line 110, foundation-player.scss */
   .foundation-player .player-button.rewind em {
     transform: scale(-1, 1); }
-  /* line 109, foundation-player.scss */
+  /* line 115, foundation-player.scss */
   .foundation-player .player-button em:before {
     background: linear-gradient(-15deg, #d91e18, #f9690e);
     -webkit-background-clip: text;
     color: transparent; }
-  /* line 116, foundation-player.scss */
+  /* line 122, foundation-player.scss */
   .foundation-player .player-button em:hover:before {
     background: linear-gradient(-15deg, #d91e18, #db0a5b);
     -webkit-background-clip: text;

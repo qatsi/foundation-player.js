@@ -44,7 +44,6 @@
       # Look and feel options
       playOnStart: true     # play as soon as it's loaded
       skipSeconds: 10       # how many we want to skip
-      # Waveform options
 
     constructor: (el, options) ->
       @options = $.extend({}, @defaults, options)
@@ -57,8 +56,11 @@
       @$volume = @$wrapper.find('.player-button.volume em')
       @$elapsed = @$wrapper.find('.player-status.time .elapsed')
       @$remains = @$wrapper.find('.player-status.time .remains')
+      @$progress = @$wrapper.find('.player-progress .progress')
+      @$played = @$progress.find('.meter')
       # State
       @timer = null
+      @played = 0
       # Calls
       @init()
 
@@ -70,16 +72,17 @@
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
       @setUpButtonRewind()    # Set up rewind button
+      @setUpPlayedProgress()  # Set up played progress meter
       @updateTimeStatuses()   # Update both time statuses
       @setUpMainLoop()
 
     # Main loop
     setUpMainLoop: ->
-      @timer = setInterval @playerLoopFunctions.bind(@), 100
+      @timer = setInterval @playerLoopFunctions.bind(@), 200
     playerLoopFunctions: ->
       @updateButtonPlay() # XXX Only when stopped?
       @updateTimeStatuses()
-
+      @updatePlayedProgress()
     # TODO: seekToTime()
     seekToTime: (time) -> # Just a dummy place holder
       # @$wrapper.html(@options.paramA + ': ' + echo)
@@ -92,14 +95,11 @@
         @audio.pause()
       @updateButtonPlay()
 
-    # XXX @wavesurfer
     # UI =======================================================================
     # Setup default class
     setUpClassAndStyle: ->
       @$wrapper.addClass(@options.size)
-
       # Calculate player width
-      # XXX Added initial extra due to 2px error...
       # TODO Refactor to smaller function and call it on window resize :-(
       actualWidth = @$player.width()
       playerWidth = 0
@@ -132,6 +132,16 @@
       @$rewind.on 'click', @, (e) ->
         e.data.wavesurfer.skipBackward()
         # XXX Update progress bar
+    # Progress =================================================================
+    setUpPlayedProgress: ->
+      # Deuglification of round progress bar when it 0% width
+      if @$progress.hasClass('round')
+        semiHeight = @$played.height()/2
+        @$played.css 'padding', "0 #{semiHeight}px"
+      @$played.css 'width', @played + '%'
+    updatePlayedProgress: ->
+      @played = Math.round @audio.currentTime / @audio.duration * 100
+      @$played.css 'width', @played + '%'
     # Status ===================================================================
     # Update all statuses
     # Gets updated in loop

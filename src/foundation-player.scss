@@ -32,7 +32,13 @@ $fp-progress-height-small: rem-calc(10);
 $fp-button-hover-scale: 1.1;
 
 // Auxillary styles
+// Disable selection
+// As seen here http://stackoverflow.com/questions/826782/
 .noselect {
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
   user-select: none;
 }
 // Foundation player styles

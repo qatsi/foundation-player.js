@@ -22,7 +22,10 @@
         this.$volume = this.$wrapper.find('.player-button.volume em');
         this.$elapsed = this.$wrapper.find('.player-status.time .elapsed');
         this.$remains = this.$wrapper.find('.player-status.time .remains');
+        this.$progress = this.$wrapper.find('.player-progress .progress');
+        this.$played = this.$progress.find('.meter');
         this.timer = null;
+        this.played = 0;
         this.init();
       }
 
@@ -31,17 +34,19 @@
         this.setUpButtonPlayPause();
         this.setUpButtonVolume();
         this.setUpButtonRewind();
+        this.setUpPlayedProgress();
         this.updateTimeStatuses();
         return this.setUpMainLoop();
       };
 
       FoundationPlayer.prototype.setUpMainLoop = function() {
-        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 100);
+        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 200);
       };
 
       FoundationPlayer.prototype.playerLoopFunctions = function() {
         this.updateButtonPlay();
-        return this.updateTimeStatuses();
+        this.updateTimeStatuses();
+        return this.updatePlayedProgress();
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {};
@@ -99,6 +104,20 @@
         return this.$rewind.on('click', this, function(e) {
           return e.data.wavesurfer.skipBackward();
         });
+      };
+
+      FoundationPlayer.prototype.setUpPlayedProgress = function() {
+        var semiHeight;
+        if (this.$progress.hasClass('round')) {
+          semiHeight = this.$played.height() / 2;
+          this.$played.css('padding', "0 " + semiHeight + "px");
+        }
+        return this.$played.css('width', this.played + '%');
+      };
+
+      FoundationPlayer.prototype.updatePlayedProgress = function() {
+        this.played = Math.round(this.audio.currentTime / this.audio.duration * 100);
+        return this.$played.css('width', this.played + '%');
       };
 
       FoundationPlayer.prototype.updateTimeStatuses = function() {

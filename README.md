@@ -59,6 +59,10 @@ Small cheatsheet with audio MIME types:
 - `audio/wav` .wav
 - `audio/webm` .webm
 
+## Tips
+
+- Add `.noselect` to player's elements or to whole player
+
 ## Todo
 - Playlists
 - `Next`/`Prev` buttons

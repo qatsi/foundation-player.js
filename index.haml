@@ -24,8 +24,7 @@
       });
   -# Prerender player
   - player = capture_haml do
-    -# TODO: Add .noselection styles
-    %ul.player.inline-list.noselection
+    %ul.player.inline-list.noselect
       %li.player-button.play
         %em.fi-pause
       %li.player-button.rewind
@@ -34,7 +33,7 @@
         %span.elapsed 00:00
       %li.player-progress
         .progress.round
-          %span.meter{ style:'width: 45%' }
+          %span.meter
       %li.player-status.time
         %span.remains 00:00
       %li.player-button.volume
