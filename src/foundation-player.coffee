@@ -25,8 +25,16 @@
 # 7) API Method to navigate to timestamp e.g. '02:10'
 # 8) API Change size method
 
-# Nice to have:
-# 1) Highlight table of contents on wavaform e.g. dots or bars
+# Nice to or *must* have:
+# 1) Highlight table of contents on progress bar e.g. dots or bars
+# 2) Ability to manage many <audio> elements via playlist
+# 3) Check is it possible to get meta information from audio
+# 4) Buffering option for playlist items and single media-file
+# 5) Next/Previous buttons when necessary
+# 6) Buffering status aka. load indicator
+# 7) Mobile actions like touch and etc.
+# 8) Mobile "first" :-(
+# 9) Show meta information when possible
 
 (($, window) ->
   # Define the plugin class
