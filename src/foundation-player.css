@@ -9,56 +9,74 @@
 /* line 48, foundation-player.scss */
 .foundation-player .player {
   margin: 0 auto; }
-/* line 55, foundation-player.scss */
+/* line 53, foundation-player.scss */
+.foundation-player .player-progress .meter {
+  background: linear-gradient(25deg, #d91e18, #f9690e); }
+/* line 59, foundation-player.scss */
+.foundation-player .player-button,
+.foundation-player .player-status {
+  color: #f9690e;
+  text-align: center; }
+/* line 65, foundation-player.scss */
+.foundation-player .player-button {
+  cursor: pointer;
+  margin-left: 0; }
+  /* line 69, foundation-player.scss */
+  .foundation-player .player-button.rewind em {
+    transform: scale(-1, 1); }
+  /* line 74, foundation-player.scss */
+  .foundation-player .player-button em:before {
+    background: linear-gradient(25deg, #d91e18, #f9690e);
+    -webkit-background-clip: text;
+    color: transparent; }
+  /* line 81, foundation-player.scss */
+  .foundation-player .player-button em:hover:before {
+    background: linear-gradient(25deg, #d91e18, #db0a5b);
+    -webkit-background-clip: text;
+    transform: scale(1.1); }
+
+/* line 92, foundation-player.scss */
 .foundation-player.normal .player-button,
-.foundation-player.normal .player-status {
-  font-size: 1.4375rem;
-  margin-left: 0.71875rem; }
-/* line 61, foundation-player.scss */
-.foundation-player.normal .player-button.play {
-  font-size: 2.75rem;
-  margin: -1.1rem 0; }
-/* line 66, foundation-player.scss */
+.foundation-player.normal .player-status,
+.foundation-player.normal .player-progress {
+  font-size: 1.4375rem; }
+/* line 98, foundation-player.scss */
+.foundation-player.normal .player-status,
+.foundation-player.normal .player-progress {
+  margin-left: 0.35938rem; }
+/* line 103, foundation-player.scss */
+.foundation-player.normal .player-button {
+  width: 2.15625rem; }
+  /* line 106, foundation-player.scss */
+  .foundation-player.normal .player-button.play {
+    font-size: 2.75rem;
+    margin: -1.1rem 0; }
+/* line 112, foundation-player.scss */
 .foundation-player.normal .player-progress .progress {
   height: 0.9375rem;
   position: relative;
   top: 0.68125rem;
-  width: 150px; }
-/* line 76, foundation-player.scss */
+  width: 250px; }
+
+/* line 122, foundation-player.scss */
 .foundation-player.small .player-button,
-.foundation-player.small .player-status {
-  font-size: 1.125rem;
-  margin-left: 0.5625rem; }
-/* line 82, foundation-player.scss */
-.foundation-player.small .player-button.play {
-  font-size: 1.6875rem;
-  margin: -0.42188rem 0; }
-/* line 87, foundation-player.scss */
+.foundation-player.small .player-status,
+.foundation-player.small .player-progress {
+  font-size: 1.125rem; }
+/* line 128, foundation-player.scss */
+.foundation-player.small .player-status,
+.foundation-player.small .player-progress {
+  margin-left: 0.28125rem; }
+/* line 133, foundation-player.scss */
+.foundation-player.small .player-button {
+  width: 1.6875rem; }
+  /* line 136, foundation-player.scss */
+  .foundation-player.small .player-button.play {
+    font-size: 1.6875rem;
+    margin: -0.42188rem 0; }
+/* line 142, foundation-player.scss */
 .foundation-player.small .player-progress .progress {
   height: 0.625rem;
   position: relative;
   top: 0.5875rem;
-  width: 75px; }
-/* line 96, foundation-player.scss */
-.foundation-player .player-progress .meter {
-  background: linear-gradient(-15deg, #d91e18, #f9690e); }
-/* line 102, foundation-player.scss */
-.foundation-player .player-button,
-.foundation-player .player-status {
-  color: #f9690e; }
-/* line 107, foundation-player.scss */
-.foundation-player .player-button {
-  cursor: pointer; }
-  /* line 110, foundation-player.scss */
-  .foundation-player .player-button.rewind em {
-    transform: scale(-1, 1); }
-  /* line 115, foundation-player.scss */
-  .foundation-player .player-button em:before {
-    background: linear-gradient(-15deg, #d91e18, #f9690e);
-    -webkit-background-clip: text;
-    color: transparent; }
-  /* line 122, foundation-player.scss */
-  .foundation-player .player-button em:hover:before {
-    background: linear-gradient(-15deg, #d91e18, #db0a5b);
-    -webkit-background-clip: text;
-    transform: scale(1.1); }
+  width: 187.5px; }

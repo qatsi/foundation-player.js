@@ -17,24 +17,23 @@
 #   `.elapsed` is actual target to update
 
 # TODO:
-# 1) XXX Reflow bug: set position to slider, resize window : - (
-# 2) Shut others when it statrs
-# 3) Loading indicator
-# 5) Fix Safari quirks for buttons hover state
-# 6) Fixed buttons sizes to prefent overflow in hover state
-# 7) API Method to navigate to timestamp e.g. '02:10'
-# 8) API Change size method
+# - Shut others when it statrs
+# - Loading indicator
+# - Fix Safari quirks for buttons hover state
+# - Pressed state for buttons
+# - API Method to navigate to timestamp e.g. '02:10'
+# - API Change size method
 
 # Nice to or *must* have:
-# 1) Highlight table of contents on progress bar e.g. dots or bars
-# 2) Ability to manage many <audio> elements via playlist
-# 3) Check is it possible to get meta information from audio
-# 4) Buffering option for playlist items and single media-file
-# 5) Next/Previous buttons when necessary
-# 6) Buffering status aka. load indicator
-# 7) Mobile actions like touch and etc.
-# 8) Mobile "first" :-(
-# 9) Show meta information when possible
+# - Highlight table of contents on progress bar e.g. dots or bars
+# - Ability to manage many <audio> elements via playlist
+# - Check is it possible to get meta information from audio
+# - Buffering option for playlist items and single media-file
+# - Next/Previous buttons when necessary
+# - Buffering status aka. load indicator
+# - Mobile actions like touch and etc.
+# - Mobile "first" :-(
+# - Show meta information when possible
 
 (($, window) ->
   # Define the plugin class

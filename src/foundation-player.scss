@@ -20,11 +20,11 @@ $logo-color-red: #d91e18;
 $logo-color-orange: #f9690e;
 $logo-color-pink: #db0a5b;
 // Gradients
-$fp-gradient: linear-gradient(-15deg, $logo-color-red, $logo-color-orange);
-$fp-gradient-hover: linear-gradient(-15deg, $logo-color-red, $logo-color-pink);
+$fp-gradient: linear-gradient(25deg, $logo-color-red, $logo-color-orange);
+$fp-gradient-hover: linear-gradient(25deg, $logo-color-red, $logo-color-pink);
 // Progress bar size
-$fp-progress-width-normal: 150px;
-$fp-progress-width-small: $fp-progress-width-normal * .5;
+$fp-progress-width-normal: 250px;
+$fp-progress-width-small: $fp-progress-width-normal * .75;
 // These numbers should be more or less reasonable
 $fp-progress-height-normal: rem-calc(15);
 $fp-progress-height-small: rem-calc(10);
@@ -43,53 +43,10 @@ $fp-button-hover-scale: 1.1;
 }
 // Foundation player styles
 @include exports('foundation-player') {
-
+  // Common styles for player parts
   .foundation-player {
     .player {
-      margin: 0 auto;
-    }
-
-    // Styles related to normal player size
-    &.normal {
-
-      .player-button,
-      .player-status {
-        font-size: $h4-font-size;
-        margin-left: ($h4-font-size / 2);
-      }
-
-      .player-button.play { // Override Play iconsize
-        font-size: $h1-font-size;
-        margin: ($h1-font-size / -2.5) 0;
-      }
-
-      .player-progress .progress {
-        height: $fp-progress-height-normal;
-        position: relative;
-        top: (($h4-font-size * ($base-line-height + .1)) / 2) - ($fp-progress-height-normal / 2);
-        width: $fp-progress-width-normal;
-      }
-    }
-    // Styles related to small player size
-    &.small {
-
-      .player-button,
-      .player-status {
-        font-size: $h5-font-size;
-        margin-left: ($h5-font-size / 2);
-      }
-
-      .player-button.play { // Override Play iconsize
-        font-size: $h3-font-size;
-        margin: ($h3-font-size / -4) 0;
-      }
-
-      .player-progress .progress {
-        height: $fp-progress-height-small;
-        position: relative;
-        top: (($h5-font-size * ($base-line-height + .1)) / 2) - ($fp-progress-height-small / 2);
-        width: $fp-progress-width-small;
-      }
+      margin: 0 auto; // Center player
     }
 
     .player-progress {
@@ -102,10 +59,12 @@ $fp-button-hover-scale: 1.1;
     .player-button,
     .player-status {
       color: $logo-color-orange;
+      text-align: center;
     }
 
     .player-button {
       cursor: pointer;
+      margin-left: 0;
 
       &.rewind em {
         transform: scale(-1, 1); // Transform button, i.e. flip horizontal
@@ -125,6 +84,66 @@ $fp-button-hover-scale: 1.1;
         -webkit-background-clip: text;
         transform: scale($fp-button-hover-scale);
       }
+    }
+  }
+  // Styles related to normal player size
+  .foundation-player.normal {
+
+    .player-button,
+    .player-status,
+    .player-progress {
+      font-size: $h4-font-size;
+    }
+
+    .player-status,
+    .player-progress {
+      margin-left: ($h4-font-size / 4);
+    }
+
+    .player-button {
+      width: $h4-font-size * $base-line-height;
+
+      &.play { // Override Play iconsize
+        font-size: $h1-font-size;
+        margin: ($h1-font-size / -2.5) 0;
+      }
+    }
+
+    .player-progress .progress {
+      height: $fp-progress-height-normal;
+      position: relative;
+      top: (($h4-font-size * ($base-line-height + .1)) / 2) - ($fp-progress-height-normal / 2);
+      width: $fp-progress-width-normal;
+    }
+  }
+  // Styles related to small player size
+  .foundation-player.small {
+
+    .player-button,
+    .player-status,
+    .player-progress {
+      font-size: $h5-font-size;
+    }
+
+    .player-status,
+    .player-progress {
+      margin-left: ($h5-font-size / 4);
+    }
+
+    .player-button {
+      width: $h5-font-size * $base-line-height;
+
+      &.play { // Override Play iconsize
+        font-size: $h3-font-size;
+        margin: ($h3-font-size / -4) 0;
+      }
+    }
+
+    .player-progress .progress {
+      height: $fp-progress-height-small;
+      position: relative;
+      top: (($h5-font-size * ($base-line-height + .1)) / 2) - ($fp-progress-height-small / 2);
+      width: $fp-progress-width-small;
     }
   }
 }
