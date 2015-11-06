@@ -1,12 +1,9 @@
 @import 'foundation/functions';
 
-// Units and sizes (Foundation defaults)
-$h1-font-size: rem-calc(44);
-$h3-font-size: rem-calc(27);
-$h4-font-size: rem-calc(23);
-$h5-font-size: rem-calc(18);
+// Some Foundation defaults
 $global-rounded: 1000px !default;
 $base-line-height: 1.5 !default;
+
 // Monkey path of radius mixin
 @mixin radius($radius:$global-radius) {
   @if $radius {
@@ -22,6 +19,10 @@ $color-pink: #db0a5b !default;
 // Gradients
 $fp-gradient: linear-gradient(5deg, $color-red, $color-orange) !default;
 $fp-gradient-hover: linear-gradient(5deg, $color-red, $color-pink) !default;
+$fp-gradient-progess: $fp-gradient;
+// Font sizes
+$fp-font-size-normal: rem-calc(23) !default;
+$fp-font-size-small: rem-calc(18) !default;
 // Progress bar size
 $fp-progress-width-normal: 200px !default;
 $fp-progress-width-small: $fp-progress-width-normal * .75 !default;
@@ -33,8 +34,7 @@ $fp-progress-height-small: rem-calc(10) !default;
 $fp-button-hover-scale: 1.2 !default;
 
 // Auxillary styles
-// Disable selection
-// As seen here http://stackoverflow.com/questions/826782/
+// Disable selection. Seen here http://stackoverflow.com/questions/826782/
 .noselect {
   -webkit-touch-callout: none;
   -moz-user-select: none;
@@ -42,6 +42,7 @@ $fp-button-hover-scale: 1.2 !default;
   -webkit-user-select: none;
   user-select: none;
 }
+
 // Foundation player styles
 @include exports('foundation-player') {
   // Common styles for player parts
@@ -51,8 +52,10 @@ $fp-button-hover-scale: 1.2 !default;
     }
 
     .player-progress {
+      cursor: col-resize;
+
       .meter {
-        background: $fp-gradient;
+        background: $fp-gradient-progess;
       }
     }
 
@@ -65,7 +68,7 @@ $fp-button-hover-scale: 1.2 !default;
 
     .player-button {
       cursor: pointer;
-      margin-left: 0;
+      margin-left: 0; // No margin for buttons
 
       &.rewind em {
         transform: scale(-1, 1); // Transform button, i.e. flip horizontal
@@ -93,27 +96,28 @@ $fp-button-hover-scale: 1.2 !default;
     .player-button,
     .player-status,
     .player-progress {
-      font-size: $h4-font-size;
+      font-size: $fp-font-size-normal;
     }
 
     .player-status,
     .player-progress {
-      margin-left: ($h4-font-size / 4);
+      margin-left: ($fp-font-size-normal / 4);
     }
 
     .player-button {
-      width: $h4-font-size * $base-line-height;
+      width: $fp-font-size-normal * $base-line-height;
 
       &.play { // Override Play iconsize
-        font-size: $h1-font-size;
-        margin: ($h1-font-size / -2.5) 0;
+        font-size: $fp-font-size-normal + 1;
+        // -1.7 is pretty magic here
+        margin: ($fp-font-size-normal / -1.7) 0;
       }
     }
 
     .player-progress .progress {
       height: $fp-progress-height-normal;
       position: relative;
-      top: (($h4-font-size * ($base-line-height + .1)) / 2) - ($fp-progress-height-normal / 2);
+      top: (($fp-font-size-normal * ($base-line-height + .1)) / 2) - ($fp-progress-height-normal / 2);
       width: $fp-progress-width-normal;
     }
   }
@@ -123,27 +127,28 @@ $fp-button-hover-scale: 1.2 !default;
     .player-button,
     .player-status,
     .player-progress {
-      font-size: $h5-font-size;
+      font-size: $fp-font-size-small;
     }
 
     .player-status,
     .player-progress {
-      margin-left: ($h5-font-size / 4);
+      margin-left: ($fp-font-size-small / 4);
     }
 
     .player-button {
-      width: $h5-font-size * $base-line-height;
+      width: $fp-font-size-small * $base-line-height;
 
       &.play { // Override Play iconsize
-        font-size: $h3-font-size;
-        margin: ($h3-font-size / -4) 0;
+        font-size: $fp-font-size-small + 1;
+        // -1.3 is pretty magic here
+        margin: ($fp-font-size-small / -1.3) 0;
       }
     }
 
     .player-progress .progress {
       height: $fp-progress-height-small;
       position: relative;
-      top: (($h5-font-size * ($base-line-height + .1)) / 2) - ($fp-progress-height-small / 2);
+      top: (($fp-font-size-small * ($base-line-height + .1)) / 2) - ($fp-progress-height-small / 2);
       width: $fp-progress-width-small;
     }
   }
