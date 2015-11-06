@@ -87,13 +87,15 @@
 
       FoundationPlayer.prototype.setUpButtonVolume = function() {
         return this.$volume.bind('click', this, function(e) {
-          e.data.wavesurfer.toggleMute();
-          return e.data.updateButtonVolume();
+          var s;
+          s = e.data;
+          s.audio.muted = !s.audio.muted;
+          return s.updateButtonVolume();
         });
       };
 
       FoundationPlayer.prototype.updateButtonVolume = function() {
-        if (this.wavesurfer.isMuted) {
+        if (this.audio.muted) {
           return swithClass(this.$volume, 'fi-volume-strike', 'fi-volume');
         } else {
           return swithClass(this.$volume, 'fi-volume', 'fi-volume-strike');
@@ -102,7 +104,11 @@
 
       FoundationPlayer.prototype.setUpButtonRewind = function() {
         return this.$rewind.on('click', this, function(e) {
-          return e.data.wavesurfer.skipBackward();
+          var s;
+          s = e.data;
+          s.audio.currentTime = s.audio.currentTime - s.options.skipSeconds;
+          s.updatePlayedProgress();
+          return s.updateTimeStatuses();
         });
       };
 

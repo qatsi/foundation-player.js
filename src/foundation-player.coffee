@@ -119,19 +119,22 @@
     # Set up volume button
     setUpButtonVolume: ->
       @$volume.bind 'click', @, (e) ->
-        e.data.wavesurfer.toggleMute() # Play or pause
-        e.data.updateButtonVolume()
+        s = e.data
+        s.audio.muted = !s.audio.muted
+        s.updateButtonVolume()
     # Update volume button
     updateButtonVolume: ->
-      if @wavesurfer.isMuted
+      if @audio.muted
         swithClass @$volume, 'fi-volume-strike', 'fi-volume'
       else
         swithClass @$volume, 'fi-volume', 'fi-volume-strike'
     # Set up rewind button
     setUpButtonRewind: ->
       @$rewind.on 'click', @, (e) ->
-        e.data.wavesurfer.skipBackward()
-        # XXX Update progress bar
+        s = e.data
+        s.audio.currentTime = s.audio.currentTime - s.options.skipSeconds
+        s.updatePlayedProgress()
+        s.updateTimeStatuses()
     # Progress =================================================================
     setUpPlayedProgress: ->
       # Deuglification of round progress bar when it 0% width
