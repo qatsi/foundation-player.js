@@ -16,9 +16,13 @@
       $(document).ready(function($) {
         $(document).foundation();
         $('.foundation-player.no-1').foundationPlayer(); // Load on DOM ready
+        player = $('.foundation-player.no-1').data('FoundationPlayer');
         $('.foundation-player-tab').on('toggled', function (event, tab) {
+          if(tab.hasClass('foundation-player-normal')){ // Load when tab active
+            $('.foundation-player.no-2').foundationPlayer()
+          }
           if(tab.hasClass('foundation-player-small')){ // Load when tab active
-            $('.foundation-player.no-2').foundationPlayer({size: 'small'});
+            $('.foundation-player.no-3').foundationPlayer({size: 'small'});
           }
         });
       });
@@ -51,29 +55,82 @@
             %a{href: 'https://github.com/qatsi/foundation-player.js/blob/master/index.html'} source
         %ul.tabs.foundation-player-tab{'data-tab' => ''}
           %li.tab-title.active
+            %a{href: '#sandbox'} API Sandbox
+          %li.tab-title.foundation-player-normal
             %a{href: '#normal'} Normal
           %li.tab-title.foundation-player-small
             %a{href: '#small'} Small
+
         %hr/
         -# Tabs
         .tabs-content
-          #normal.content.active
-            %p
-              Regular player setup. There is no options here.
-              %br/
-              %code $('.foundation-player.no-1').foundationPlayer();
+          #sandbox.content.active
             .foundation-player.no-1
               = player
               %audio
-                %source{src: './src/climbing.m4a', type: 'audio/mp4'}
+                %source{src: 'http://kolber.github.io/audiojs/demos/mp3/juicy.mp3'}
+
+            / I know this is not good
+            %br/
+            %dl.accordion{"data-accordion" => ""}
+              %dd.accordion-navigation
+                %a{href: "#info"} Intro
+                #info.content.active
+                  %p
+                    This is your sandbox for Foundation Player API.
+                    Once you have clicked this tab player has initialized and
+                    %code player
+                    global variable has appeared.
+                    Fill free to experiment in your browser's JavaScript console.
+              %dd.accordion-navigation
+                %a{href: "#playback"} Playback control
+                #playback.content
+                  %table
+                    %thead
+                      %tr
+                        %th Method
+                        %th Description
+                        %th Returns
+                    %tbody
+                      %tr
+                        %td
+                          %code playPause()
+                        %td
+                          This method
+                          %a{onclick: 'player.playPause()'} toggles
+                          play or pause state of player.
+                        %td
+                          %code true
+                          or
+                          %code false
+                      %tr
+                        %td
+                          %code play()
+                        %td ...
+                        %td ...
+              %dd.accordion-navigation
+                %a{href: "#volume"} Volume control
+                #volume.content
+                  Table with API...
+
+          #normal.content
+            %p
+              Regular player setup. There is no options here.
+              %br/
+              %code $('.foundation-player.no-2').foundationPlayer();
+            .foundation-player.no-2
+              = player
+              %audio
+                %source{src: './src/climbing.m4a'}
+
           #small.content
             %p
               Small player setup:
               %code { size: 'small' }
-            .foundation-player.no-2
+            .foundation-player.no-3
               = player
               %audio
-                %source{src: './src/ukulele.m4a', type: 'audio/mp4'}
+                %source{src: './src/ukulele.m4a'}
 
         %p.text-center
           %small

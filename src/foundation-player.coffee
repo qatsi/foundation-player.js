@@ -2,35 +2,31 @@
 # Author: Alexander Egorov
 
 # Usage:
-# $('.foundation-player').foundationPlayer
-#    playOnStart: false
-# or:
-#    $('.foundation-player').foundationPlayer('seekToTime', 'Hello, world');
-#    $('.foundation-player').foundationPlayer('seek', '1:50');
+# $('.foundation-player').foundationPlayer()
 
 # Some conventions:
 # - Buttons has selector `.player-button.play em` where:
-#   `.player-button.play` is li element
-#   `em` is actual event target
+#   `.player-button.play` is li element and `em` is event target
 # - Status elements has selector `.player-status.time .elapsed` where:
-#   `.player-status.time` is li element
-#   `.elapsed` is actual target to update
+#   `.player-status.time` is li element and `.elapsed` is target to update
 
 # TODO:
 # - Shut others when it statrs
 # - Loading indicator
 # - Fix Safari quirks for buttons hover state
-# - Pressed state for buttons
 # - API Method to navigate to timestamp e.g. '02:10'
 # - API Change size method
+# - animate or not options
+# - aN:aN in statuses while loading...
 
-# Nice to or *must* have:
+# Unsorted list of *nice to* or *must* have:
+# - Pressed state for buttons
 # - Highlight table of contents on progress bar e.g. dots or bars
 # - Ability to manage many <audio> elements via playlist
 # - Check is it possible to get meta information from audio
 # - Buffering option for playlist items and single media-file
 # - Next/Previous buttons when necessary
-# - Buffering status aka. load indicator
+# - Buffering status aka load indicator
 # - Mobile actions like touch and etc.
 # - Mobile "first" :-(
 # - Show meta information when possible
@@ -40,71 +36,78 @@
   # Define the plugin class
   class FoundationPlayer
     defaults:
-      size: 'normal'        # Size of player. Internall it is just class name
+      size: 'normal'        # Size of player <normal|small>
       # Look and feel options
-      playOnStart: true     # play as soon as it's loaded
+      playOnStart: true     # TODO: play as soon as it's loaded
       skipSeconds: 10       # how many we want to skip
+      # Volume options
+      dimmedVolume: 0.25
+      # Animation Duration
+      quick: 50
+      moderate: 150
 
-    constructor: (el, options) ->
-      @options = $.extend({}, @defaults, options)
+    constructor: (el, opt) ->
+      @options = $.extend({}, @defaults, opt)
       # Elements
-      @$wrapper = $(el)
-      @$player = @$wrapper.children('.player')
-      @audio = @$wrapper.children('audio').get(0)
-      @$play = @$wrapper.find('.player-button.play em')
-      @$rewind = @$wrapper.find('.player-button.rewind em')
-      @$volume = @$wrapper.find('.player-button.volume em')
-      @$elapsed = @$wrapper.find('.player-status.time .elapsed')
-      @$remains = @$wrapper.find('.player-status.time .remains')
+      @$wrapper =  $(el)
+      @$player =   @$wrapper.children('.player')
+      @$play =     @$wrapper.find('.player-button.play em')
+      @$rewind =   @$wrapper.find('.player-button.rewind em')
+      @$volume =   @$wrapper.find('.player-button.volume em')
+      @$elapsed =  @$wrapper.find('.player-status.time .elapsed')
+      @$remains =  @$wrapper.find('.player-status.time .remains')
       @$progress = @$wrapper.find('.player-progress .progress')
-      @$played = @$progress.find('.meter')
+      @$played =   @$progress.find('.meter')
+      @$loaded =   @$played.clone().appendTo(@$progress)
+      @audio =     @$wrapper.children('audio').get(0)
       # State
-      @timer = null
-      @played = 0
+      @timer =     null
+      @played =    0
       @nowdragging = false
       # Calls
-      @init()
+      @initialize()
 
     # Additional plugin methods go here
-    init: ->
+    initialize: ->
       # Init function
-      @setUpClassAndStyle()    # Setup default class
+      @resetClassAndStyle()    # Setup classes and styles
       # Player setup
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
       @setUpButtonRewind()    # Set up rewind button
       @setUpPlayedProgress()  # Set up played progress meter
       @updateTimeStatuses()   # Update both time statuses
-      @setUpMainLoop()
+      @setUpMainLoop()        # Fire up main loop
 
     # Main loop
     setUpMainLoop: ->
-      @timer = setInterval @playerLoopFunctions.bind(@), 1000
+      @timer = setInterval @playerLoopFunctions.bind(@), 500
     playerLoopFunctions: ->
       @updateButtonPlay() # XXX Only when stopped?
       @updateTimeStatuses()
       @updatePlayedProgress()
     # TODO: seekToTime()
-    seekToTime: (time) -> # Just a dummy place holder
-      # @$wrapper.html(@options.paramA + ': ' + echo)
-      return
-    seekToPercent: (percent) ->
-      # Can use both 0.65 and 65
-      percent = percent/100 if percent >= 1
-      @audio.currentTime = @audio.duration*percent
-      @updatePlayedProgress()
-      @updateTimeStatuses()
-
+    # Playback =================================================================
     playPause: ->
       if @audio.paused # Update button class
         @audio.play()
       else
         @audio.pause()
       @updateButtonPlay()
+      !@audio.paused
 
-    # UI =======================================================================
+    seekToTime: (time) -> # Just a dummy place holder
+      # @$wrapper.html(@options.paramA + ': ' + echo)
+      return
+    seekPercent: (p) ->
+      # Can use both 0.65 and 65
+      @audio.currentTime = @audio.duration * (p / 100 if p >= 1)
+      @updatePlayedProgress()
+      @updateTimeStatuses()
+
+    # Generic ==================================================================
     # Setup default class
-    setUpClassAndStyle: ->
+    resetClassAndStyle: ->
       @$wrapper.addClass(@options.size)
       # Calculate player width
       # TODO Refactor to smaller function and call it on window resize :-(
@@ -112,6 +115,13 @@
       playerWidth = 0
       calculateChildrensWidth(@$player).each -> playerWidth += this
       @$player.width Math.floor(5 + playerWidth/actualWidth*100) + '%'
+      # Deuglification of round progress bar when it 0% width
+      if @$progress.hasClass('round')
+        semiHeight = @$played.height()/2
+        @$played.css 'padding', "0 #{semiHeight}px"
+      # TODO: Setup styles for meter clone @$loaded
+      # - position: absolute; height: 9px; opacity: 0.5;
+
     # Buttons ==================================================================
     # Set up Play/Pause
     setUpButtonPlayPause: ->
@@ -127,7 +137,7 @@
     setUpButtonVolume: ->
       @$volume.bind 'click', @, (e) ->
         s = e.data
-        s.audio.muted = !s.audio.muted
+        s.toggleMute()
         s.updateButtonVolume()
     # Update volume button
     updateButtonVolume: ->
@@ -142,31 +152,43 @@
         s.audio.currentTime = s.audio.currentTime - s.options.skipSeconds
         s.updatePlayedProgress()
         s.updateTimeStatuses()
+
     # Progress =================================================================
     setUpPlayedProgress: ->
-      # Deuglification of round progress bar when it 0% width
-      if @$progress.hasClass('round')
-        semiHeight = @$played.height()/2
-        @$played.css 'padding', "0 #{semiHeight}px"
       @$played.css 'width', @played + '%'
       # Click and drag progress
       @$progress.on 'click.fndtn.player', @, (e) ->
-        e.data.seekToPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
+        e.data.seekPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
       # Drag section is tricky
       # TODO: Mobile actions
+      # TODO: DRYup this code
       @$progress.on 'mousedown.fndtn.player', @, (e) ->
         e.data.nowdragging = true
+        e.data.setVolume(e.data.options.dimmedVolume)
       $(document).on 'mouseup.fndtn.player', @, (e) ->
-        e.data.nowdragging = false if e.data.nowdragging
+        if e.data.nowdragging
+          e.data.nowdragging = false
+          e.data.setVolume(1)
       @$progress.on 'mouseup.fndtn.player', @, (e) ->
-        e.data.nowdragging = false if e.data.nowdragging
+        if e.data.nowdragging
+          e.data.nowdragging = false
+          e.data.setVolume(1)
       @$progress.on 'mousemove.fndtn.player', @, (e) ->
         if e.data.nowdragging
-          e.data.seekToPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
-
+          e.data.seekPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
     updatePlayedProgress: ->
       @played = Math.round @audio.currentTime / @audio.duration * 100
-      @$played.css 'width', @played + '%'
+      # @$played.css 'width', @played + '%'
+      @$played.animate width: @played + '%',
+        (queue: false, duration: @options.quick)
+
+    # Volume ===================================================================
+    setVolume: (vol) ->
+      $(@audio).animate volume: vol, (duration: @options.moderate)
+    toggleMute: ->
+      @audio.muted = !@audio.muted
+      @updateButtonVolume()
+
     # Status ===================================================================
     # Update all statuses
     # Gets updated in loop

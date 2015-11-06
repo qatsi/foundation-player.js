@@ -9,14 +9,16 @@
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
         playOnStart: true,
-        skipSeconds: 10
+        skipSeconds: 10,
+        dimmedVolume: 0.25,
+        quick: 50,
+        moderate: 150
       };
 
-      function FoundationPlayer(el, options) {
-        this.options = $.extend({}, this.defaults, options);
+      function FoundationPlayer(el, opt) {
+        this.options = $.extend({}, this.defaults, opt);
         this.$wrapper = $(el);
         this.$player = this.$wrapper.children('.player');
-        this.audio = this.$wrapper.children('audio').get(0);
         this.$play = this.$wrapper.find('.player-button.play em');
         this.$rewind = this.$wrapper.find('.player-button.rewind em');
         this.$volume = this.$wrapper.find('.player-button.volume em');
@@ -24,14 +26,16 @@
         this.$remains = this.$wrapper.find('.player-status.time .remains');
         this.$progress = this.$wrapper.find('.player-progress .progress');
         this.$played = this.$progress.find('.meter');
+        this.$loaded = this.$played.clone().appendTo(this.$progress);
+        this.audio = this.$wrapper.children('audio').get(0);
         this.timer = null;
         this.played = 0;
         this.nowdragging = false;
-        this.init();
+        this.initialize();
       }
 
-      FoundationPlayer.prototype.init = function() {
-        this.setUpClassAndStyle();
+      FoundationPlayer.prototype.initialize = function() {
+        this.resetClassAndStyle();
         this.setUpButtonPlayPause();
         this.setUpButtonVolume();
         this.setUpButtonRewind();
@@ -41,7 +45,7 @@
       };
 
       FoundationPlayer.prototype.setUpMainLoop = function() {
-        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 1000);
+        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 500);
       };
 
       FoundationPlayer.prototype.playerLoopFunctions = function() {
@@ -50,35 +54,37 @@
         return this.updatePlayedProgress();
       };
 
-      FoundationPlayer.prototype.seekToTime = function(time) {};
-
-      FoundationPlayer.prototype.seekToPercent = function(percent) {
-        if (percent >= 1) {
-          percent = percent / 100;
-        }
-        this.audio.currentTime = this.audio.duration * percent;
-        this.updatePlayedProgress();
-        return this.updateTimeStatuses();
-      };
-
       FoundationPlayer.prototype.playPause = function() {
         if (this.audio.paused) {
           this.audio.play();
         } else {
           this.audio.pause();
         }
-        return this.updateButtonPlay();
+        this.updateButtonPlay();
+        return !this.audio.paused;
       };
 
-      FoundationPlayer.prototype.setUpClassAndStyle = function() {
-        var actualWidth, playerWidth;
+      FoundationPlayer.prototype.seekToTime = function(time) {};
+
+      FoundationPlayer.prototype.seekPercent = function(p) {
+        this.audio.currentTime = this.audio.duration * (p >= 1 ? p / 100 : void 0);
+        this.updatePlayedProgress();
+        return this.updateTimeStatuses();
+      };
+
+      FoundationPlayer.prototype.resetClassAndStyle = function() {
+        var actualWidth, playerWidth, semiHeight;
         this.$wrapper.addClass(this.options.size);
         actualWidth = this.$player.width();
         playerWidth = 0;
         calculateChildrensWidth(this.$player).each(function() {
           return playerWidth += this;
         });
-        return this.$player.width(Math.floor(5 + playerWidth / actualWidth * 100) + '%');
+        this.$player.width(Math.floor(5 + playerWidth / actualWidth * 100) + '%');
+        if (this.$progress.hasClass('round')) {
+          semiHeight = this.$played.height() / 2;
+          return this.$played.css('padding', "0 " + semiHeight + "px");
+        }
       };
 
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
@@ -99,7 +105,7 @@
         return this.$volume.bind('click', this, function(e) {
           var s;
           s = e.data;
-          s.audio.muted = !s.audio.muted;
+          s.toggleMute();
           return s.updateButtonVolume();
         });
       };
@@ -123,38 +129,54 @@
       };
 
       FoundationPlayer.prototype.setUpPlayedProgress = function() {
-        var semiHeight;
-        if (this.$progress.hasClass('round')) {
-          semiHeight = this.$played.height() / 2;
-          this.$played.css('padding', "0 " + semiHeight + "px");
-        }
         this.$played.css('width', this.played + '%');
         this.$progress.on('click.fndtn.player', this, function(e) {
-          return e.data.seekToPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
+          return e.data.seekPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
         });
         this.$progress.on('mousedown.fndtn.player', this, function(e) {
-          return e.data.nowdragging = true;
+          e.data.nowdragging = true;
+          return e.data.setVolume(e.data.options.dimmedVolume);
         });
         $(document).on('mouseup.fndtn.player', this, function(e) {
           if (e.data.nowdragging) {
-            return e.data.nowdragging = false;
+            e.data.nowdragging = false;
+            return e.data.setVolume(1);
           }
         });
         this.$progress.on('mouseup.fndtn.player', this, function(e) {
           if (e.data.nowdragging) {
-            return e.data.nowdragging = false;
+            e.data.nowdragging = false;
+            return e.data.setVolume(1);
           }
         });
         return this.$progress.on('mousemove.fndtn.player', this, function(e) {
           if (e.data.nowdragging) {
-            return e.data.seekToPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
+            return e.data.seekPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
           }
         });
       };
 
       FoundationPlayer.prototype.updatePlayedProgress = function() {
         this.played = Math.round(this.audio.currentTime / this.audio.duration * 100);
-        return this.$played.css('width', this.played + '%');
+        return this.$played.animate({
+          width: this.played + '%'
+        }, {
+          queue: false,
+          duration: this.options.quick
+        });
+      };
+
+      FoundationPlayer.prototype.setVolume = function(vol) {
+        return $(this.audio).animate({
+          volume: vol
+        }, {
+          duration: this.options.moderate
+        });
+      };
+
+      FoundationPlayer.prototype.toggleMute = function() {
+        this.audio.muted = !this.audio.muted;
+        return this.updateButtonVolume();
       };
 
       FoundationPlayer.prototype.updateTimeStatuses = function() {
