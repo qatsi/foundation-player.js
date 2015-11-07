@@ -32,6 +32,7 @@
         this.timer = null;
         this.played = 0;
         this.nowdragging = false;
+        this.currentPlayerSize = this.options.size;
         this.initialize();
       }
 
@@ -74,18 +75,8 @@
       };
 
       FoundationPlayer.prototype.resetClassAndStyle = function() {
-        var actualWidth, playerWidth, semiHeight;
         this.$wrapper.addClass(this.options.size);
-        actualWidth = this.$player.width();
-        playerWidth = 0;
-        calculateChildrensWidth(this.$player).each(function() {
-          return playerWidth += this;
-        });
-        this.$player.width(Math.floor(5 + playerWidth / actualWidth * 100) + '%');
-        if (this.$progress.hasClass('round')) {
-          semiHeight = this.$played.height() / 2;
-          return this.$played.css('padding', "0 " + semiHeight + "px");
-        }
+        return this.setPlayerSizeHandler();
       };
 
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
@@ -199,6 +190,41 @@
 
       FoundationPlayer.prototype.updateStatusRemains = function() {
         return this.$remains.text('-' + prettyTime(this.audio.duration - this.audio.currentTime));
+      };
+
+      FoundationPlayer.prototype.togglePlayerSize = function() {
+        var swithToSize;
+        swithToSize = this.currentPlayerSize === 'normal' ? 'small' : 'normal';
+        console.log("" + swithToSize);
+        this.$wrapper.addClass(swithToSize).removeClass(this.currentPlayerSize);
+        this.setPlayerSizeHandler();
+        return this.currentPlayerSize = swithToSize;
+      };
+
+      FoundationPlayer.prototype.setPlayerSize = function(size) {
+        this.$wrapper.addClass(size).removeClass(this.currentPlayerSize);
+        this.setPlayerSizeHandler();
+        return this.currentPlayerSize = size;
+      };
+
+      FoundationPlayer.prototype.setPlayerSizeHandler = function() {
+        var actualWidth, magicNumber, playerWidth;
+        actualWidth = this.$wrapper.width();
+        magicNumber = 3;
+        playerWidth = 0;
+        calculateChildrensWidth(this.$player).each(function() {
+          return playerWidth += this;
+        });
+        this.$player.width(Math.floor(magicNumber + playerWidth / actualWidth * 100) + '%');
+        return this.playerBeautifyProgressBar();
+      };
+
+      FoundationPlayer.prototype.playerBeautifyProgressBar = function() {
+        var semiHeight;
+        if (this.$progress.hasClass('round')) {
+          semiHeight = this.$played.height() / 2;
+          return this.$played.css('padding', "0 " + semiHeight + "px");
+        }
       };
 
       swithClass = function(element, p, n) {
