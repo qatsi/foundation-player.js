@@ -47,12 +47,6 @@
     .row
       .large-offset-2.large-8.columns
         %h1.text-center Foundation-player.js
-        %p
-          Super-easy way to add player to your page. Take a look to
-          %a{href: 'https://github.com/qatsi/foundation-player.js/blob/master/README.md'} README
-          and the
-          = succeed '.' do
-            %a{href: 'https://github.com/qatsi/foundation-player.js/blob/master/index.html'} source
         %ul.tabs.foundation-player-tab{'data-tab' => ''}
           %li.tab-title.active
             %a{href: '#sandbox'} API Sandbox
@@ -77,11 +71,15 @@
                 %a{href: "#info"} Intro
                 #info.content.active
                   %p
-                    This is your sandbox for Foundation Player API.
-                    Once you have clicked this tab player has initialized and
+                    This is super easy way to bring HTML5 audio player to your Foundation based project. Take a look to
+                    %a{ href: 'https://github.com/qatsi/foundation-player.js/blob/master/README.md' } README
+                    and the
+                    = succeed '.' do
+                      %a{href: 'https://github.com/qatsi/foundation-player.js/blob/master/index.html'} source of this page
+                    This tab is also sandbox for Foundation Player API. There is the
                     %code player
-                    global variable has appeared.
-                    Fill free to experiment in your browser's JavaScript console.
+                    global variable. Fill free to experiment in your browser's JavaScript console.
+
               %dd.accordion-navigation
                 %a{href: "#playback"} Playback control
                 #playback.content
