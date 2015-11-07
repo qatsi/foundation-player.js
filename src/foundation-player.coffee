@@ -212,10 +212,10 @@
       @currentPlayerSize = swithToSize
     # Set particalar player size
     setPlayerSize: (size) ->
-      if 'normal' == size or 'small' == size
-        @$wrapper.addClass(size).removeClass(@currentPlayerSize)
-        @setPlayerSizeHandler()
-        @currentPlayerSize = size
+      size = 'normal' unless 'normal' == size or 'small' == size
+      @$wrapper.addClass(size).removeClass(@currentPlayerSize)
+      @setPlayerSizeHandler()
+      @currentPlayerSize = size
     # Update player elemant width
     setPlayerSizeHandler: ->
       actualWidth = @$wrapper.width()

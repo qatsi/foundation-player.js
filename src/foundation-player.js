@@ -202,11 +202,12 @@
       };
 
       FoundationPlayer.prototype.setPlayerSize = function(size) {
-        if ('normal' === size || 'small' === size) {
-          this.$wrapper.addClass(size).removeClass(this.currentPlayerSize);
-          this.setPlayerSizeHandler();
-          return this.currentPlayerSize = size;
+        if (!('normal' === size || 'small' === size)) {
+          size = 'normal';
         }
+        this.$wrapper.addClass(size).removeClass(this.currentPlayerSize);
+        this.setPlayerSizeHandler();
+        return this.currentPlayerSize = size;
       };
 
       FoundationPlayer.prototype.setPlayerSizeHandler = function() {
