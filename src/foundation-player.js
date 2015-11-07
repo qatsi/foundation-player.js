@@ -11,6 +11,7 @@
         playOnStart: true,
         skipSeconds: 10,
         dimmedVolume: 0.25,
+        animate: true,
         quick: 50,
         moderate: 150
       };
@@ -158,20 +159,28 @@
 
       FoundationPlayer.prototype.updatePlayedProgress = function() {
         this.played = Math.round(this.audio.currentTime / this.audio.duration * 100);
-        return this.$played.animate({
-          width: this.played + '%'
-        }, {
-          queue: false,
-          duration: this.options.quick
-        });
+        if (this.options.animate) {
+          return this.$played.animate({
+            width: this.played + '%'
+          }, {
+            queue: false,
+            duration: this.options.quick
+          });
+        } else {
+          return this.$played.css('width', this.played + '%');
+        }
       };
 
       FoundationPlayer.prototype.setVolume = function(vol) {
-        return $(this.audio).animate({
-          volume: vol
-        }, {
-          duration: this.options.moderate
-        });
+        if (this.options.animate) {
+          return $(this.audio).animate({
+            volume: vol
+          }, {
+            duration: this.options.moderate
+          });
+        } else {
+          return this.audio.volume = vol;
+        }
       };
 
       FoundationPlayer.prototype.toggleMute = function() {
