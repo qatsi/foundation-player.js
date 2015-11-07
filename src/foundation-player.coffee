@@ -16,7 +16,6 @@
 # - Fix Safari quirks for buttons hover state
 # - API Method to navigate to timestamp e.g. '02:10'
 # - API Change size method
-# - animate or not options
 # - aN:aN in statuses while loading...
 
 # Unsorted list of *nice to* or *must* have:
@@ -43,6 +42,7 @@
       # Volume options
       dimmedVolume: 0.25
       # Animation Duration
+      animate: false
       quick: 50
       moderate: 150
 
@@ -178,13 +178,20 @@
           e.data.seekPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
     updatePlayedProgress: ->
       @played = Math.round @audio.currentTime / @audio.duration * 100
-      # @$played.css 'width', @played + '%'
-      @$played.animate width: @played + '%',
-        (queue: false, duration: @options.quick)
+      # Animate property if necessary
+      if @options.animate
+        @$played.animate width: @played + '%',
+          (queue: false, duration: @options.quick)
+      else
+        @$played.css 'width', @played + '%'
 
     # Volume ===================================================================
     setVolume: (vol) ->
-      $(@audio).animate volume: vol, (duration: @options.moderate)
+      # Animate property if necessary
+      if @options.animate
+        $(@audio).animate volume: vol, (duration: @options.moderate)
+      else
+        @audio.volume = vol
     toggleMute: ->
       @audio.muted = !@audio.muted
       @updateButtonVolume()
