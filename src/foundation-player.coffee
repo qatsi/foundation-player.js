@@ -212,10 +212,13 @@
       @currentPlayerSize = swithToSize
     # Set particalar player size
     setPlayerSize: (size) ->
-      size = 'normal' unless 'normal' == size or 'small' == size
-      @$wrapper.addClass(size).removeClass(@currentPlayerSize)
-      @setPlayerSizeHandler()
-      @currentPlayerSize = size
+      if ('normal' == size or 'small' == size) and size != @currentPlayerSize
+          @$wrapper.addClass(size).removeClass(@currentPlayerSize)
+          @setPlayerSizeHandler()
+          @currentPlayerSize = size
+      else
+        console.log 'setPlayerSize: incorrect size argument'
+        return false
     # Update player elemant width
     setPlayerSizeHandler: ->
       actualWidth = @$wrapper.width()
