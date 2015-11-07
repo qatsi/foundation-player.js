@@ -110,6 +110,27 @@
                 %a{href: "#volume"} Volume control
                 #volume.content
                   Table with API...
+              %dd.accordion-navigation
+                %a{href: "#look"} Look and feel
+                #look.content
+                  %table
+                    %thead
+                      %tr
+                        %th Method
+                        %th Description
+                        %th Returns
+                    %tbody
+                      %tr
+                        %td
+                          %code togglePlayerSize()
+                        %td
+                          This method
+                          %a{onclick: 'player.togglePlayerSize()'} toggles
+                          player size. Method returns current size of player which was set.
+                        %td
+                          %code 'small'
+                          or
+                          %code 'normal'
 
           #normal.content
             %p
