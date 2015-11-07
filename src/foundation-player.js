@@ -11,7 +11,7 @@
         playOnStart: true,
         skipSeconds: 10,
         dimmedVolume: 0.25,
-        animate: true,
+        animate: false,
         quick: 50,
         moderate: 150
       };

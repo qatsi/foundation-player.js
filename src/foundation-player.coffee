@@ -42,7 +42,7 @@
       # Volume options
       dimmedVolume: 0.25
       # Animation Duration
-      animate: true
+      animate: false
       quick: 50
       moderate: 150
 
