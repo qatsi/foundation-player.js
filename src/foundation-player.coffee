@@ -151,11 +151,8 @@
         swithClass @$volume, 'fi-volume', 'fi-volume-strike'
     # Set up rewind button
     setUpButtonRewind: ->
-      @$rewind.on 'click', @, (e) ->
-        s = e.data
-        s.audio.currentTime = s.audio.currentTime - s.options.skipSeconds
-        s.updatePlayedProgress()
-        s.updateTimeStatuses()
+      @$rewind.on 'click', (e) =>
+        @seekToTime(@audio.currentTime - @options.skipSeconds)
 
     # Progress =================================================================
     setUpPlayedProgress: ->

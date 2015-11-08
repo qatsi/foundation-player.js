@@ -129,13 +129,11 @@
       };
 
       FoundationPlayer.prototype.setUpButtonRewind = function() {
-        return this.$rewind.on('click', this, function(e) {
-          var s;
-          s = e.data;
-          s.audio.currentTime = s.audio.currentTime - s.options.skipSeconds;
-          s.updatePlayedProgress();
-          return s.updateTimeStatuses();
-        });
+        return this.$rewind.on('click', (function(_this) {
+          return function(e) {
+            return _this.seekToTime(_this.audio.currentTime - _this.options.skipSeconds);
+          };
+        })(this));
       };
 
       FoundationPlayer.prototype.setUpPlayedProgress = function() {
