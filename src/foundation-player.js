@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var calculateChildrensWidth, checkMax, isNumber, prettyTime, stringPadLeft, switchClass;
+      var calculateChildrensWidth, forceRange, isNumber, prettyTime, stringPadLeft, switchClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -81,24 +81,12 @@
       FoundationPlayer.prototype.seekToTime = function(time) {
         var m;
         if (isNumber(time)) {
-          if (checkMax(time, this.audio.duration)) {
-            this.audio.currentTime = time;
-          } else {
-            console.warn("seekToTime(time) call ignored, argument: " + time);
-          }
+          this.audio.currentTime = forceRange(time, this.audio.duration);
         } else if (m = time.match(/^(\d{0,3})$/)) {
-          if (checkMax(m[1], this.audio.duration)) {
-            this.audio.currentTime = m[1];
-          } else {
-            console.warn("seekToTime(time) call ignored, argument: " + time);
-          }
+          this.audio.currentTime = forceRange(m[1], this.audio.duration);
         } else if (m = time.match(/^(\d?\d):(\d\d)$/)) {
           time = (parseInt(m[1], 10)) * 60 + (parseInt(m[2], 10));
-          if (checkMax(time, this.audio.duration)) {
-            this.audio.currentTime = time;
-          } else {
-            console.warn("seekToTime(time) call ignored, argument: " + time);
-          }
+          this.audio.currentTime = forceRange(time, this.audio.duration);
         } else {
           console.error("seekToTime(time), invalid argument: " + time);
         }
@@ -306,8 +294,14 @@
         return typeof x === 'number' && isFinite(x);
       };
 
-      checkMax = function(x, max) {
-        return x >= 0 && x <= max;
+      forceRange = function(x, max) {
+        if (x < 0) {
+          return 0;
+        }
+        if (x > max) {
+          return max;
+        }
+        return x;
       };
 
       return FoundationPlayer;
