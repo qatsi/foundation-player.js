@@ -90,20 +90,14 @@
     # TODO: seekToTime()
     # Playback =================================================================
     playPause: ->
-      if @audio.paused # Update button class
-        @audio.play()
-      else
-        @audio.pause()
+      if @audio.paused then @audio.play() else @audio.pause()
       @updateButtonPlay()
-      @
     play: ->
       @audio.play()
       @updateButtonPlay()
-      @
     pause: ->
       @audio.pause()
       @updateButtonPlay()
-      @
 
     seekToTime: (time) ->
       # Numeric e.g. 42th second
@@ -144,13 +138,14 @@
     # Set up Play/Pause
     setUpButtonPlayPause: ->
       @$play.bind 'click', () =>
-        @playPause() # Play or pause
+        @playPause()
     # Update Play/Pause
     updateButtonPlay: ->
       if @audio.paused # Update button class
         switchClass @$play, 'fi-pause', 'fi-play'
       else
         switchClass @$play, 'fi-play', 'fi-pause'
+      @
     # Set up volume button
     setUpButtonVolume: ->
       @$volume.bind 'click', () =>

@@ -62,20 +62,17 @@
         } else {
           this.audio.pause();
         }
-        this.updateButtonPlay();
-        return this;
+        return this.updateButtonPlay();
       };
 
       FoundationPlayer.prototype.play = function() {
         this.audio.play();
-        this.updateButtonPlay();
-        return this;
+        return this.updateButtonPlay();
       };
 
       FoundationPlayer.prototype.pause = function() {
         this.audio.pause();
-        this.updateButtonPlay();
-        return this;
+        return this.updateButtonPlay();
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {
@@ -117,10 +114,11 @@
 
       FoundationPlayer.prototype.updateButtonPlay = function() {
         if (this.audio.paused) {
-          return switchClass(this.$play, 'fi-pause', 'fi-play');
+          switchClass(this.$play, 'fi-pause', 'fi-play');
         } else {
-          return switchClass(this.$play, 'fi-play', 'fi-pause');
+          switchClass(this.$play, 'fi-play', 'fi-pause');
         }
+        return this;
       };
 
       FoundationPlayer.prototype.setUpButtonVolume = function() {
