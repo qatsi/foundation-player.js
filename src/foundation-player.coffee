@@ -130,57 +130,53 @@
     # Buttons ==================================================================
     # Set up Play/Pause
     setUpButtonPlayPause: ->
-      @$play.bind 'click', @, (e) ->
-        e.data.playPause() # Play or pause
+      @$play.bind 'click', () =>
+        @playPause() # Play or pause
     # Update Play/Pause
     updateButtonPlay: ->
       if @audio.paused # Update button class
-        swithClass @$play, 'fi-pause', 'fi-play'
+        switchClass @$play, 'fi-pause', 'fi-play'
       else
-        swithClass @$play, 'fi-play', 'fi-pause'
+        switchClass @$play, 'fi-play', 'fi-pause'
     # Set up volume button
     setUpButtonVolume: ->
-      @$volume.bind 'click', @, (e) ->
-        s = e.data
-        s.toggleMute()
-        s.updateButtonVolume()
+      @$volume.bind 'click', () =>
+        @toggleMute()
+        @updateButtonVolume()
     # Update volume button
     updateButtonVolume: ->
       if @audio.muted
-        swithClass @$volume, 'fi-volume-strike', 'fi-volume'
+        switchClass @$volume, 'fi-volume-strike', 'fi-volume'
       else
-        swithClass @$volume, 'fi-volume', 'fi-volume-strike'
+        switchClass @$volume, 'fi-volume', 'fi-volume-strike'
     # Set up rewind button
     setUpButtonRewind: ->
-      @$rewind.on 'click', @, (e) ->
-        s = e.data
-        s.audio.currentTime = s.audio.currentTime - s.options.skipSeconds
-        s.updatePlayedProgress()
-        s.updateTimeStatuses()
+      @$rewind.on 'click', () =>
+        @seekToTime(@audio.currentTime - @options.skipSeconds)
 
     # Progress =================================================================
     setUpPlayedProgress: ->
       @$played.css 'width', @played + '%'
       # Click and drag progress
-      @$progress.on 'click.fndtn.player', @, (e) ->
-        e.data.seekPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
+      @$progress.on 'click.fndtn.player', (e) =>
+        @seekPercent(Math.floor e.offsetX / @$progress.outerWidth() * 100)
       # Drag section is tricky
       # TODO: Mobile actions
       # TODO: DRYup this code
-      @$progress.on 'mousedown.fndtn.player', @, (e) ->
-        e.data.nowdragging = true
-        e.data.setVolume(e.data.options.dimmedVolume)
-      $(document).on 'mouseup.fndtn.player', @, (e) ->
-        if e.data.nowdragging
-          e.data.nowdragging = false
-          e.data.setVolume(1)
-      @$progress.on 'mouseup.fndtn.player', @, (e) ->
-        if e.data.nowdragging
-          e.data.nowdragging = false
-          e.data.setVolume(1)
-      @$progress.on 'mousemove.fndtn.player', @, (e) ->
-        if e.data.nowdragging
-          e.data.seekPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
+      @$progress.on 'mousedown.fndtn.player',  () =>
+        @nowdragging = true
+        @setVolume(@options.dimmedVolume)
+      $(document).on 'mouseup.fndtn.player', () =>
+        if @nowdragging
+          @nowdragging = false
+          @setVolume(1)
+      @$progress.on 'mouseup.fndtn.player', () =>
+        if @nowdragging
+          @nowdragging = false
+          @setVolume(1)
+      @$progress.on 'mousemove.fndtn.player', (e) =>
+        if @nowdragging
+          @seekPercent(Math.floor e.offsetX / @$progress.outerWidth() * 100)
     updatePlayedProgress: ->
       @played = Math.round @audio.currentTime / @audio.duration * 100
       # Animate property if necessary
@@ -246,7 +242,7 @@
         @$played.css 'padding', "0 #{semiHeight}px"
     # Helpers ==================================================================
     # Some relly internal stuff goes here
-    swithClass = (element, p, n) ->
+    switchClass = (element, p, n) ->
       $(element).addClass(p).removeClass(n)
 
     # Foramt second to human readable format
