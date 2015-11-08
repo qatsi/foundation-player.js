@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var calculateChildrensWidth, prettyTime, stringPadLeft, swithClass;
+      var calculateChildrensWidth, checkMax, isNumber, prettyTime, stringPadLeft, swithClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -79,7 +79,29 @@
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {
-        this.audio.currentTime = time;
+        var m;
+        if (isNumber(time)) {
+          if (checkMax(time, this.audio.duration)) {
+            this.audio.currentTime = time;
+          } else {
+            console.warn("seekToTime(time) call ignored, argument: " + time);
+          }
+        } else if (m = time.match(/^(\d{0,3})$/)) {
+          if (checkMax(m[1], this.audio.duration)) {
+            this.audio.currentTime = m[1];
+          } else {
+            console.warn("seekToTime(time) call ignored, argument: " + time);
+          }
+        } else if (m = time.match(/^(\d?\d):(\d\d)$/)) {
+          time = (parseInt(m[1], 10)) * 60 + (parseInt(m[2], 10));
+          if (checkMax(time, this.audio.duration)) {
+            this.audio.currentTime = time;
+          } else {
+            console.warn("seekToTime(time) call ignored, argument: " + time);
+          }
+        } else {
+          console.error("seekToTime(time), invalid argument: " + time);
+        }
         this.updatePlayedProgress();
         this.updateTimeStatuses();
         return this;
@@ -213,7 +235,6 @@
       FoundationPlayer.prototype.togglePlayerSize = function() {
         var swithToSize;
         swithToSize = this.currentPlayerSize === 'normal' ? 'small' : 'normal';
-        console.log("" + swithToSize);
         this.$wrapper.addClass(swithToSize).removeClass(this.currentPlayerSize);
         this.setPlayerSizeHandler();
         return this.currentPlayerSize = swithToSize;
@@ -225,7 +246,7 @@
           this.setPlayerSizeHandler();
           return this.currentPlayerSize = size;
         } else {
-          console.log('setPlayerSize: incorrect size argument');
+          console.error('setPlayerSize: incorrect size argument');
           return false;
         }
       };
@@ -269,6 +290,14 @@
         return e.children().map(function() {
           return $(this).outerWidth(true);
         });
+      };
+
+      isNumber = function(x) {
+        return typeof x === 'number' && isFinite(x);
+      };
+
+      checkMax = function(x, max) {
+        return x >= 0 && x <= max;
       };
 
       return FoundationPlayer;
