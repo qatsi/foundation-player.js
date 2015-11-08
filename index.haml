@@ -129,8 +129,30 @@
                           player size. Method returns current size of player which was set.
                         %td
                           %code 'small'
-                          or
+                          |
                           %code 'normal'
+                      %tr
+                        %td
+                          %code setPlayerSize(size)
+                        %td
+                          This method sets player size to one of possible values:
+                          %code
+                            = surround '\'' do
+                              %a{onclick: 'player.setPlayerSize(\'small\')'}  small
+                          or
+                          %code
+                            = surround '\'' do
+                              %a{onclick: 'player.setPlayerSize(\'normal\')'} normal
+                          = '.'
+                          Player has
+                          %code 'normal'
+                          size by default.
+                        %td
+                          %code false
+                          |
+                          %code normal
+                          |
+                          %code small
 
           #normal.content
             %p
