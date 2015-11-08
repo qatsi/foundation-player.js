@@ -98,9 +98,11 @@
       };
 
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
-        return this.$play.bind('click', this, function(e) {
-          return e.data.playPause();
-        });
+        return this.$play.bind('click', (function(_this) {
+          return function() {
+            return _this.playPause();
+          };
+        })(this));
       };
 
       FoundationPlayer.prototype.updateButtonPlay = function() {
@@ -112,12 +114,12 @@
       };
 
       FoundationPlayer.prototype.setUpButtonVolume = function() {
-        return this.$volume.bind('click', this, function(e) {
-          var s;
-          s = e.data;
-          s.toggleMute();
-          return s.updateButtonVolume();
-        });
+        return this.$volume.bind('click', (function(_this) {
+          return function() {
+            _this.toggleMute();
+            return _this.updateButtonVolume();
+          };
+        })(this));
       };
 
       FoundationPlayer.prototype.updateButtonVolume = function() {
@@ -130,7 +132,7 @@
 
       FoundationPlayer.prototype.setUpButtonRewind = function() {
         return this.$rewind.on('click', (function(_this) {
-          return function(e) {
+          return function() {
             return _this.seekToTime(_this.audio.currentTime - _this.options.skipSeconds);
           };
         })(this));
@@ -138,30 +140,40 @@
 
       FoundationPlayer.prototype.setUpPlayedProgress = function() {
         this.$played.css('width', this.played + '%');
-        this.$progress.on('click.fndtn.player', this, function(e) {
-          return e.data.seekPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
-        });
-        this.$progress.on('mousedown.fndtn.player', this, function(e) {
-          e.data.nowdragging = true;
-          return e.data.setVolume(e.data.options.dimmedVolume);
-        });
-        $(document).on('mouseup.fndtn.player', this, function(e) {
-          if (e.data.nowdragging) {
-            e.data.nowdragging = false;
-            return e.data.setVolume(1);
-          }
-        });
-        this.$progress.on('mouseup.fndtn.player', this, function(e) {
-          if (e.data.nowdragging) {
-            e.data.nowdragging = false;
-            return e.data.setVolume(1);
-          }
-        });
-        return this.$progress.on('mousemove.fndtn.player', this, function(e) {
-          if (e.data.nowdragging) {
-            return e.data.seekPercent(Math.floor(e.offsetX / $(this).outerWidth() * 100));
-          }
-        });
+        this.$progress.on('click.fndtn.player', (function(_this) {
+          return function(e) {
+            return _this.seekPercent(Math.floor(e.offsetX / _this.$progress.outerWidth() * 100));
+          };
+        })(this));
+        this.$progress.on('mousedown.fndtn.player', (function(_this) {
+          return function() {
+            _this.nowdragging = true;
+            return _this.setVolume(_this.options.dimmedVolume);
+          };
+        })(this));
+        $(document).on('mouseup.fndtn.player', (function(_this) {
+          return function() {
+            if (_this.nowdragging) {
+              _this.nowdragging = false;
+              return _this.setVolume(1);
+            }
+          };
+        })(this));
+        this.$progress.on('mouseup.fndtn.player', (function(_this) {
+          return function() {
+            if (_this.nowdragging) {
+              _this.nowdragging = false;
+              return _this.setVolume(1);
+            }
+          };
+        })(this));
+        return this.$progress.on('mousemove.fndtn.player', (function(_this) {
+          return function(e) {
+            if (_this.nowdragging) {
+              return _this.seekPercent(Math.floor(e.offsetX / _this.$progress.outerWidth() * 100));
+            }
+          };
+        })(this));
       };
 
       FoundationPlayer.prototype.updatePlayedProgress = function() {
