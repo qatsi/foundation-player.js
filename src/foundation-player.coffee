@@ -95,16 +95,49 @@
       else
         @audio.pause()
       @updateButtonPlay()
-      !@audio.paused
+      @
+    play: ->
+      @audio.play()
+      @updateButtonPlay()
+      @
+    pause: ->
+      @audio.pause()
+      @updateButtonPlay()
+      @
 
-    seekToTime: (time) -> # Just a dummy place holder
-      # @$wrapper.html(@options.paramA + ': ' + echo)
-      return
-    seekPercent: (p) ->
-      # Can use both 0.65 and 65
-      @audio.currentTime = @audio.duration * (p / 100 if p >= 1)
+    seekToTime: (time) ->
+      # Numeric e.g. 42th second
+      if isNumber(time)
+        if checkMax(time, @audio.duration)
+          @audio.currentTime = time
+        else
+          console.warn "seekToTime(time) call ignored, argument: #{time}"
+      # String e.g. '15', '42'...
+      else if m = time.match /^(\d{0,3})$/
+        if checkMax(m[1], @audio.duration)
+          @audio.currentTime = m[1]
+        else
+          console.warn "seekToTime(time) call ignored, argument: #{time}"
+      # String e.g. '00:15', '1:42'...
+      else if m = time.match /^(\d?\d):(\d\d)$/
+        time = (parseInt m[1], 10) * 60 + (parseInt m[2], 10)
+        if checkMax(time, @audio.duration)
+          @audio.currentTime = time
+        else
+          console.warn "seekToTime(time) call ignored, argument: #{time}"
+      else
+        console.error "seekToTime(time), invalid argument: #{time}"
+      # Common part, update UI and return
       @updatePlayedProgress()
       @updateTimeStatuses()
+      @
+
+    seekPercent: (p) ->
+      # Can use both 0.65 and 65
+      @audio.currentTime = @audio.duration * (if p >= 1 then p/100 else p)
+      @updatePlayedProgress()
+      @updateTimeStatuses()
+      @
 
     # Generic ==================================================================
     # Setup default class
@@ -206,7 +239,6 @@
     # Method returns  size which was set i.e. 'small' or 'normal'
     togglePlayerSize: ->
       swithToSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
-      console.log "#{swithToSize}"
       @$wrapper.addClass(swithToSize).removeClass(@currentPlayerSize)
       @setPlayerSizeHandler()
       @currentPlayerSize = swithToSize
@@ -217,7 +249,7 @@
           @setPlayerSizeHandler()
           @currentPlayerSize = size
       else
-        console.log 'setPlayerSize: incorrect size argument'
+        console.error 'setPlayerSize: incorrect size argument'
         return false
     # Update player elemant width
     setPlayerSizeHandler: ->
@@ -233,7 +265,6 @@
       if @$progress.hasClass('round')
         semiHeight = @$played.height()/2
         @$played.css 'padding', "0 #{semiHeight}px"
-
     # Helpers ==================================================================
     # Some relly internal stuff goes here
     swithClass = (element, p, n) ->
@@ -255,6 +286,14 @@
     # Utility function to calculate actual withds of children elements
     calculateChildrensWidth = (e) ->
       e.children().map -> $(@).outerWidth(true) # Get widths including margin
+
+    # Check number http://stackoverflow.com/a/1280236/228067
+    isNumber = (x) ->
+      typeof x == 'number' and isFinite(x)
+
+    # Small function to check if 0 >= number >= max
+    checkMax = (x, max) ->
+      x >= 0 and x <= max
 
   # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->
