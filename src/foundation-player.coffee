@@ -95,16 +95,26 @@
       else
         @audio.pause()
       @updateButtonPlay()
-      !@audio.paused
-
-    seekToTime: (time) -> # Just a dummy place holder
-      # @$wrapper.html(@options.paramA + ': ' + echo)
-      return
-    seekPercent: (p) ->
-      # Can use both 0.65 and 65
-      @audio.currentTime = @audio.duration * (p / 100 if p >= 1)
+      @
+    play: ->
+      @audio.play()
+      @updateButtonPlay()
+      @
+    pause: ->
+      @audio.pause()
+      @updateButtonPlay()
+      @
+    seekToTime: (time) ->
+      @audio.currentTime = time
       @updatePlayedProgress()
       @updateTimeStatuses()
+      @
+    seekPercent: (p) ->
+      # Can use both 0.65 and 65
+      @audio.currentTime = @audio.duration * (if p >= 1 then p/100 else p)
+      @updatePlayedProgress()
+      @updateTimeStatuses()
+      @
 
     # Generic ==================================================================
     # Setup default class
@@ -212,9 +222,13 @@
       @currentPlayerSize = swithToSize
     # Set particalar player size
     setPlayerSize: (size) ->
-      @$wrapper.addClass(size).removeClass(@currentPlayerSize)
-      @setPlayerSizeHandler()
-      @currentPlayerSize = size
+      if ('normal' == size or 'small' == size) and size != @currentPlayerSize
+          @$wrapper.addClass(size).removeClass(@currentPlayerSize)
+          @setPlayerSizeHandler()
+          @currentPlayerSize = size
+      else
+        console.log 'setPlayerSize: incorrect size argument'
+        return false
     # Update player elemant width
     setPlayerSizeHandler: ->
       actualWidth = @$wrapper.width()
@@ -229,7 +243,6 @@
       if @$progress.hasClass('round')
         semiHeight = @$played.height()/2
         @$played.css 'padding', "0 #{semiHeight}px"
-
     # Helpers ==================================================================
     # Some relly internal stuff goes here
     swithClass = (element, p, n) ->
