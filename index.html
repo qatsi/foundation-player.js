@@ -30,12 +30,6 @@
     <div class='row'>
       <div class='large-offset-2 large-8 columns'>
         <h1 class='text-center'>Foundation-player.js</h1>
-        <p>
-          Super-easy way to add player to your page. Take a look to
-          <a href='https://github.com/qatsi/foundation-player.js/blob/master/README.md'>README</a>
-          and the
-          <a href='https://github.com/qatsi/foundation-player.js/blob/master/index.html'>source</a>.
-        </p>
         <ul class='tabs foundation-player-tab' data-tab=''>
           <li class='tab-title active'>
             <a href='#sandbox'>API Sandbox</a>
@@ -84,11 +78,13 @@
                 <a href='#info'>Intro</a>
                 <div class='content active' id='info'>
                   <p>
-                    This is your sandbox for Foundation Player API.
-                    Once you have clicked this tab player has initialized and
+                    This is super easy way to bring HTML5 audio player to your Foundation based project. Take a look to
+                    <a href='https://github.com/qatsi/foundation-player.js/blob/master/README.md'>README</a>
+                    and the
+                    <a href='https://github.com/qatsi/foundation-player.js/blob/master/index.html'>source of this page</a>.
+                    This tab is also sandbox for Foundation Player API. There is the
                     <code>player</code>
-                    global variable has appeared.
-                    Fill free to experiment in your browser's JavaScript console.
+                    global variable. Fill free to experiment in your browser's JavaScript console.
                   </p>
                 </div>
               </dd>
@@ -134,6 +130,37 @@
                 <a href='#volume'>Volume control</a>
                 <div class='content' id='volume'>
                   Table with API...
+                </div>
+              </dd>
+              <dd class='accordion-navigation'>
+                <a href='#look'>Look and feel</a>
+                <div class='content' id='look'>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                        <th>Returns</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <code>togglePlayerSize()</code>
+                        </td>
+                        <td>
+                          This method
+                          <a onclick='player.togglePlayerSize()'>toggles</a>
+                          player size. Method returns current size of player which was set.
+                        </td>
+                        <td>
+                          <code>'small'</code>
+                          or
+                          <code>'normal'</code>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </dd>
             </dl>
