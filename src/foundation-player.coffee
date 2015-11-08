@@ -15,7 +15,7 @@
 # - Loading indicator
 # - Fix Safari quirks for buttons hover state
 # - API Method to navigate to timestamp e.g. '02:10'
-# - API Change size method
+# - Set up window resize handler for player
 # - aN:aN in statuses while loading...
 
 # Unsorted list of *nice to* or *must* have:
@@ -64,13 +64,14 @@
       @timer =     null
       @played =    0
       @nowdragging = false
+      @currentPlayerSize = @options.size
       # Calls
       @initialize()
 
     # Additional plugin methods go here
     initialize: ->
       # Init function
-      @resetClassAndStyle()    # Setup classes and styles
+      @resetClassAndStyle()   # Setup classes and styles
       # Player setup
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
@@ -108,17 +109,10 @@
     # Generic ==================================================================
     # Setup default class
     resetClassAndStyle: ->
+      # Set initial size
       @$wrapper.addClass(@options.size)
       # Calculate player width
-      # TODO Refactor to smaller function and call it on window resize :-(
-      actualWidth = @$player.width()
-      playerWidth = 0
-      calculateChildrensWidth(@$player).each -> playerWidth += this
-      @$player.width Math.floor(5 + playerWidth/actualWidth*100) + '%'
-      # Deuglification of round progress bar when it 0% width
-      if @$progress.hasClass('round')
-        semiHeight = @$played.height()/2
-        @$played.css 'padding', "0 #{semiHeight}px"
+      @setPlayerSizeHandler()
       # TODO: Setup styles for meter clone @$loaded
       # - position: absolute; height: 9px; opacity: 0.5;
 
@@ -206,6 +200,39 @@
       @$elapsed.text prettyTime @audio.currentTime
     updateStatusRemains: -> # Update $remains time status
       @$remains.text '-' + prettyTime @audio.duration-@audio.currentTime
+
+    # Look and feel ============================================================
+    # This method toggles player size.
+    # Method returns  size which was set i.e. 'small' or 'normal'
+    togglePlayerSize: ->
+      swithToSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
+      console.log "#{swithToSize}"
+      @$wrapper.addClass(swithToSize).removeClass(@currentPlayerSize)
+      @setPlayerSizeHandler()
+      @currentPlayerSize = swithToSize
+    # Set particalar player size
+    setPlayerSize: (size) ->
+      if ('normal' == size or 'small' == size) and size != @currentPlayerSize
+          @$wrapper.addClass(size).removeClass(@currentPlayerSize)
+          @setPlayerSizeHandler()
+          @currentPlayerSize = size
+      else
+        console.log 'setPlayerSize: incorrect size argument'
+        return false
+    # Update player elemant width
+    setPlayerSizeHandler: ->
+      actualWidth = @$wrapper.width()
+      magicNumber = 3
+      playerWidth = 0
+      calculateChildrensWidth(@$player).each -> playerWidth += this
+      @$player.width Math.floor(magicNumber + playerWidth/actualWidth*100) + '%'
+      @playerBeautifyProgressBar()
+      # Add this to window resize
+    # Deuglification of round progress bar when it 0% width
+    playerBeautifyProgressBar: ->
+      if @$progress.hasClass('round')
+        semiHeight = @$played.height()/2
+        @$played.css 'padding', "0 #{semiHeight}px"
 
     # Helpers ==================================================================
     # Some relly internal stuff goes here
