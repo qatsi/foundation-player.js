@@ -95,16 +95,27 @@
       else
         @audio.pause()
       @updateButtonPlay()
-      !@audio.paused
-
-    seekToTime: (time) -> # Just a dummy place holder
-      # @$wrapper.html(@options.paramA + ': ' + echo)
-      return
-    seekPercent: (p) ->
-      # Can use both 0.65 and 65
-      @audio.currentTime = @audio.duration * (p / 100 if p >= 1)
+      @
+    play: ->
+      @audio.play()
+      @updateButtonPlay()
+      @
+    pause: ->
+      @audio.pause()
+      @updateButtonPlay()
+      @
+    seekToTime: (time) ->
+      # TODO: `time` should be parsable MM:SS string.
+      @audio.currentTime = time
       @updatePlayedProgress()
       @updateTimeStatuses()
+      @
+    seekPercent: (p) ->
+      # Can use both 0.65 and 65
+      @audio.currentTime = @audio.duration * (if p >= 1 then p/100 else p)
+      @updatePlayedProgress()
+      @updateTimeStatuses()
+      @
 
     # Generic ==================================================================
     # Setup default class
@@ -233,7 +244,6 @@
       if @$progress.hasClass('round')
         semiHeight = @$played.height()/2
         @$played.css 'padding', "0 #{semiHeight}px"
-
     # Helpers ==================================================================
     # Some relly internal stuff goes here
     swithClass = (element, p, n) ->

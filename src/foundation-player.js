@@ -63,15 +63,33 @@
           this.audio.pause();
         }
         this.updateButtonPlay();
-        return !this.audio.paused;
+        return this;
       };
 
-      FoundationPlayer.prototype.seekToTime = function(time) {};
+      FoundationPlayer.prototype.play = function() {
+        this.audio.play();
+        this.updateButtonPlay();
+        return this;
+      };
+
+      FoundationPlayer.prototype.pause = function() {
+        this.audio.pause();
+        this.updateButtonPlay();
+        return this;
+      };
+
+      FoundationPlayer.prototype.seekToTime = function(time) {
+        this.audio.currentTime = time;
+        this.updatePlayedProgress();
+        this.updateTimeStatuses();
+        return this;
+      };
 
       FoundationPlayer.prototype.seekPercent = function(p) {
-        this.audio.currentTime = this.audio.duration * (p >= 1 ? p / 100 : void 0);
+        this.audio.currentTime = this.audio.duration * (p >= 1 ? p / 100 : p);
         this.updatePlayedProgress();
-        return this.updateTimeStatuses();
+        this.updateTimeStatuses();
+        return this;
       };
 
       FoundationPlayer.prototype.resetClassAndStyle = function() {
