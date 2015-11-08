@@ -104,13 +104,14 @@
       @audio.pause()
       @updateButtonPlay()
       @
-    seekToTime: (time) -> # Just a dummy place holder
-      # @$wrapper.html(@options.paramA + ': ' + echo)
-      return
+    seekToTime: (time) ->
+      @audio.currentTime = time
+      @updatePlayedProgress()
+      @updateTimeStatuses()
+      @
     seekPercent: (p) ->
       # Can use both 0.65 and 65
       @audio.currentTime = @audio.duration * (if p >= 1 then p/100 else p)
-      # @audio.currentTime = @audio.duration * (p / 100 if p >= 1)
       @updatePlayedProgress()
       @updateTimeStatuses()
       @
