@@ -95,23 +95,25 @@
       else
         @audio.pause()
       @updateButtonPlay()
-      !@audio.paused
+      @
     play: ->
       @audio.play()
       @updateButtonPlay()
-      !@audio.paused
+      @
     pause: ->
       @audio.pause()
       @updateButtonPlay()
-      @audio.paused
+      @
     seekToTime: (time) -> # Just a dummy place holder
       # @$wrapper.html(@options.paramA + ': ' + echo)
       return
     seekPercent: (p) ->
       # Can use both 0.65 and 65
-      @audio.currentTime = @audio.duration * (p / 100 if p >= 1)
+      @audio.currentTime = @audio.duration * (if p >= 1 then p/100 else p)
+      # @audio.currentTime = @audio.duration * (p / 100 if p >= 1)
       @updatePlayedProgress()
       @updateTimeStatuses()
+      @
 
     # Generic ==================================================================
     # Setup default class
