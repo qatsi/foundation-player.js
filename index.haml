@@ -98,14 +98,23 @@
                           %a{onclick: 'player.playPause()'} toggles
                           play or pause state of player.
                         %td
-                          %code true
-                          or
-                          %code false
+                          player object
                       %tr
                         %td
                           %code play()
-                        %td ...
-                        %td ...
+                        %td
+                          %a{onclick: 'player.play()'} toggles
+                          play state of player.
+                        %td
+                          player object
+                      %tr
+                        %td
+                          %code pause()
+                        %td
+                          %a{onclick: 'player.pause()'} toggles
+                          pause state of player.
+                        %td
+                          player object
               %dd.accordion-navigation
                 %a{href: "#volume"} Volume control
                 #volume.content
@@ -148,11 +157,7 @@
                           %code 'normal'
                           size by default.
                         %td
-                          %code false
-                          |
-                          %code normal
-                          |
-                          %code small
+                          player object
 
           #normal.content
             %p
