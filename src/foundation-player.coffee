@@ -96,7 +96,14 @@
         @audio.pause()
       @updateButtonPlay()
       !@audio.paused
-
+    play: ->
+      @audio.play()
+      @updateButtonPlay()
+      !@audio.paused
+    pause: ->
+      @audio.pause()
+      @updateButtonPlay()
+      @audio.paused
     seekToTime: (time) -> # Just a dummy place holder
       # @$wrapper.html(@options.paramA + ': ' + echo)
       return
@@ -233,7 +240,6 @@
       if @$progress.hasClass('round')
         semiHeight = @$played.height()/2
         @$played.css 'padding', "0 #{semiHeight}px"
-
     # Helpers ==================================================================
     # Some relly internal stuff goes here
     swithClass = (element, p, n) ->

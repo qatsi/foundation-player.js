@@ -66,6 +66,18 @@
         return !this.audio.paused;
       };
 
+      FoundationPlayer.prototype.play = function() {
+        this.audio.play();
+        this.updateButtonPlay();
+        return !this.audio.paused;
+      };
+
+      FoundationPlayer.prototype.pause = function() {
+        this.audio.pause();
+        this.updateButtonPlay();
+        return this.audio.paused;
+      };
+
       FoundationPlayer.prototype.seekToTime = function(time) {};
 
       FoundationPlayer.prototype.seekPercent = function(p) {
