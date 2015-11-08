@@ -95,16 +95,49 @@
       else
         @audio.pause()
       @updateButtonPlay()
-      !@audio.paused
+      @
+    play: ->
+      @audio.play()
+      @updateButtonPlay()
+      @
+    pause: ->
+      @audio.pause()
+      @updateButtonPlay()
+      @
 
-    seekToTime: (time) -> # Just a dummy place holder
-      # @$wrapper.html(@options.paramA + ': ' + echo)
-      return
-    seekPercent: (p) ->
-      # Can use both 0.65 and 65
-      @audio.currentTime = @audio.duration * (p / 100 if p >= 1)
+    seekToTime: (time) ->
+      # Numeric e.g. 42th second
+      if isNumber(time)
+        if checkMax(time, @audio.duration)
+          @audio.currentTime = time
+        else
+          console.warn "seekToTime(time) call ignored, argument: #{time}"
+      # String e.g. '15', '42'...
+      else if m = time.match /^(\d{0,3})$/
+        if checkMax(m[1], @audio.duration)
+          @audio.currentTime = m[1]
+        else
+          console.warn "seekToTime(time) call ignored, argument: #{time}"
+      # String e.g. '00:15', '1:42'...
+      else if m = time.match /^(\d?\d):(\d\d)$/
+        time = (parseInt m[1], 10) * 60 + (parseInt m[2], 10)
+        if checkMax(time, @audio.duration)
+          @audio.currentTime = time
+        else
+          console.warn "seekToTime(time) call ignored, argument: #{time}"
+      else
+        console.error "seekToTime(time), invalid argument: #{time}"
+      # Common part, update UI and return
       @updatePlayedProgress()
       @updateTimeStatuses()
+      @
+
+    seekPercent: (p) ->
+      # Can use both 0.65 and 65
+      @audio.currentTime = @audio.duration * (if p >= 1 then p/100 else p)
+      @updatePlayedProgress()
+      @updateTimeStatuses()
+      @
 
     # Generic ==================================================================
     # Setup default class
@@ -119,57 +152,53 @@
     # Buttons ==================================================================
     # Set up Play/Pause
     setUpButtonPlayPause: ->
-      @$play.bind 'click', @, (e) ->
-        e.data.playPause() # Play or pause
+      @$play.bind 'click', () =>
+        @playPause() # Play or pause
     # Update Play/Pause
     updateButtonPlay: ->
       if @audio.paused # Update button class
-        swithClass @$play, 'fi-pause', 'fi-play'
+        switchClass @$play, 'fi-pause', 'fi-play'
       else
-        swithClass @$play, 'fi-play', 'fi-pause'
+        switchClass @$play, 'fi-play', 'fi-pause'
     # Set up volume button
     setUpButtonVolume: ->
-      @$volume.bind 'click', @, (e) ->
-        s = e.data
-        s.toggleMute()
-        s.updateButtonVolume()
+      @$volume.bind 'click', () =>
+        @toggleMute()
+        @updateButtonVolume()
     # Update volume button
     updateButtonVolume: ->
       if @audio.muted
-        swithClass @$volume, 'fi-volume-strike', 'fi-volume'
+        switchClass @$volume, 'fi-volume-strike', 'fi-volume'
       else
-        swithClass @$volume, 'fi-volume', 'fi-volume-strike'
+        switchClass @$volume, 'fi-volume', 'fi-volume-strike'
     # Set up rewind button
     setUpButtonRewind: ->
-      @$rewind.on 'click', @, (e) ->
-        s = e.data
-        s.audio.currentTime = s.audio.currentTime - s.options.skipSeconds
-        s.updatePlayedProgress()
-        s.updateTimeStatuses()
+      @$rewind.on 'click', () =>
+        @seekToTime(@audio.currentTime - @options.skipSeconds)
 
     # Progress =================================================================
     setUpPlayedProgress: ->
       @$played.css 'width', @played + '%'
       # Click and drag progress
-      @$progress.on 'click.fndtn.player', @, (e) ->
-        e.data.seekPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
+      @$progress.on 'click.fndtn.player', (e) =>
+        @seekPercent(Math.floor e.offsetX / @$progress.outerWidth() * 100)
       # Drag section is tricky
       # TODO: Mobile actions
       # TODO: DRYup this code
-      @$progress.on 'mousedown.fndtn.player', @, (e) ->
-        e.data.nowdragging = true
-        e.data.setVolume(e.data.options.dimmedVolume)
-      $(document).on 'mouseup.fndtn.player', @, (e) ->
-        if e.data.nowdragging
-          e.data.nowdragging = false
-          e.data.setVolume(1)
-      @$progress.on 'mouseup.fndtn.player', @, (e) ->
-        if e.data.nowdragging
-          e.data.nowdragging = false
-          e.data.setVolume(1)
-      @$progress.on 'mousemove.fndtn.player', @, (e) ->
-        if e.data.nowdragging
-          e.data.seekPercent(Math.floor e.offsetX / $(this).outerWidth() * 100)
+      @$progress.on 'mousedown.fndtn.player',  () =>
+        @nowdragging = true
+        @setVolume(@options.dimmedVolume)
+      $(document).on 'mouseup.fndtn.player', () =>
+        if @nowdragging
+          @nowdragging = false
+          @setVolume(1)
+      @$progress.on 'mouseup.fndtn.player', () =>
+        if @nowdragging
+          @nowdragging = false
+          @setVolume(1)
+      @$progress.on 'mousemove.fndtn.player', (e) =>
+        if @nowdragging
+          @seekPercent(Math.floor e.offsetX / @$progress.outerWidth() * 100)
     updatePlayedProgress: ->
       @played = Math.round @audio.currentTime / @audio.duration * 100
       # Animate property if necessary
@@ -206,7 +235,6 @@
     # Method returns  size which was set i.e. 'small' or 'normal'
     togglePlayerSize: ->
       swithToSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
-      console.log "#{swithToSize}"
       @$wrapper.addClass(swithToSize).removeClass(@currentPlayerSize)
       @setPlayerSizeHandler()
       @currentPlayerSize = swithToSize
@@ -217,7 +245,7 @@
           @setPlayerSizeHandler()
           @currentPlayerSize = size
       else
-        console.log 'setPlayerSize: incorrect size argument'
+        console.error 'setPlayerSize: incorrect size argument'
         return false
     # Update player elemant width
     setPlayerSizeHandler: ->
@@ -233,10 +261,9 @@
       if @$progress.hasClass('round')
         semiHeight = @$played.height()/2
         @$played.css 'padding', "0 #{semiHeight}px"
-
     # Helpers ==================================================================
     # Some relly internal stuff goes here
-    swithClass = (element, p, n) ->
+    switchClass = (element, p, n) ->
       $(element).addClass(p).removeClass(n)
 
     # Foramt second to human readable format
@@ -255,6 +282,14 @@
     # Utility function to calculate actual withds of children elements
     calculateChildrensWidth = (e) ->
       e.children().map -> $(@).outerWidth(true) # Get widths including margin
+
+    # Check number http://stackoverflow.com/a/1280236/228067
+    isNumber = (x) ->
+      typeof x == 'number' and isFinite(x)
+
+    # Small function to check if 0 >= number >= max
+    checkMax = (x, max) ->
+      x >= 0 and x <= max
 
   # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->
