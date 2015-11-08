@@ -134,9 +134,9 @@
     # Update Play/Pause
     updateButtonPlay: ->
       if @audio.paused # Update button class
-        swithClass @$play, 'fi-pause', 'fi-play'
+        switchClass @$play, 'fi-pause', 'fi-play'
       else
-        swithClass @$play, 'fi-play', 'fi-pause'
+        switchClass @$play, 'fi-play', 'fi-pause'
     # Set up volume button
     setUpButtonVolume: ->
       @$volume.bind 'click', () =>
@@ -145,9 +145,9 @@
     # Update volume button
     updateButtonVolume: ->
       if @audio.muted
-        swithClass @$volume, 'fi-volume-strike', 'fi-volume'
+        switchClass @$volume, 'fi-volume-strike', 'fi-volume'
       else
-        swithClass @$volume, 'fi-volume', 'fi-volume-strike'
+        switchClass @$volume, 'fi-volume', 'fi-volume-strike'
     # Set up rewind button
     setUpButtonRewind: ->
       @$rewind.on 'click', () =>
@@ -241,7 +241,7 @@
         @$played.css 'padding', "0 #{semiHeight}px"
     # Helpers ==================================================================
     # Some relly internal stuff goes here
-    swithClass = (element, p, n) ->
+    switchClass = (element, p, n) ->
       $(element).addClass(p).removeClass(n)
 
     # Foramt second to human readable format

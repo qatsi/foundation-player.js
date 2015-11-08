@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var calculateChildrensWidth, prettyTime, stringPadLeft, swithClass;
+      var calculateChildrensWidth, prettyTime, stringPadLeft, switchClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -107,9 +107,9 @@
 
       FoundationPlayer.prototype.updateButtonPlay = function() {
         if (this.audio.paused) {
-          return swithClass(this.$play, 'fi-pause', 'fi-play');
+          return switchClass(this.$play, 'fi-pause', 'fi-play');
         } else {
-          return swithClass(this.$play, 'fi-play', 'fi-pause');
+          return switchClass(this.$play, 'fi-play', 'fi-pause');
         }
       };
 
@@ -124,9 +124,9 @@
 
       FoundationPlayer.prototype.updateButtonVolume = function() {
         if (this.audio.muted) {
-          return swithClass(this.$volume, 'fi-volume-strike', 'fi-volume');
+          return switchClass(this.$volume, 'fi-volume-strike', 'fi-volume');
         } else {
-          return swithClass(this.$volume, 'fi-volume', 'fi-volume-strike');
+          return switchClass(this.$volume, 'fi-volume', 'fi-volume-strike');
         }
       };
 
@@ -260,7 +260,7 @@
         }
       };
 
-      swithClass = function(element, p, n) {
+      switchClass = function(element, p, n) {
         return $(element).addClass(p).removeClass(n);
       };
 
