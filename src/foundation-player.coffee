@@ -108,23 +108,14 @@
     seekToTime: (time) ->
       # Numeric e.g. 42th second
       if isNumber(time)
-        if checkMax(time, @audio.duration)
-          @audio.currentTime = time
-        else
-          console.warn "seekToTime(time) call ignored, argument: #{time}"
+        @audio.currentTime = forceRange time, @audio.duration
       # String e.g. '15', '42'...
       else if m = time.match /^(\d{0,3})$/
-        if checkMax(m[1], @audio.duration)
-          @audio.currentTime = m[1]
-        else
-          console.warn "seekToTime(time) call ignored, argument: #{time}"
+        @audio.currentTime = forceRange m[1], @audio.duration
       # String e.g. '00:15', '1:42'...
       else if m = time.match /^(\d?\d):(\d\d)$/
         time = (parseInt m[1], 10) * 60 + (parseInt m[2], 10)
-        if checkMax(time, @audio.duration)
-          @audio.currentTime = time
-        else
-          console.warn "seekToTime(time) call ignored, argument: #{time}"
+        @audio.currentTime = forceRange time, @audio.duration
       else
         console.error "seekToTime(time), invalid argument: #{time}"
       # Common part, update UI and return
@@ -288,8 +279,10 @@
       typeof x == 'number' and isFinite(x)
 
     # Small function to check if 0 >= number >= max
-    checkMax = (x, max) ->
-      x >= 0 and x <= max
+    forceRange = (x, max) ->
+      return 0 if x < 0
+      return max if x > max
+      x
 
   # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->
