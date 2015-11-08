@@ -105,6 +105,7 @@
       @updateButtonPlay()
       @
     seekToTime: (time) ->
+      # TODO: `time` should be parsable MM:SS string.
       @audio.currentTime = time
       @updatePlayedProgress()
       @updateTimeStatuses()
