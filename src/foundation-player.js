@@ -77,16 +77,7 @@
 
       FoundationPlayer.prototype.seekToTime = function(time) {
         var m;
-        if (isNumber(time)) {
-          this.audio.currentTime = forceRange(time, this.audio.duration);
-        } else if (m = time.match(/^(\d{0,3})$/)) {
-          this.audio.currentTime = forceRange(m[1], this.audio.duration);
-        } else if (m = time.match(/^(\d?\d):(\d\d)$/)) {
-          time = (parseInt(m[1], 10)) * 60 + (parseInt(m[2], 10));
-          this.audio.currentTime = forceRange(time, this.audio.duration);
-        } else {
-          console.error("seekToTime(time), invalid argument: " + time);
-        }
+        this.audio.currentTime = (isNumber(time) ? time : (m = time.match(/^(\d{0,3})$/)) ? m[1] : (m = time.match(/^(\d?\d):(\d\d)$/)) ? (parseInt(m[1], 10)) * 60 + (parseInt(m[2], 10)) : console.error("seekToTime(time), invalid argument: " + time));
         this.updatePlayedProgress();
         this.updateTimeStatuses();
         return this;
