@@ -122,7 +122,7 @@
     # Set up Play/Pause
     setUpButtonPlayPause: ->
       @$play.bind 'click', () =>
-        @playPause()
+        @playPause() if @canPlayCurrent
     # Update Play/Pause
     updateButtonPlay: ->
       @$play.toggleClass('fi-loop', !@canPlayCurrent)

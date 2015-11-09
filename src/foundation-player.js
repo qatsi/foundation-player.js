@@ -119,7 +119,9 @@
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
         return this.$play.bind('click', (function(_this) {
           return function() {
-            return _this.playPause();
+            if (_this.canPlayCurrent) {
+              return _this.playPause();
+            }
           };
         })(this));
       };
