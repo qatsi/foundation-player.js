@@ -8,7 +8,7 @@
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
-        playOnStart: true,
+        playOnLoad: false,
         skipSeconds: 10,
         dimmedVolume: 0.25,
         animate: false,
@@ -28,32 +28,23 @@
         this.$progress = this.$wrapper.find('.player-progress .progress');
         this.$played = this.$progress.find('.meter');
         this.$loaded = this.$played.clone().appendTo(this.$progress);
-        this.audio = this.$wrapper.children('audio').get(0);
+        this.$sources = this.$wrapper.children('audio');
+        this.audio = this.$sources.get(0);
         this.timer = null;
         this.played = 0;
         this.nowdragging = false;
         this.currentPlayerSize = this.options.size;
+        this.canPlayCurrent = false;
         this.initialize();
       }
 
       FoundationPlayer.prototype.initialize = function() {
         this.resetClassAndStyle();
+        this.setUpCurrentAudio();
         this.setUpButtonPlayPause();
         this.setUpButtonVolume();
         this.setUpButtonRewind();
-        this.setUpPlayedProgress();
-        this.updateTimeStatuses();
-        return this.setUpMainLoop();
-      };
-
-      FoundationPlayer.prototype.setUpMainLoop = function() {
-        return this.timer = setInterval(this.playerLoopFunctions.bind(this), 500);
-      };
-
-      FoundationPlayer.prototype.playerLoopFunctions = function() {
-        this.updateButtonPlay();
-        this.updateTimeStatuses();
-        return this.updatePlayedProgress();
+        return this.setUpPlayedProgress();
       };
 
       FoundationPlayer.prototype.playPause = function() {
@@ -95,6 +86,36 @@
         return this.setPlayerSizeHandler();
       };
 
+      FoundationPlayer.prototype.setUpCurrentAudio = function() {
+        this.audio.preload = 'metadata';
+        this.audio.ontimeupdate = (function(_this) {
+          return function() {
+            _this.updatePlayedProgress();
+            return _this.updateTimeStatuses();
+          };
+        })(this);
+        this.audio.onloadstart = (function(_this) {
+          return function() {
+            _this.canPlayCurrent = false;
+            return _this.updateButtonPlay();
+          };
+        })(this);
+        this.audio.ondurationchange = (function(_this) {
+          return function() {
+            return _this.updateTimeStatuses();
+          };
+        })(this);
+        return this.audio.oncanplay = (function(_this) {
+          return function() {
+            _this.canPlayCurrent = true;
+            if (_this.options.playOnLoad) {
+              _this.play();
+            }
+            return _this.updateButtonPlay();
+          };
+        })(this);
+      };
+
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
         return this.$play.bind('click', (function(_this) {
           return function() {
@@ -104,11 +125,9 @@
       };
 
       FoundationPlayer.prototype.updateButtonPlay = function() {
-        if (this.audio.paused) {
-          switchClass(this.$play, 'fi-pause', 'fi-play');
-        } else {
-          switchClass(this.$play, 'fi-play', 'fi-pause');
-        }
+        this.$play.toggleClass('fi-loop', !this.canPlayCurrent);
+        this.$play.toggleClass('fi-pause', this.audio.paused && this.canPlayCurrent);
+        this.$play.toggleClass('fi-play', !this.audio.paused);
         return this;
       };
 
