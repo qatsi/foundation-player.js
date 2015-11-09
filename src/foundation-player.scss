@@ -51,6 +51,14 @@ $fp-button-hover-scale: 1.2 !default;
       margin: 0 auto; // Center player
     }
 
+    .disabled {
+      .player-button,
+      .player-status,
+      .player-progress {
+        opacity: .5;
+      }
+    }
+
     .player-progress {
       cursor: col-resize;
 
