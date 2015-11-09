@@ -178,10 +178,6 @@
         if @nowdragging
           @nowdragging = false
           @setVolume(1)
-      @$progress.on 'mouseup.fndtn.player', () =>
-        if @nowdragging
-          @nowdragging = false
-          @setVolume(1)
       @$progress.on 'mousemove.fndtn.player', (e) =>
         if @nowdragging
           @seekPercent(Math.floor e.offsetX / @$progress.outerWidth() * 100)
@@ -220,14 +216,14 @@
     # This method toggles player size.
     # Method returns  size which was set i.e. 'small' or 'normal'
     togglePlayerSize: ->
-      swithToSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
-      @$wrapper.addClass(swithToSize).removeClass(@currentPlayerSize)
+      switchToSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
+      switchClass @$wrapper, switchToSize, @currentPlayerSize
       @setPlayerSizeHandler()
-      @currentPlayerSize = swithToSize
+      @currentPlayerSize = switchToSize
     # Set particalar player size
     setPlayerSize: (size) ->
       if ('normal' == size or 'small' == size) and size != @currentPlayerSize
-          @$wrapper.addClass(size).removeClass(@currentPlayerSize)
+          switchClass @$wrapper, size, @currentPlayerSize
           @setPlayerSizeHandler()
           @currentPlayerSize = size
       else
@@ -248,11 +244,11 @@
         semiHeight = @$played.height()/2
         @$played.css 'padding', "0 #{semiHeight}px"
     # Helpers ==================================================================
-    # Some relly internal stuff goes here
+    # Some really internal stuff goes here
     switchClass = (element, p, n) ->
       $(element).addClass(p).removeClass(n)
 
-    # Foramt second to human readable format
+    # Format second to human readable format
     prettyTime = (s) ->
       # As seen here: http://stackoverflow.com/questions/3733227
       minutes = Math.floor s / 60
