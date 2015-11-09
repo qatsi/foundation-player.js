@@ -1,43 +1,13 @@
 # foundation-player.js
 # Author: Alexander Egorov
 
-# Usage:
-# $('.foundation-player').foundationPlayer()
-
-# Some conventions:
-# - Buttons has selector `.player-button.play em` where:
-#   `.player-button.play` is li element and `em` is event target
-# - Status elements has selector `.player-status.time .elapsed` where:
-#   `.player-status.time` is li element and `.elapsed` is target to update
-
-# TODO:
-# - Shut others when it statrs
-# - Loading indicator
-# - Fix Safari quirks for buttons hover state
-# - API Method to navigate to timestamp e.g. '02:10'
-# - Set up window resize handler for player
-# - aN:aN in statuses while loading...
-
-# Unsorted list of *nice to* or *must* have:
-# - Pressed state for buttons
-# - Highlight table of contents on progress bar e.g. dots or bars
-# - Ability to manage many <audio> elements via playlist
-# - Check is it possible to get meta information from audio
-# - Buffering option for playlist items and single media-file
-# - Next/Previous buttons when necessary
-# - Buffering status aka load indicator
-# - Mobile actions like touch and etc.
-# - Mobile "first" :-(
-# - Show meta information when possible
-# - Error handling
-
 (($, window) ->
   # Define the plugin class
   class FoundationPlayer
     defaults:
-      size: 'normal'        # Size of player <normal|small>
       # Look and feel options
-      playOnStart: true     # TODO: play as soon as it's loaded
+      size: 'normal'        # Size of player <normal|small>
+      playOnLoad: false     # Play as soon as it's loaded
       skipSeconds: 10       # how many we want to skip
       # Volume options
       dimmedVolume: 0.25
@@ -48,7 +18,7 @@
 
     constructor: (el, opt) ->
       @options = $.extend({}, @defaults, opt)
-      # Elements
+      # jQuery Objects
       @$wrapper =  $(el)
       @$player =   @$wrapper.children('.player')
       @$play =     @$wrapper.find('.player-button.play em')
@@ -59,12 +29,16 @@
       @$progress = @$wrapper.find('.player-progress .progress')
       @$played =   @$progress.find('.meter')
       @$loaded =   @$played.clone().appendTo(@$progress)
-      @audio =     @$wrapper.children('audio').get(0)
+      @$sources =  @$wrapper.children('audio')
+      # DOM Elements
+      # TODO: Manage current audio object more carefully
+      @audio =     @$sources.get(0)
       # State
       @timer =     null
       @played =    0
       @nowdragging = false
       @currentPlayerSize = @options.size
+      @canPlayCurrent = false
       # Calls
       @initialize()
 
@@ -73,21 +47,12 @@
       # Init function
       @resetClassAndStyle()   # Setup classes and styles
       # Player setup
+      @setUpCurrentAudio()    # Set up Play/Pause
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
       @setUpButtonRewind()    # Set up rewind button
       @setUpPlayedProgress()  # Set up played progress meter
-      @updateTimeStatuses()   # Update both time statuses
-      @setUpMainLoop()        # Fire up main loop
 
-    # Main loop
-    setUpMainLoop: ->
-      @timer = setInterval @playerLoopFunctions.bind(@), 500
-    playerLoopFunctions: ->
-      @updateButtonPlay() # XXX Only when stopped?
-      @updateTimeStatuses()
-      @updatePlayedProgress()
-    # TODO: seekToTime()
     # Playback =================================================================
     playPause: ->
       if @audio.paused then @audio.play() else @audio.pause()
@@ -100,9 +65,8 @@
       @updateButtonPlay()
 
     seekToTime: (time) ->
-      # Numeric e.g. 42th second
       @audio.currentTime = (
-        if isNumber(time)
+        if isNumber(time) # Numeric e.g. 42th second
           time
         else if m = time.match /^(\d{0,3})$/  # String e.g. '15', '42'...
           m[1]
@@ -133,6 +97,27 @@
       # TODO: Setup styles for meter clone @$loaded
       # - position: absolute; height: 9px; opacity: 0.5;
 
+    # Setup current audio
+    setUpCurrentAudio: ->
+      @audio.preload = 'metadata' # Start preload of audio file
+      @audio.ontimeupdate = () =>
+        @updatePlayedProgress()
+        @updateTimeStatuses()
+      # Bunch of <audio> events
+      @audio.onloadstart = () => # Loading is started
+        @canPlayCurrent = false
+        @updateButtonPlay()
+      @audio.ondurationchange = () => # From "NaN" to the actual duration
+        @updateTimeStatuses()   # Update both time statuses
+      # TODO: Loaded but can't play
+      # @audio.onloadeddata = (e) => console.log e.type
+      # TODO: Loading porogress
+      # @audio.onprogress = (e) => console.log e.type
+      @audio.oncanplay = () => # Can be played
+        @canPlayCurrent = true
+        @play() if @options.playOnLoad
+        @updateButtonPlay()
+
     # Buttons ==================================================================
     # Set up Play/Pause
     setUpButtonPlayPause: ->
@@ -140,10 +125,9 @@
         @playPause()
     # Update Play/Pause
     updateButtonPlay: ->
-      if @audio.paused # Update button class
-        switchClass @$play, 'fi-pause', 'fi-play'
-      else
-        switchClass @$play, 'fi-play', 'fi-pause'
+      @$play.toggleClass('fi-loop', !@canPlayCurrent)
+      @$play.toggleClass('fi-pause', @audio.paused && @canPlayCurrent)
+      @$play.toggleClass('fi-play', !@audio.paused)
       @
     # Set up volume button
     setUpButtonVolume: ->
@@ -202,7 +186,6 @@
 
     # Status ===================================================================
     # Update all statuses
-    # Gets updated in loop
     updateTimeStatuses: ->
       @updateStatusElapsed()
       @updateStatusRemains()
@@ -212,8 +195,7 @@
       @$remains.text '-' + prettyTime @audio.duration-@audio.currentTime
 
     # Look and feel ============================================================
-    # This method toggles player size.
-    # Method returns  size which was set i.e. 'small' or 'normal'
+    # This method toggles player size
     togglePlayerSize: ->
       switchToSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
       switchClass @$wrapper, switchToSize, @currentPlayerSize
