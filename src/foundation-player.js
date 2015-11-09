@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var calculateChildrensWidth, prettyTime, stringPadLeft, switchClass;
+      var calculateChildrensWidth, forceRange, isNumber, prettyTime, stringPadLeft, switchClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -62,24 +62,31 @@
         } else {
           this.audio.pause();
         }
-        this.updateButtonPlay();
-        return this;
+        return this.updateButtonPlay();
       };
 
       FoundationPlayer.prototype.play = function() {
         this.audio.play();
-        this.updateButtonPlay();
-        return this;
+        return this.updateButtonPlay();
       };
 
       FoundationPlayer.prototype.pause = function() {
         this.audio.pause();
-        this.updateButtonPlay();
-        return this;
+        return this.updateButtonPlay();
       };
 
       FoundationPlayer.prototype.seekToTime = function(time) {
-        this.audio.currentTime = time;
+        var m;
+        if (isNumber(time)) {
+          this.audio.currentTime = forceRange(time, this.audio.duration);
+        } else if (m = time.match(/^(\d{0,3})$/)) {
+          this.audio.currentTime = forceRange(m[1], this.audio.duration);
+        } else if (m = time.match(/^(\d?\d):(\d\d)$/)) {
+          time = (parseInt(m[1], 10)) * 60 + (parseInt(m[2], 10));
+          this.audio.currentTime = forceRange(time, this.audio.duration);
+        } else {
+          console.error("seekToTime(time), invalid argument: " + time);
+        }
         this.updatePlayedProgress();
         this.updateTimeStatuses();
         return this;
@@ -107,10 +114,11 @@
 
       FoundationPlayer.prototype.updateButtonPlay = function() {
         if (this.audio.paused) {
-          return switchClass(this.$play, 'fi-pause', 'fi-play');
+          switchClass(this.$play, 'fi-pause', 'fi-play');
         } else {
-          return switchClass(this.$play, 'fi-play', 'fi-pause');
+          switchClass(this.$play, 'fi-play', 'fi-pause');
         }
+        return this;
       };
 
       FoundationPlayer.prototype.setUpButtonVolume = function() {
@@ -226,7 +234,7 @@
           this.setPlayerSizeHandler();
           return this.currentPlayerSize = size;
         } else {
-          console.log('setPlayerSize: incorrect size argument');
+          console.error('setPlayerSize: incorrect size argument');
           return false;
         }
       };
@@ -270,6 +278,20 @@
         return e.children().map(function() {
           return $(this).outerWidth(true);
         });
+      };
+
+      isNumber = function(x) {
+        return typeof x === 'number' && isFinite(x);
+      };
+
+      forceRange = function(x, max) {
+        if (x < 0) {
+          return 0;
+        }
+        if (x > max) {
+          return max;
+        }
+        return x;
       };
 
       return FoundationPlayer;

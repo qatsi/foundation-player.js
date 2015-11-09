@@ -90,25 +90,33 @@
     # TODO: seekToTime()
     # Playback =================================================================
     playPause: ->
-      if @audio.paused # Update button class
-        @audio.play()
-      else
-        @audio.pause()
+      if @audio.paused then @audio.play() else @audio.pause()
       @updateButtonPlay()
-      @
     play: ->
       @audio.play()
       @updateButtonPlay()
-      @
     pause: ->
       @audio.pause()
       @updateButtonPlay()
-      @
+
     seekToTime: (time) ->
-      @audio.currentTime = time
+      # Numeric e.g. 42th second
+      if isNumber(time)
+        @audio.currentTime = forceRange time, @audio.duration
+      # String e.g. '15', '42'...
+      else if m = time.match /^(\d{0,3})$/
+        @audio.currentTime = forceRange m[1], @audio.duration
+      # String e.g. '00:15', '1:42'...
+      else if m = time.match /^(\d?\d):(\d\d)$/
+        time = (parseInt m[1], 10) * 60 + (parseInt m[2], 10)
+        @audio.currentTime = forceRange time, @audio.duration
+      else
+        console.error "seekToTime(time), invalid argument: #{time}"
+      # Common part, update UI and return
       @updatePlayedProgress()
       @updateTimeStatuses()
       @
+
     seekPercent: (p) ->
       # Can use both 0.65 and 65
       @audio.currentTime = @audio.duration * (if p >= 1 then p/100 else p)
@@ -130,13 +138,14 @@
     # Set up Play/Pause
     setUpButtonPlayPause: ->
       @$play.bind 'click', () =>
-        @playPause() # Play or pause
+        @playPause()
     # Update Play/Pause
     updateButtonPlay: ->
       if @audio.paused # Update button class
         switchClass @$play, 'fi-pause', 'fi-play'
       else
         switchClass @$play, 'fi-play', 'fi-pause'
+      @
     # Set up volume button
     setUpButtonVolume: ->
       @$volume.bind 'click', () =>
@@ -218,7 +227,7 @@
           @setPlayerSizeHandler()
           @currentPlayerSize = size
       else
-        console.log 'setPlayerSize: incorrect size argument'
+        console.error 'setPlayerSize: incorrect size argument'
         return false
     # Update player elemant width
     setPlayerSizeHandler: ->
@@ -255,6 +264,16 @@
     # Utility function to calculate actual withds of children elements
     calculateChildrensWidth = (e) ->
       e.children().map -> $(@).outerWidth(true) # Get widths including margin
+
+    # Check number http://stackoverflow.com/a/1280236/228067
+    isNumber = (x) ->
+      typeof x == 'number' and isFinite(x)
+
+    # Small function to check if 0 >= number >= max
+    forceRange = (x, max) ->
+      return 0 if x < 0
+      return max if x > max
+      x
 
   # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->
