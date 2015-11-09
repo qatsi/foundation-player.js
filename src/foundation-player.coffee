@@ -15,6 +15,7 @@
       animate: false
       quick: 50
       moderate: 150
+      shutOthersOnPlay: true
 
     constructor: (el, opt) ->
       @options = $.extend({}, @defaults, opt)
@@ -55,9 +56,11 @@
 
     # Playback =================================================================
     playPause: ->
-      if @audio.paused then @audio.play() else @audio.pause()
-      @updateButtonPlay()
+      if @audio.paused then @play() else @pause()
     play: ->
+      if @options.shutOthersOnPlay
+        players = $.data(document.body, 'FoundationPlayers')
+        players.map (p) => p.pause() if @ != p
       @audio.play()
       @updateButtonPlay()
     pause: ->
@@ -246,12 +249,6 @@
     # Check number http://stackoverflow.com/a/1280236/228067
     isNumber = (x) ->
       typeof x == 'number' and isFinite(x)
-
-    # Small function to check if 0 >= number >= max
-    forceRange = (x, max) ->
-      return 0 if x < 0
-      return max if x > max
-      x
 
   # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->

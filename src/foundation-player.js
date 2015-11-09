@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var calculateChildrensWidth, forceRange, isNumber, prettyTime, stringPadLeft, switchClass;
+      var calculateChildrensWidth, isNumber, prettyTime, stringPadLeft, switchClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -13,7 +13,8 @@
         dimmedVolume: 0.25,
         animate: false,
         quick: 50,
-        moderate: 150
+        moderate: 150,
+        shutOthersOnPlay: true
       };
 
       function FoundationPlayer(el, opt) {
@@ -49,14 +50,24 @@
 
       FoundationPlayer.prototype.playPause = function() {
         if (this.audio.paused) {
-          this.audio.play();
+          return this.play();
         } else {
-          this.audio.pause();
+          return this.pause();
         }
-        return this.updateButtonPlay();
       };
 
       FoundationPlayer.prototype.play = function() {
+        var players;
+        if (this.options.shutOthersOnPlay) {
+          players = $.data(document.body, 'FoundationPlayers');
+          players.map((function(_this) {
+            return function(p) {
+              if (_this !== p) {
+                return p.pause();
+              }
+            };
+          })(this));
+        }
         this.audio.play();
         return this.updateButtonPlay();
       };
@@ -293,16 +304,6 @@
 
       isNumber = function(x) {
         return typeof x === 'number' && isFinite(x);
-      };
-
-      forceRange = function(x, max) {
-        if (x < 0) {
-          return 0;
-        }
-        if (x > max) {
-          return max;
-        }
-        return x;
       };
 
       return FoundationPlayer;
