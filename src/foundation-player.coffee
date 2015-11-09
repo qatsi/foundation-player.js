@@ -101,17 +101,16 @@
 
     seekToTime: (time) ->
       # Numeric e.g. 42th second
-      if isNumber(time)
-        @audio.currentTime = forceRange time, @audio.duration
-      # String e.g. '15', '42'...
-      else if m = time.match /^(\d{0,3})$/
-        @audio.currentTime = forceRange m[1], @audio.duration
-      # String e.g. '00:15', '1:42'...
-      else if m = time.match /^(\d?\d):(\d\d)$/
-        time = (parseInt m[1], 10) * 60 + (parseInt m[2], 10)
-        @audio.currentTime = forceRange time, @audio.duration
-      else
-        console.error "seekToTime(time), invalid argument: #{time}"
+      @audio.currentTime = (
+        if isNumber(time)
+          time
+        else if m = time.match /^(\d{0,3})$/  # String e.g. '15', '42'...
+          m[1]
+        else if m = time.match /^(\d?\d):(\d\d)$/ # String e.g. '00:15', '1:42'...
+          (parseInt m[1], 10) * 60 + (parseInt m[2], 10)
+        else
+          console.error "seekToTime(time), invalid argument: #{time}"
+      )
       # Common part, update UI and return
       @updatePlayedProgress()
       @updateTimeStatuses()
