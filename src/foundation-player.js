@@ -97,6 +97,7 @@
         this.audio.onloadstart = (function(_this) {
           return function() {
             _this.canPlayCurrent = false;
+            _this.updateDisabledStatus();
             return _this.updateButtonPlay();
           };
         })(this);
@@ -111,6 +112,7 @@
             if (_this.options.playOnLoad) {
               _this.play();
             }
+            _this.updateDisabledStatus();
             return _this.updateButtonPlay();
           };
         })(this);
@@ -119,7 +121,9 @@
       FoundationPlayer.prototype.setUpButtonPlayPause = function() {
         return this.$play.bind('click', (function(_this) {
           return function() {
-            return _this.playPause();
+            if (_this.canPlayCurrent) {
+              return _this.playPause();
+            }
           };
         })(this));
       };
@@ -228,6 +232,10 @@
 
       FoundationPlayer.prototype.updateStatusRemains = function() {
         return this.$remains.text('-' + prettyTime(this.audio.duration - this.audio.currentTime));
+      };
+
+      FoundationPlayer.prototype.updateDisabledStatus = function() {
+        return this.$player.toggleClass('disabled', !this.canPlayCurrent);
       };
 
       FoundationPlayer.prototype.togglePlayerSize = function() {

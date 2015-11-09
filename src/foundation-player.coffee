@@ -106,6 +106,7 @@
       # Bunch of <audio> events
       @audio.onloadstart = () => # Loading is started
         @canPlayCurrent = false
+        @updateDisabledStatus()
         @updateButtonPlay()
       @audio.ondurationchange = () => # From "NaN" to the actual duration
         @updateTimeStatuses()   # Update both time statuses
@@ -116,13 +117,14 @@
       @audio.oncanplay = () => # Can be played
         @canPlayCurrent = true
         @play() if @options.playOnLoad
+        @updateDisabledStatus()
         @updateButtonPlay()
 
     # Buttons ==================================================================
     # Set up Play/Pause
     setUpButtonPlayPause: ->
       @$play.bind 'click', () =>
-        @playPause()
+        @playPause() if @canPlayCurrent
     # Update Play/Pause
     updateButtonPlay: ->
       @$play.toggleClass('fi-loop', !@canPlayCurrent)
@@ -193,6 +195,9 @@
       @$elapsed.text prettyTime @audio.currentTime
     updateStatusRemains: -> # Update $remains time status
       @$remains.text '-' + prettyTime @audio.duration-@audio.currentTime
+    updateDisabledStatus: -> # Update $remains time status
+      @$player.toggleClass('disabled', !@canPlayCurrent)
+
 
     # Look and feel ============================================================
     # This method toggles player size
