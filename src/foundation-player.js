@@ -250,14 +250,6 @@
       };
 
       FoundationPlayer.prototype.setPlayerSizeHandler = function() {
-        var actualWidth, magicNumber, playerWidth;
-        actualWidth = this.$wrapper.width();
-        magicNumber = 3;
-        playerWidth = 0;
-        calculateChildrensWidth(this.$player).each(function() {
-          return playerWidth += this;
-        });
-        this.$player.width(Math.floor(magicNumber + playerWidth / actualWidth * 100) + '%');
         return this.playerBeautifyProgressBar();
       };
 

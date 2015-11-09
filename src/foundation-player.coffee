@@ -210,15 +210,9 @@
       else
         console.error 'setPlayerSize: incorrect size argument'
         return false
-    # Update player elemant width
+    # Obsolete PlayerSizeHandler funct
     setPlayerSizeHandler: ->
-      actualWidth = @$wrapper.width()
-      magicNumber = 3
-      playerWidth = 0
-      calculateChildrensWidth(@$player).each -> playerWidth += this
-      @$player.width Math.floor(magicNumber + playerWidth/actualWidth*100) + '%'
       @playerBeautifyProgressBar()
-      # Add this to window resize
     # Deuglification of round progress bar when it 0% width
     playerBeautifyProgressBar: ->
       if @$progress.hasClass('round')

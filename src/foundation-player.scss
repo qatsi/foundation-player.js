@@ -43,10 +43,13 @@ $fp-button-hover-scale: 1.2 !default;
   user-select: none;
 }
 
+
 // Foundation player styles
 @include exports('foundation-player') {
   // Common styles for player parts
   .foundation-player {
+    display: table;
+    margin: 0 auto;
     .player {
       margin: 0 auto; // Center player
     }
