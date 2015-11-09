@@ -202,10 +202,8 @@
     # Look and feel ============================================================
     # This method toggles player size
     togglePlayerSize: ->
-      switchToSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
-      switchClass @$wrapper, switchToSize, @currentPlayerSize
-      @setPlayerSizeHandler()
-      @currentPlayerSize = switchToSize
+      setPlayerSize('small') if @currentPlayerSize == 'normal'
+      setPlayerSize('normal') if @currentPlayerSize == 'small'
     # Set particalar player size
     setPlayerSize: (size) ->
       if ('normal' == size or 'small' == size) and size != @currentPlayerSize
