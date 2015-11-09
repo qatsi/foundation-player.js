@@ -159,14 +159,6 @@
             }
           };
         })(this));
-        this.$progress.on('mouseup.fndtn.player', (function(_this) {
-          return function() {
-            if (_this.nowdragging) {
-              _this.nowdragging = false;
-              return _this.setVolume(1);
-            }
-          };
-        })(this));
         return this.$progress.on('mousemove.fndtn.player', (function(_this) {
           return function(e) {
             if (_this.nowdragging) {
@@ -221,17 +213,16 @@
       };
 
       FoundationPlayer.prototype.togglePlayerSize = function() {
-        var swithToSize;
-        swithToSize = this.currentPlayerSize === 'normal' ? 'small' : 'normal';
-        console.log("" + swithToSize);
-        this.$wrapper.addClass(swithToSize).removeClass(this.currentPlayerSize);
+        var switchToSize;
+        switchToSize = this.currentPlayerSize === 'normal' ? 'small' : 'normal';
+        switchClass(this.$wrapper, switchToSize, this.currentPlayerSize);
         this.setPlayerSizeHandler();
-        return this.currentPlayerSize = swithToSize;
+        return this.currentPlayerSize = switchToSize;
       };
 
       FoundationPlayer.prototype.setPlayerSize = function(size) {
         if (('normal' === size || 'small' === size) && size !== this.currentPlayerSize) {
-          this.$wrapper.addClass(size).removeClass(this.currentPlayerSize);
+          switchClass(this.$wrapper, size, this.currentPlayerSize);
           this.setPlayerSizeHandler();
           return this.currentPlayerSize = size;
         } else {
