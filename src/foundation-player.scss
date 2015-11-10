@@ -46,8 +46,11 @@ $fp-progress-height-small: rem-calc(10) !default;
   .foundation-player {
     display: table;
     margin: 0 auto;
+
+    // Override Foundation .inline-list values
     .player {
-      margin: 0 auto; // Center player
+      margin-left: 0;
+      margin-right: 0;
     }
 
     .disabled {

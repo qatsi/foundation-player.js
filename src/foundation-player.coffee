@@ -12,6 +12,7 @@
       animate: false
       quick: 50
       moderate: 150
+      shutOthersOnPlay: true
 
     constructor: (el, opt) ->
       @options = $.extend({}, @defaults, opt)
@@ -49,9 +50,11 @@
 
     # Playback =================================================================
     playPause: ->
-      if @audio.paused then @audio.play() else @audio.pause()
-      @updateButtonPlay()
+      if @audio.paused then @play() else @pause()
     play: ->
+      if @options.shutOthersOnPlay
+        players = $.data(document.body, 'FoundationPlayers')
+        players.map (p) => p.pause() if @ != p
       @audio.play()
       @updateButtonPlay()
     pause: ->
@@ -105,6 +108,7 @@
         @updateTimeStatuses()   # Update both time statuses
       $audio.on 'progress.fndtn.player', () =>
         @redrawBufferizationBars()
+        @updateDisabledStatus()
       $audio.on 'canplay.fndtn.player', () => # Can be played
         @canPlayCurrent = true
         @play() if @options.playOnLoad
@@ -219,29 +223,25 @@
     # Look and feel ============================================================
     # This method toggles player size
     togglePlayerSize: ->
-      switchToSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
-      switchClass @$wrapper, switchToSize, @currentPlayerSize
-      @setPlayerSizeHandler()
-      @redrawBufferizationBars()
-      @currentPlayerSize = switchToSize
+      # TODO: rename @currentPlayerSize and switchToSize
+      toSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
+      @currentPlayerSize = toSize if @setPlayerSize toSize
+
     # Set particalar player size
     setPlayerSize: (size) ->
       if ('normal' == size or 'small' == size) and size != @currentPlayerSize
           switchClass @$wrapper, size, @currentPlayerSize
           @setPlayerSizeHandler()
-          @currentPlayerSize = size
+          return @currentPlayerSize = size
       else
         console.error 'setPlayerSize: incorrect size argument'
         return false
-    # Update player elemant width
+
+    # Player resize handler
     setPlayerSizeHandler: ->
-      actualWidth = @$wrapper.width()
-      magicNumber = 3
-      playerWidth = 0
-      calculateChildrensWidth(@$player).each -> playerWidth += this
-      @$player.width Math.floor(magicNumber + playerWidth/actualWidth*100) + '%'
       @playerBeautifyProgressBar()
-      # Add this to window resize
+      @redrawBufferizationBars()
+
     # Deuglification of round progress bar when it 0% width
     playerBeautifyProgressBar: ->
       if @$progress.hasClass('round')
@@ -267,19 +267,9 @@
       # As seen here: http://stackoverflow.com/questions/3733227
       (new Array(length+1).join(pad)+string).slice(-length)
 
-    # Utility function to calculate actual withds of children elements
-    calculateChildrensWidth = (e) ->
-      e.children().map -> $(@).outerWidth(true) # Get widths including margin
-
     # Check number http://stackoverflow.com/a/1280236/228067
     isNumber = (x) ->
       typeof x == 'number' and isFinite(x)
-
-    # Small function to check if 0 >= number >= max
-    forceRange = (x, max) ->
-      return 0 if x < 0
-      return max if x > max
-      x
 
   # Define the jQuery plugin
   $.fn.extend foundationPlayer: (option, args...) ->
