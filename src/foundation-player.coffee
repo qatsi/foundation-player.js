@@ -108,6 +108,7 @@
         @updateTimeStatuses()   # Update both time statuses
       $audio.on 'progress.fndtn.player', () =>
         @redrawBufferizationBars()
+        @updateDisabledStatus()
       $audio.on 'canplay.fndtn.player', () => # Can be played
         @canPlayCurrent = true
         @play() if @options.playOnLoad

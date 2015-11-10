@@ -120,7 +120,8 @@
         })(this));
         $audio.on('progress.fndtn.player', (function(_this) {
           return function() {
-            return _this.redrawBufferizationBars();
+            _this.redrawBufferizationBars();
+            return _this.updateDisabledStatus();
           };
         })(this));
         return $audio.on('canplay.fndtn.player', (function(_this) {
