@@ -61,9 +61,14 @@ Small cheatsheet with audio MIME types:
 - `audio/wav` .wav
 - `audio/webm` .webm
 
-## Tips
+## Tips and known issues
 
+- Add `preload: 'none'` to every `<audio>` to prevent preloading. Player automatically starts preloading when initialized.
 - Add `.noselect` class to whole player
+
+## Some conventions:
+- Buttons has selector `.player-button.play em`, where: `.player-button.play` is li element and `em` is event target
+- Status elements has selector `.player-status.time .elapsed`, where: `.player-status.time` is li element and `.elapsed` is target to update
 
 ## Todo
 - Playlists

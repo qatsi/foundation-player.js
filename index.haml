@@ -30,7 +30,7 @@
   - player = capture_haml do
     %ul.player.inline-list.noselect
       %li.player-button.play
-        %em.fi-pause
+        %em.fi-music
       %li.player-button.rewind
         %em.fi-refresh
       %li.player-button.volume
@@ -39,9 +39,9 @@
         %span.elapsed 00:00
       %li.player-progress
         .progress.round
-          %span.meter
+          %span.meter.played
       %li.player-status.time
-        %span.remains 00:00
+        %span.remains -00:00
 
   %body.foundation-player-demo
     .row
@@ -166,8 +166,8 @@
               %code $('.foundation-player.no-2').foundationPlayer();
             .foundation-player.no-2
               = player
-              %audio
-                %source{src: './src/climbing.m4a'}
+              %audio{ preload: 'none' }
+                %source{ src: './src/climbing.m4a' }
 
           #small.content
             %p
@@ -175,8 +175,8 @@
               %code { size: 'small' }
             .foundation-player.no-3
               = player
-              %audio
-                %source{src: './src/ukulele.m4a'}
+              %audio{ preload: 'none' }
+                %source{ src: './src/ukulele.m4a' }
 
         %p.text-center
           %small
