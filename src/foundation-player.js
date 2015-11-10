@@ -78,7 +78,7 @@
 
       FoundationPlayer.prototype.seekToTime = function(time) {
         var m;
-        this.audio.currentTime = (isNumber(time) ? time : (m = time.match(/^(\d{0,3})$/)) ? m[1] : (m = time.match(/^(\d?\d):(\d\d)$/)) ? (parseInt(m[1], 10)) * 60 + (parseInt(m[2], 10)) : console.error("seekToTime(time), invalid argument: " + time));
+        this.audio.currentTime = (isNumber(time) ? time : (m = time.match(/^(\d{0,3})$/)) ? m[1] : (m = time.match(/^(\d?\d):(\d\d)$/)) ? (parseInt(m[1], 10)) * 60 + (parseInt(m[2], 10)) : console.error('seekToTime(time), invalid argument: ' + time));
         this.updatePlayedProgress();
         this.updateTimeStatuses();
         return this;
@@ -315,8 +315,8 @@
         var semiHeight;
         if (this.$progress.hasClass('round')) {
           semiHeight = this.$played.height() / 2;
-          this.$played.css('padding', "0 " + semiHeight + "px");
-          return this.$progress.find('.buffered').css('padding', "0 " + semiHeight + "px");
+          this.$played.css('padding', '0 ' + semiHeight + 'px');
+          return this.$progress.find('.buffered').css('padding', '0 ' + semiHeight + 'px');
         }
       };
 
@@ -328,7 +328,7 @@
         var minutes, seconds;
         minutes = Math.floor(s / 60);
         seconds = Math.floor(s - minutes * 60);
-        return (stringPadLeft(minutes, '0', 2)) + ":" + (stringPadLeft(seconds, '0', 2));
+        return (stringPadLeft(minutes, '0', 2)) + ':' + (stringPadLeft(seconds, '0', 2));
       };
 
       stringPadLeft = function(string, pad, length) {

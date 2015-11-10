@@ -70,7 +70,7 @@
         else if m = time.match /^(\d?\d):(\d\d)$/ # String e.g. '00:15', '1:42'...
           (parseInt m[1], 10) * 60 + (parseInt m[2], 10)
         else
-          console.error "seekToTime(time), invalid argument: #{time}"
+          console.error 'seekToTime(time), invalid argument: ' + time
       )
       # Common part, update UI and return
       @updatePlayedProgress()
@@ -104,7 +104,7 @@
         @canPlayCurrent = false
         @updateDisabledStatus()
         @updateButtonPlay()
-      $audio.on 'durationchange.fndtn.player', () => # "NaN" to loaded
+      $audio.on 'durationchange.fndtn.player', () => # 'NaN' to loaded
         @updateTimeStatuses()   # Update both time statuses
       $audio.on 'progress.fndtn.player', () =>
         @redrawBufferizationBars()
@@ -249,8 +249,8 @@
       if @$progress.hasClass('round')
         semiHeight = @$played.height()/2
         # TODO: Make it better
-        @$played.css 'padding', "0 #{semiHeight}px"
-        @$progress.find('.buffered').css 'padding', "0 #{semiHeight}px"
+        @$played.css 'padding', '0 ' + semiHeight + 'px'
+        @$progress.find('.buffered').css 'padding', '0 ' + semiHeight + 'px'
     # Helpers ==================================================================
     # Some really internal stuff goes here
     switchClass = (element, p, n) ->
@@ -261,7 +261,7 @@
       # As seen here: http://stackoverflow.com/questions/3733227
       minutes = Math.floor s / 60
       seconds = Math.floor s - minutes * 60
-      "#{stringPadLeft minutes, '0', 2}:#{stringPadLeft seconds, '0', 2}"
+      (stringPadLeft minutes, '0', 2) + ':' + (stringPadLeft seconds, '0', 2)
 
     # Small helper to padd time correctly
     stringPadLeft = (string,pad,length) ->
