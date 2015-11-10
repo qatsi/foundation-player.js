@@ -4,7 +4,7 @@
   (function($, window) {
     var FoundationPlayer;
     FoundationPlayer = (function() {
-      var calculateChildrensWidth, forceRange, isNumber, prettyTime, stringPadLeft, switchClass;
+      var isNumber, prettyTime, stringPadLeft, switchClass;
 
       FoundationPlayer.prototype.defaults = {
         size: 'normal',
@@ -13,7 +13,8 @@
         dimmedVolume: 0.25,
         animate: false,
         quick: 50,
-        moderate: 150
+        moderate: 150,
+        shutOthersOnPlay: true
       };
 
       function FoundationPlayer(el, opt) {
@@ -48,14 +49,24 @@
 
       FoundationPlayer.prototype.playPause = function() {
         if (this.audio.paused) {
-          this.audio.play();
+          return this.play();
         } else {
-          this.audio.pause();
+          return this.pause();
         }
-        return this.updateButtonPlay();
       };
 
       FoundationPlayer.prototype.play = function() {
+        var players;
+        if (this.options.shutOthersOnPlay) {
+          players = $.data(document.body, 'FoundationPlayers');
+          players.map((function(_this) {
+            return function(p) {
+              if (_this !== p) {
+                return p.pause();
+              }
+            };
+          })(this));
+        }
         this.audio.play();
         return this.updateButtonPlay();
       };
@@ -109,7 +120,8 @@
         })(this));
         $audio.on('progress.fndtn.player', (function(_this) {
           return function() {
-            return _this.redrawBufferizationBars();
+            _this.redrawBufferizationBars();
+            return _this.updateDisabledStatus();
           };
         })(this));
         return $audio.on('canplay.fndtn.player', (function(_this) {
@@ -273,12 +285,11 @@
       };
 
       FoundationPlayer.prototype.togglePlayerSize = function() {
-        var switchToSize;
-        switchToSize = this.currentPlayerSize === 'normal' ? 'small' : 'normal';
-        switchClass(this.$wrapper, switchToSize, this.currentPlayerSize);
-        this.setPlayerSizeHandler();
-        this.redrawBufferizationBars();
-        return this.currentPlayerSize = switchToSize;
+        var toSize;
+        toSize = this.currentPlayerSize === 'normal' ? 'small' : 'normal';
+        if (this.setPlayerSize(toSize)) {
+          return this.currentPlayerSize = toSize;
+        }
       };
 
       FoundationPlayer.prototype.setPlayerSize = function(size) {
@@ -293,15 +304,8 @@
       };
 
       FoundationPlayer.prototype.setPlayerSizeHandler = function() {
-        var actualWidth, magicNumber, playerWidth;
-        actualWidth = this.$wrapper.width();
-        magicNumber = 3;
-        playerWidth = 0;
-        calculateChildrensWidth(this.$player).each(function() {
-          return playerWidth += this;
-        });
-        this.$player.width(Math.floor(magicNumber + playerWidth / actualWidth * 100) + '%');
-        return this.playerBeautifyProgressBar();
+        this.playerBeautifyProgressBar();
+        return this.redrawBufferizationBars();
       };
 
       FoundationPlayer.prototype.playerBeautifyProgressBar = function() {
@@ -328,24 +332,8 @@
         return (new Array(length + 1).join(pad) + string).slice(-length);
       };
 
-      calculateChildrensWidth = function(e) {
-        return e.children().map(function() {
-          return $(this).outerWidth(true);
-        });
-      };
-
       isNumber = function(x) {
         return typeof x === 'number' && isFinite(x);
-      };
-
-      forceRange = function(x, max) {
-        if (x < 0) {
-          return 0;
-        }
-        if (x > max) {
-          return max;
-        }
-        return x;
       };
 
       return FoundationPlayer;
