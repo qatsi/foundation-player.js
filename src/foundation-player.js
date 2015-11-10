@@ -201,10 +201,13 @@
             }
           };
         })(this);
+        this.$player.on('mouseleave.fndtn.player', function() {
+          return _stopDragHandler();
+        });
         $(document).on('mouseup.fndtn.player', function() {
           return _stopDragHandler();
         });
-        $(window).on('mouseleave.fndtn.player', function() {
+        $(window).on('blur.fndtn.player', function() {
           return _stopDragHandler();
         });
         return this.$progress.on('mousemove.fndtn.player', (function(_this) {

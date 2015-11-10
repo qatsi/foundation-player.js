@@ -160,8 +160,9 @@
         if @nowdragging
           @nowdragging = false
           @setVolume(1)
+      @$player.on 'mouseleave.fndtn.player', () -> _stopDragHandler()
       $(document).on 'mouseup.fndtn.player', () -> _stopDragHandler()
-      $(window).on 'mouseleave.fndtn.player', () -> _stopDragHandler()
+      $(window).on 'blur.fndtn.player', () -> _stopDragHandler()
       # Update player position
       @$progress.on 'mousemove.fndtn.player', (e) =>
         if @nowdragging
