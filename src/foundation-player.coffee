@@ -5,13 +5,10 @@
   # Define the plugin class
   class FoundationPlayer
     defaults:
-      # Look and feel options
       size: 'normal'        # Size of player <normal|small>
       playOnLoad: false     # Play as soon as it's loaded
       skipSeconds: 10       # how many we want to skip
-      # Volume options
       dimmedVolume: 0.25
-      # Animation Duration
       animate: false
       quick: 50
       moderate: 150
@@ -27,8 +24,7 @@
       @$elapsed =  @$wrapper.find('.player-status.time .elapsed')
       @$remains =  @$wrapper.find('.player-status.time .remains')
       @$progress = @$wrapper.find('.player-progress .progress')
-      @$played =   @$progress.find('.meter')
-      @$loaded =   @$played.clone().appendTo(@$progress)
+      @$played =   @$progress.find('.meter.played')
       @$sources =  @$wrapper.children('audio')
       # DOM Elements
       # TODO: Manage current audio object more carefully
@@ -42,11 +38,9 @@
       # Calls
       @initialize()
 
-    # Additional plugin methods go here
+    # Init function
     initialize: ->
-      # Init function
       @resetClassAndStyle()   # Setup classes and styles
-      # Player setup
       @setUpCurrentAudio()    # Set up Play/Pause
       @setUpButtonPlayPause() # Set up Play/Pause
       @setUpButtonVolume()    # Set up volume button
@@ -94,29 +88,27 @@
       @$wrapper.addClass(@options.size)
       # Calculate player width
       @setPlayerSizeHandler()
-      # TODO: Setup styles for meter clone @$loaded
-      # - position: absolute; height: 9px; opacity: 0.5;
 
     # Setup current audio
     setUpCurrentAudio: ->
       @audio.preload = 'metadata' # Start preload of audio file
-      @audio.ontimeupdate = () =>
+      $audio = $(@audio)
+      $audio.on 'timeupdate.fndtn.player', () => # While playing
         @updatePlayedProgress()
         @updateTimeStatuses()
       # Bunch of <audio> events
-      @audio.onloadstart = () => # Loading is started
+      $audio.on 'loadstart.fndtn.player', () => # Loading is started
         @canPlayCurrent = false
         @updateDisabledStatus()
         @updateButtonPlay()
-      @audio.ondurationchange = () => # From "NaN" to the actual duration
+      $audio.on 'durationchange.fndtn.player', () => # "NaN" to loaded
         @updateTimeStatuses()   # Update both time statuses
-      # TODO: Loaded but can't play
-      # @audio.onloadeddata = (e) => console.log e.type
-      # TODO: Loading porogress
-      # @audio.onprogress = (e) => console.log e.type
-      @audio.oncanplay = () => # Can be played
+      $audio.on 'progress.fndtn.player', () =>
+        @redrawBufferizationBars()
+      $audio.on 'canplay.fndtn.player', () => # Can be played
         @canPlayCurrent = true
         @play() if @options.playOnLoad
+        @redrawBufferizationBars()
         @updateDisabledStatus()
         @updateButtonPlay()
 
@@ -127,7 +119,7 @@
         @playPause() if @canPlayCurrent
     # Update Play/Pause
     updateButtonPlay: ->
-      @$play.toggleClass('fi-loop', !@canPlayCurrent)
+      @$play.toggleClass('fi-music', !@canPlayCurrent)
       @$play.toggleClass('fi-pause', @audio.paused && @canPlayCurrent)
       @$play.toggleClass('fi-play', !@audio.paused)
       @
@@ -159,13 +151,18 @@
       @$progress.on 'mousedown.fndtn.player',  () =>
         @nowdragging = true
         @setVolume(@options.dimmedVolume)
-      $(document).on 'mouseup.fndtn.player', () =>
+      # Stop dragging common handler
+      _stopDragHandler = () =>
         if @nowdragging
           @nowdragging = false
           @setVolume(1)
+      $(document).on 'mouseup.fndtn.player', () -> _stopDragHandler()
+      $(window).on 'mouseleave.fndtn.player', () -> _stopDragHandler()
+      # Update player position
       @$progress.on 'mousemove.fndtn.player', (e) =>
         if @nowdragging
           @seekPercent(Math.floor e.offsetX / @$progress.outerWidth() * 100)
+
     updatePlayedProgress: ->
       @played = Math.round @audio.currentTime / @audio.duration * 100
       # Animate property if necessary
@@ -174,6 +171,26 @@
           (queue: false, duration: @options.quick)
       else
         @$played.css 'width', @played + '%'
+    redrawBufferizationBars: ->
+      # This function should be called after playerBeautifyProgressBar
+      # Remove all current indicators
+      @$progress.find('.buffered').remove()
+      segments = @audio.buffered.length
+      # If there is at least one segment...
+      if segments > 0
+        # Some of $progress styles are used for buffer indicators
+        t =  parseInt @$progress.css('padding-top'), 10
+        l = parseInt @$progress.css('padding-left'), 10
+        w = @$progress.width()
+        h = @$progress.height()
+        widthDelta = 2 * parseInt @$played.css('padding-left'), 10
+        for range in [0...segments]
+          b = @audio.buffered.start(range) # Segment start second
+          e = @audio.buffered.end(range) # Segment end second
+          switchClass(@$played.clone(), 'buffered', 'played')
+          .css('left', l + (Math.floor w * (b / @audio.duration)) + 'px')
+          .css('top', t).height(h).width(Math.floor(w*(e-b)/@audio.duration))
+          .appendTo(@$progress)
 
     # Volume ===================================================================
     setVolume: (vol) ->
@@ -205,6 +222,7 @@
       switchToSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
       switchClass @$wrapper, switchToSize, @currentPlayerSize
       @setPlayerSizeHandler()
+      @redrawBufferizationBars()
       @currentPlayerSize = switchToSize
     # Set particalar player size
     setPlayerSize: (size) ->
@@ -228,7 +246,9 @@
     playerBeautifyProgressBar: ->
       if @$progress.hasClass('round')
         semiHeight = @$played.height()/2
+        # TODO: Make it better
         @$played.css 'padding', "0 #{semiHeight}px"
+        @$progress.find('.buffered').css 'padding', "0 #{semiHeight}px"
     # Helpers ==================================================================
     # Some really internal stuff goes here
     switchClass = (element, p, n) ->

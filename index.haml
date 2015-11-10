@@ -30,7 +30,7 @@
   - player = capture_haml do
     %ul.player.inline-list.noselect
       %li.player-button.play
-        %em.fi-loop
+        %em.fi-music
       %li.player-button.rewind
         %em.fi-refresh
       %li.player-button.volume
@@ -39,9 +39,9 @@
         %span.elapsed 00:00
       %li.player-progress
         .progress.round
-          %span.meter
+          %span.meter.played
       %li.player-status.time
-        %span.remains 00:00
+        %span.remains -00:00
 
   %body.foundation-player-demo
     .row

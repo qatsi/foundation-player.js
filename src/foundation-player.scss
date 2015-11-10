@@ -1,6 +1,6 @@
 @import 'foundation/functions';
 
-// Some Foundation defaults
+// Redefinition of some Foundation defaults
 $global-rounded: 1000px !default;
 $base-line-height: 1.5 !default;
 
@@ -11,7 +11,6 @@ $base-line-height: 1.5 !default;
   }
 }
 
-// Parameters which may be changed
 // Main player colors
 $color-red: #d91e18 !default;
 $color-orange: #f9690e !default;
@@ -19,19 +18,16 @@ $color-pink: #db0a5b !default;
 // Gradients
 $fp-gradient: linear-gradient(5deg, $color-red, $color-orange) !default;
 $fp-gradient-hover: linear-gradient(5deg, $color-red, $color-pink) !default;
-$fp-gradient-progess: $fp-gradient;
+$fp-gradient-progess: $fp-gradient !default;
 // Font sizes
 $fp-font-size-normal: rem-calc(23) !default;
 $fp-font-size-small: rem-calc(18) !default;
 // Progress bar size
 $fp-progress-width-normal: 200px !default;
-$fp-progress-width-small: $fp-progress-width-normal * .75 !default;
+$fp-progress-width-small: 125px !default;
 // These numbers should be more or less reasonable
-$fp-progress-height-normal: rem-calc(18) !default;
-$fp-progress-height-small: rem-calc(12) !default;
-// Button options
-// May cause 'quirks' in Safari
-$fp-button-hover-scale: 1.2 !default;
+$fp-progress-height-normal: rem-calc(24) !default;
+$fp-progress-height-small: rem-calc(10) !default;
 
 // Auxillary styles
 // Disable selection. Seen here http://stackoverflow.com/questions/826782/
@@ -62,8 +58,14 @@ $fp-button-hover-scale: 1.2 !default;
     .player-progress {
       cursor: col-resize;
 
-      .meter {
+      .meter.played {
         background: $fp-gradient-progess;
+      }
+
+      .meter.buffered {
+        background: $fp-gradient-progess;
+        opacity: .2;
+        position: absolute;
       }
     }
 
@@ -94,7 +96,6 @@ $fp-button-hover-scale: 1.2 !default;
         background: $fp-gradient-hover;
         // Can't avoid -webkut http://caniuse.com/#search=background-clip
         -webkit-background-clip: text;
-        transform: scale($fp-button-hover-scale);
       }
     }
   }
@@ -125,7 +126,7 @@ $fp-button-hover-scale: 1.2 !default;
     .player-progress .progress {
       height: $fp-progress-height-normal;
       position: relative;
-      top: (($fp-font-size-normal * ($base-line-height + .1)) / 2) - ($fp-progress-height-normal / 2);
+      top: ($fp-font-size-normal * $base-line-height / 2) - ($fp-progress-height-normal / 2);
       width: $fp-progress-width-normal;
     }
   }
@@ -156,7 +157,7 @@ $fp-button-hover-scale: 1.2 !default;
     .player-progress .progress {
       height: $fp-progress-height-small;
       position: relative;
-      top: (($fp-font-size-small * ($base-line-height + .1)) / 2) - ($fp-progress-height-small / 2);
+      top: ($fp-font-size-small * $base-line-height / 2) - ($fp-progress-height-small / 2);
       width: $fp-progress-width-small;
     }
   }
