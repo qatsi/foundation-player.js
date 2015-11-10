@@ -5,14 +5,14 @@
   # Define the plugin class
   class FoundationPlayer
     defaults:
-      size: 'normal'        # Size of player <normal|small>
-      playOnLoad: false     # Play as soon as it's loaded
-      skipSeconds: 10       # how many we want to skip
-      dimmedVolume: 0.25
-      animate: false
-      quick: 50
-      moderate: 150
-      shutOthersOnPlay: true
+      size: 'normal'          # Size of player <normal|small>
+      playOnLoad: false       # Play as soon as it's loaded
+      skipSeconds: 10         # How many we want to skip
+      dimmedVolume: 0.25      # Reduced volume i.e. while seeking
+      animate: false          # EXPERIMENTAL: Animate some actions
+      quickAnimation: 50      # Small delay preset
+      moderateAnimation: 150  # Faster delay preset
+      pauseOthersOnPlay: true # Pause other players if any
 
     constructor: (el, opt) ->
       @options = $.extend({}, @defaults, opt)
@@ -34,7 +34,7 @@
       @timer =     null
       @played =    0
       @nowdragging = false
-      @currentPlayerSize = @options.size
+      @currentUISize = @options.size
       @canPlayCurrent = false
       # Calls
       @initialize()
@@ -52,7 +52,7 @@
     playPause: ->
       if @audio.paused then @play() else @pause()
     play: ->
-      if @options.shutOthersOnPlay
+      if @options.pauseOthersOnPlay
         players = $.data(document.body, 'FoundationPlayers')
         players.map (p) => p.pause() if @ != p
       @audio.play()
@@ -151,10 +151,11 @@
         @seekPercent(Math.floor e.offsetX / @$progress.outerWidth() * 100)
       # Drag section is tricky
       # TODO: Mobile actions
-      # TODO: DRYup this code
+
       @$progress.on 'mousedown.fndtn.player',  () =>
         @nowdragging = true
         @setVolume(@options.dimmedVolume)
+
       # Stop dragging common handler
       _stopDragHandler = () =>
         if @nowdragging
@@ -172,7 +173,7 @@
       # Animate property if necessary
       if @options.animate
         @$played.animate width: @played + '%',
-          (queue: false, duration: @options.quick)
+          (queue: false, duration: @options.quickAnimation)
       else
         @$played.css 'width', @played + '%'
     redrawBufferizationBars: ->
@@ -200,7 +201,7 @@
     setVolume: (vol) ->
       # Animate property if necessary
       if @options.animate
-        $(@audio).animate volume: vol, (duration: @options.moderate)
+        $(@audio).animate volume: vol, (duration: @options.moderateAnimation)
       else
         @audio.volume = vol
     toggleMute: ->
@@ -223,16 +224,16 @@
     # Look and feel ============================================================
     # This method toggles player size
     togglePlayerSize: ->
-      # TODO: rename @currentPlayerSize and switchToSize
-      toSize = if @currentPlayerSize == 'normal' then 'small' else 'normal'
-      @currentPlayerSize = toSize if @setPlayerSize toSize
+      # TODO: rename @currentUISize and switchToSize
+      toSize = if @currentUISize == 'normal' then 'small' else 'normal'
+      @currentUISize = toSize if @setPlayerSize toSize
 
     # Set particalar player size
     setPlayerSize: (size) ->
-      if ('normal' == size or 'small' == size) and size != @currentPlayerSize
-          switchClass @$wrapper, size, @currentPlayerSize
+      if ('normal' == size or 'small' == size) and size != @currentUISize
+          switchClass @$wrapper, size, @currentUISize
           @setPlayerSizeHandler()
-          return @currentPlayerSize = size
+          return @currentUISize = size
       else
         console.error 'setPlayerSize: incorrect size argument'
         return false

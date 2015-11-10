@@ -12,9 +12,9 @@
         skipSeconds: 10,
         dimmedVolume: 0.25,
         animate: false,
-        quick: 50,
-        moderate: 150,
-        shutOthersOnPlay: true
+        quickAnimation: 50,
+        moderateAnimation: 150,
+        pauseOthersOnPlay: true
       };
 
       function FoundationPlayer(el, opt) {
@@ -33,7 +33,7 @@
         this.timer = null;
         this.played = 0;
         this.nowdragging = false;
-        this.currentPlayerSize = this.options.size;
+        this.currentUISize = this.options.size;
         this.canPlayCurrent = false;
         this.initialize();
       }
@@ -57,7 +57,7 @@
 
       FoundationPlayer.prototype.play = function() {
         var players;
-        if (this.options.shutOthersOnPlay) {
+        if (this.options.pauseOthersOnPlay) {
           players = $.data(document.body, 'FoundationPlayers');
           players.map((function(_this) {
             return function(p) {
@@ -223,7 +223,7 @@
             width: this.played + '%'
           }, {
             queue: false,
-            duration: this.options.quick
+            duration: this.options.quickAnimation
           });
         } else {
           return this.$played.css('width', this.played + '%');
@@ -255,7 +255,7 @@
           return $(this.audio).animate({
             volume: vol
           }, {
-            duration: this.options.moderate
+            duration: this.options.moderateAnimation
           });
         } else {
           return this.audio.volume = vol;
@@ -286,17 +286,17 @@
 
       FoundationPlayer.prototype.togglePlayerSize = function() {
         var toSize;
-        toSize = this.currentPlayerSize === 'normal' ? 'small' : 'normal';
+        toSize = this.currentUISize === 'normal' ? 'small' : 'normal';
         if (this.setPlayerSize(toSize)) {
-          return this.currentPlayerSize = toSize;
+          return this.currentUISize = toSize;
         }
       };
 
       FoundationPlayer.prototype.setPlayerSize = function(size) {
-        if (('normal' === size || 'small' === size) && size !== this.currentPlayerSize) {
-          switchClass(this.$wrapper, size, this.currentPlayerSize);
+        if (('normal' === size || 'small' === size) && size !== this.currentUISize) {
+          switchClass(this.$wrapper, size, this.currentUISize);
           this.setPlayerSizeHandler();
-          return this.currentPlayerSize = size;
+          return this.currentUISize = size;
         } else {
           console.error('setPlayerSize: incorrect size argument');
           return false;
