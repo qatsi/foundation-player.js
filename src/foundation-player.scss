@@ -39,12 +39,18 @@ $fp-progress-height-small: rem-calc(10) !default;
   user-select: none;
 }
 
+
 // Foundation player styles
 @include exports('foundation-player') {
   // Common styles for player parts
   .foundation-player {
+    display: table;
+    margin: 0 auto;
+
+    // Override Foundation .inline-list values
     .player {
-      margin: 0 auto; // Center player
+      margin-left: 0;
+      margin-right: 0;
     }
 
     .disabled {
