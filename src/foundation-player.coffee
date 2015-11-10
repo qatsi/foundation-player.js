@@ -1,5 +1,5 @@
 # foundation-player.js
-# Author: Alexander Egorov
+# Authors: Alexander Egorov, Rita Kondratyeva
 
 (($, window) ->
   # Define the plugin class
