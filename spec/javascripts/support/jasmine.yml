@@ -12,18 +12,9 @@ helpers:
   - 'helpers/**/*.js'
 
 spec_files:
-  - '**/*[sS]pec.js'
-
-src_dir:
-
-spec_dir:
+  - '**/*spec.js'
 
 spec_helper: spec/javascripts/support/jasmine_helper.rb
 
-boot_dir:
-
-boot_files:
-
-# Interesting for LiveReload
-# rack_options:
-#   server: 'thin'
+rack_options:
+  server: 'puma'
