@@ -1,0 +1,29 @@
+src_files:
+  - http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
+  - http://cdn.foundation5.zurb.com/foundation.js
+  - /src/foundation-player.min.js
+
+stylesheets:
+  - http://cdn.foundation5.zurb.com/foundation.css
+  - /src/foundation-player.css
+  - /src/foundation-icons/foundation-icons.css
+
+helpers:
+  - 'helpers/**/*.js'
+
+spec_files:
+  - '**/*[sS]pec.js'
+
+src_dir:
+
+spec_dir:
+
+spec_helper: spec/javascripts/support/jasmine_helper.rb
+
+boot_dir:
+
+boot_files:
+
+# Interesting for LiveReload
+# rack_options:
+#   server: 'thin'
