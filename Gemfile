@@ -1,10 +1,13 @@
 source 'https://rubygems.org'
+gem 'foundation-rails' # Sorry, about that :-/
 gem 'compass'
-gem 'foundation-rails' # Sorry, about that
-gem 'guard'
 gem 'guard-compass'
 gem 'guard-uglify'
 gem 'guard-coffeescript'
+gem 'guard-livereload'
 gem 'guard-haml'
+gem 'rack-livereload'
 gem 'scss_lint'
 gem 'jasmine'
+gem 'foreman'
+gem 'puma'
